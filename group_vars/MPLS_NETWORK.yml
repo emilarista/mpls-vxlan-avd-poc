@@ -1,0 +1,148 @@
+---
+design:
+  type: "mpls"
+
+fabric_name: MPLS_NETWORK
+
+overlay_routing_protocol: ibgp
+
+underlay_routing_protocol: isis-sr
+
+isis_default_is_type: level-2
+isis_default_circuit_type: level-2
+isis_default_metric: 50
+isis_advertise_passive_only: true
+
+isis_ti_lfa:
+  enabled: true
+  protection: link
+  local_convergence_delay: 15000
+
+bgp_as: 65000
+
+bgp_peer_groups:
+  mpls_overlay_peers:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+  rr_overlay_peers:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+
+overlay_rd_type:
+  admin_subfield: overlay_loopback
+overlay_rt_type:
+  admin_subfield: 65000
+
+# Nodes:
+
+# P Routers
+p:
+  platform: vEOS-LAB
+  defaults:
+    loopback_ipv4_pool: 100.70.3.0/24
+    node_sid_base: 300
+    isis_system_id_prefix: '0000.0003'
+  nodes:
+    P-1A:
+      id: 1
+      mgmt_ip: 10.30.30.103/24
+    P-1B:
+      id: 2
+      mgmt_ip: 10.30.30.104/24
+    P-2A:
+      id: 3
+      mgmt_ip: 10.30.30.106/24
+    P-2B:
+      id: 4
+      mgmt_ip: 10.30.30.107/24
+    P-3A:
+      id: 5
+      mgmt_ip: 10.30.30.110/24
+    P-3B:
+      id: 6
+      mgmt_ip: 10.30.30.111/24
+    P-4A:
+      id: 7
+      mgmt_ip: 10.30.30.115/24
+    P-4B:
+      id: 8
+      mgmt_ip: 10.30.30.116/24
+
+pe:
+  platform: vEOS-LAB
+  defaults:
+    virtual_router_mac_address: 00:1c:73:00:dc:00
+    platform: vEOS-LAB
+    loopback_ipv4_pool: 100.70.1.0/24
+    is_type: level-2
+    node_sid_base: 100
+    isis_system_id_prefix: '0000.0001'
+    spanning_tree_priority: 4096
+    spanning_tree_mode: mstp
+    overlay_address_families: [ evpn, vpn-ipv4, vpn-ipv6 ]
+    bgp_defaults:
+      - 'no bgp default ipv4-unicast'
+      - 'distance bgp 20 200 200'
+      - 'graceful-restart restart-time 300'
+      - 'graceful-restart'
+    mpls_route_reflectors: [ "???", "???" ]
+  node_groups:
+    SITE1:
+      spanning_tree_root_super: true
+      filter:
+        tenants: []
+        tags: []
+      nodes:
+        PE-1A:
+          id: 1
+          mgmt_ip: 10.30.30.101/24
+        PE-1B:
+          id: 2
+          mgmt_ip: 10.30.30.102/24
+
+    SITE2:
+      nodes:
+        PE-2:
+          id: 3
+          mgmt_ip: 10.30.30.105/24
+
+    SITE3:
+      nodes:
+        PE-3:
+          id: 4
+          mgmt_ip: 10.30.30.109/24
+
+    SITE4:
+      spanning_tree_root_super: true
+      nodes:
+        PE-4A:
+          id: 5
+          mgmt_ip: 10.30.30.113/24
+        PE-4B:
+          id: 6
+          mgmt_ip: 10.30.30.114/24
+
+rr:
+  defaults:
+    platform: vEOS-LAB
+    loopback_ipv4_pool: 100.70.2.0/24
+    is_type: level-2
+    node_sid_base: 200
+    isis_system_id_prefix: '0000.0002'
+    overlay_address_families: [ evpn, vpn-ipv4, vpn-ipv6 ]
+    bgp_defaults:
+      - 'no bgp default ipv4-unicast'
+      - 'distance bgp 20 200 200'
+      - 'graceful-restart restart-time 300'
+      - 'graceful-restart'
+      - 'bgp route-reflector preserve-attributes always'
+      # - 'no bgp client-to-client reflection' # If meshing PEs, client-to-client reflection can be turned off
+  # node_groups:
+    # rr7-8:
+    #   bgp_cluster_id: 7.7.7.7
+    #   # evpn_gw:
+    #   nodes:
+    #     rr7:
+    #       id: 7
+    #       mgmt_ip: 10.30.30.107/24
+    #     rr8:
+    #       id: 8
+    #       mgmt_ip: 10.30.30.108/24

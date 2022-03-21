@@ -1,0 +1,8 @@
+---
+design:
+  type: "l3ls-evpn"
+
+underlay_routing_protocol: isis
+overlay_routing_protocol: ibgp
+
+fabric_name: VXLAN_NETWORK
