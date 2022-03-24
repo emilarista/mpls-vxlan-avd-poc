@@ -8,7 +8,6 @@
     - arista.cvp
 
   tasks:
-
     - name: generate intended variables
       tags: [build, generate]
       import_role:
@@ -18,6 +17,7 @@
       tags: [build, generate]
       import_role:
         name: arista.avd.eos_cli_config_gen
+      when: structured_config.changed
 
 # - name: Configuration deployment with CVP
 #   hosts: cv_server

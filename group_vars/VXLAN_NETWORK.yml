@@ -1,8 +1,8 @@
 ---
-design:
-  type: "l3ls-evpn"
-
-underlay_routing_protocol: isis
-overlay_routing_protocol: ibgp
-
 fabric_name: VXLAN_NETWORK
+
+bgp_peer_groups:
+  EVPN_OVERLAY_PEERS:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+  IPv4_UNDERLAY_PEERS:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==

@@ -31,13 +31,13 @@ all:
                     PE-1B:
                       ansible_host: 10.30.30.102
                 SITE1_P:
-                  vars:
-                    type: p
                   hosts:
                     P-1A:
                       ansible_host: 10.30.30.103
+                      type: rr
                     P-1B:
                       ansible_host: 10.30.30.104
+                      type: p
 
             SITE2:
               children:
@@ -53,10 +53,10 @@ all:
                   hosts:
                     P-2A:
                       ansible_host: 10.30.30.106
+                      type: rr
                     P-2B:
                       ansible_host: 10.30.30.107
-                    P-2GW:
-                      ansible_host: 10.30.30.108
+                      type: p
 
             SITE3:
               children:
@@ -74,8 +74,6 @@ all:
                       ansible_host: 10.30.30.110
                     P-3B:
                       ansible_host: 10.30.30.111
-                    P-3GW:
-                      ansible_host: 10.30.30.112
 
             SITE4:
               children:
@@ -98,23 +96,38 @@ all:
 
         VXLAN_NETWORK:
           children:
-            SITE_5:
+            VXLAN_ISLAND2:
               children:
-                SITE_5_PE:
+                SITE_2_LEAFS:
                   vars:
                     type: l3leaf
                   hosts:
-                    PE-5:
+                    GW2:
                       ansible_host: 10.30.30.117
-            SITE_6:
+                    LF2:
+                      ansible_host: 10.30.30.118
+                SITE_2_SPINES:
+                  vars:
+                    type: spine
+                  hosts:
+                    SP2:
+                      ansible_host: 10.30.30.119
+            VXLAN_ISLAND3:
               children:
-                SITE_6_PE:
+                SITE_3_LEAFS:
                   vars:
                     type: l3leaf
                   hosts:
-                    PE-6:
+                    GW3:
+                      ansible_host: 10.30.30.117
+                    LF3:
                       ansible_host: 10.30.30.118
-
+                SITE_3_SPINES:
+                  vars:
+                    type: spine
+                  hosts:
+                    SP3:
+                      ansible_host: 10.30.30.119
 
     # MPLS_TENANTS:
     #   children:

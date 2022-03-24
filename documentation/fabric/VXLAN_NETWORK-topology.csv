@@ -1,0 +1,11 @@
+Node Type,Node,Node Interface,Peer Type,Peer Node,Peer Interface
+l3leaf,GW2,Ethernet1,other,P-2A,Ethernet5
+l3leaf,GW2,Ethernet2,spine,SP2,Ethernet2
+l3leaf,GW3,Ethernet1,other,P-3B,Ethernet5
+l3leaf,GW3,Ethernet2,spine,SP3,Ethernet2
+l3leaf,LF2,Ethernet1,spine,SP2,Ethernet1
+l3leaf,LF3,Ethernet1,spine,SP3,Ethernet1
+spine,SP2,Ethernet1,l3leaf,LF2,Ethernet1
+spine,SP2,Ethernet2,l3leaf,GW2,Ethernet2
+spine,SP3,Ethernet1,l3leaf,LF3,Ethernet1
+spine,SP3,Ethernet2,l3leaf,GW3,Ethernet2

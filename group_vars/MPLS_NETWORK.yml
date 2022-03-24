@@ -6,6 +6,8 @@ fabric_name: MPLS_NETWORK
 
 overlay_routing_protocol: ibgp
 
+# bgp_mesh_pes: true
+
 underlay_routing_protocol: isis-sr
 
 isis_default_is_type: level-2
@@ -40,16 +42,17 @@ p:
     loopback_ipv4_pool: 100.70.3.0/24
     node_sid_base: 300
     isis_system_id_prefix: '0000.0003'
+    loopback_ipv4_offset: 30
   nodes:
-    P-1A:
-      id: 1
-      mgmt_ip: 10.30.30.103/24
+    # P-1A:
+    #   id: 1
+    #   mgmt_ip: 10.30.30.103/24
     P-1B:
       id: 2
       mgmt_ip: 10.30.30.104/24
-    P-2A:
-      id: 3
-      mgmt_ip: 10.30.30.106/24
+    # P-2A:
+    #   id: 3
+    #   mgmt_ip: 10.30.30.106/24
     P-2B:
       id: 4
       mgmt_ip: 10.30.30.107/24
@@ -78,12 +81,13 @@ pe:
     spanning_tree_priority: 4096
     spanning_tree_mode: mstp
     overlay_address_families: [ evpn, vpn-ipv4, vpn-ipv6 ]
+    loopback_ipv4_offset: 10
     bgp_defaults:
       - 'no bgp default ipv4-unicast'
       - 'distance bgp 20 200 200'
       - 'graceful-restart restart-time 300'
       - 'graceful-restart'
-    mpls_route_reflectors: [ "???", "???" ]
+    mpls_route_reflectors: [ P-1A, P-2A ]
   node_groups:
     SITE1:
       spanning_tree_root_super: true
@@ -134,15 +138,14 @@ rr:
       - 'graceful-restart restart-time 300'
       - 'graceful-restart'
       - 'bgp route-reflector preserve-attributes always'
-      # - 'no bgp client-to-client reflection' # If meshing PEs, client-to-client reflection can be turned off
-  # node_groups:
-    # rr7-8:
-    #   bgp_cluster_id: 7.7.7.7
-    #   # evpn_gw:
-    #   nodes:
-    #     rr7:
-    #       id: 7
-    #       mgmt_ip: 10.30.30.107/24
-    #     rr8:
-    #       id: 8
-    #       mgmt_ip: 10.30.30.108/24
+  node_groups:
+    P1-2:
+      bgp_cluster_id: 12.12.12.12
+      # evpn_gw:
+      nodes:
+        P-1A:
+          id: 1
+          mgmt_ip: 10.30.30.107/24
+        P-2A:
+          id: 2
+          mgmt_ip: 10.30.30.108/24
