@@ -212,8 +212,8 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
 | --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
-| Ethernet1 | - | CORE | 50 | point-to-point | level-2 | False | md5 |
-| Ethernet2 | - | CORE | 50 | point-to-point | - | - | - |
+| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | level-2 | False | md5 |
+| Ethernet2 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
 
 ### Ethernet Interfaces Device Configuration
 
@@ -227,7 +227,7 @@ interface Ethernet1
    no switchport
    ip address 100.64.48.27/31
    mpls ip
-   isis enable CORE
+   isis enable EVPN_UNDERLAY
    isis circuit-type level-2
    isis metric 50
    no isis hello padding
@@ -242,7 +242,7 @@ interface Ethernet2
    no switchport
    ip address 100.64.22.7/31
    mpls ip
-   isis enable CORE
+   isis enable EVPN_UNDERLAY
    isis metric 50
    isis network point-to-point
 ```
@@ -255,39 +255,40 @@ interface Ethernet2
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | LSR_Router_ID | default | 100.64.20.12/32 |
+| Loopback0 | EVPN_Overlay_Peering | default | 100.64.20.12/32 |
 | Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 100.64.21.12/32 |
 
 #### IPv6
 
 | Interface | Description | VRF | IPv6 Address |
 | --------- | ----------- | --- | ------------ |
-| Loopback0 | LSR_Router_ID | default | - |
+| Loopback0 | EVPN_Overlay_Peering | default | - |
 | Loopback1 | VTEP_VXLAN_Tunnel_Source | default | - |
 
 #### ISIS
 
 | Interface | ISIS instance | ISIS metric | Interface mode |
 | --------- | ------------- | ----------- | -------------- |
-| Loopback0 | CORE | - | passive |
-| Loopback1 | CORE | - | passive |
+| Loopback0 | EVPN_UNDERLAY | - | passive |
+| Loopback1 | EVPN_UNDERLAY | - | passive |
 
 ### Loopback Interfaces Device Configuration
 
 ```eos
 !
 interface Loopback0
-   description LSR_Router_ID
+   description EVPN_Overlay_Peering
    no shutdown
    ip address 100.64.20.12/32
-   isis enable CORE
+   isis enable EVPN_UNDERLAY
    isis passive
+   node-segment ipv4 index 2002
 !
 interface Loopback1
    description VTEP_VXLAN_Tunnel_Source
    no shutdown
    ip address 100.64.21.12/32
-   isis enable CORE
+   isis enable EVPN_UNDERLAY
    isis passive
 ```
 
@@ -379,27 +380,34 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 
 | Settings | Value |
 | -------- | ----- |
-| Instance | CORE |
+| Instance | EVPN_UNDERLAY |
 | Net-ID | 49.0001.0000.0022.0002.00 |
 | Type | level-2 |
 | Address Family | ipv4 unicast |
 | Router-ID | 100.64.20.12 |
 | Log Adjacency Changes | True |
+| SR MPLS Enabled | True |
 
 ### ISIS Interfaces Summary
 
 | Interface | ISIS Instance | ISIS Metric | Interface Mode |
 | --------- | ------------- | ----------- | -------------- |
-| Ethernet1 | CORE | 50 | point-to-point |
-| Ethernet2 | CORE | 50 | point-to-point |
-| Loopback0 | CORE | - | passive |
-| Loopback1 | CORE | - | passive |
+| Ethernet1 | EVPN_UNDERLAY | 50 | point-to-point |
+| Ethernet2 | EVPN_UNDERLAY | 50 | point-to-point |
+| Loopback0 | EVPN_UNDERLAY | - | passive |
+| Loopback1 | EVPN_UNDERLAY | - | passive |
+
+### ISIS Segment-routing Node-SID
+
+| Loopback | IPv4 Index | IPv6 Index |
+| -------- | ---------- | ---------- |
+| Loopback0 | 2002 | - |
 
 ### Router ISIS Device Configuration
 
 ```eos
 !
-router isis CORE
+router isis EVPN_UNDERLAY
    net 49.0001.0000.0022.0002.00
    is-type level-2
    router-id ipv4 100.64.20.12
@@ -408,6 +416,8 @@ router isis CORE
    address-family ipv4 unicast
       maximum-paths 4
    !
+   segment-routing mpls
+      no shutdown
 ```
 
 ## Router BGP
@@ -444,12 +454,6 @@ router isis CORE
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
-### BGP Neighbors
-
-| Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
-| -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
-| 100.64.20.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
-
 ### Router BGP EVPN Address Family
 
 #### EVPN Peer Groups
@@ -478,8 +482,6 @@ router bgp 65200
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
-   neighbor 100.64.20.12 peer group EVPN-OVERLAY-PEERS
-   neighbor 100.64.20.12 description GW2
    !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in

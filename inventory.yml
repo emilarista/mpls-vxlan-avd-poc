@@ -101,7 +101,7 @@ all:
                 SITE_2_LEAFS:
                   hosts:
                     GW2:
-                      type: gateway_l3leaf
+                      type: l3leaf
                       ansible_host: 10.30.30.117
                     LF2:
                       ansible_host: 10.30.30.118
@@ -117,7 +117,7 @@ all:
                 SITE_3_LEAFS:
                   hosts:
                     GW3:
-                      type: gateway_l3leaf
+                      type: l3leaf
                       ansible_host: 10.30.30.117
                     LF3:
                       type: l3leaf
