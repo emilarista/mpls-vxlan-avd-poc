@@ -31,6 +31,9 @@
   - [Router BGP](#router-bgp)
 - [BFD](#bfd)
   - [Router BFD](#router-bfd)
+- [MPLS](#mpls)
+  - [MPLS and LDP](#mpls-and-ldp)
+  - [MPLS Interfaces](#mpls-interfaces)
 - [Multicast](#multicast)
   - [IP IGMP Snooping](#ip-igmp-snooping)
 - [Filters](#filters)
@@ -209,7 +212,8 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
 | --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
-| Ethernet2 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
+| Ethernet1 | - | CORE | 50 | point-to-point | level-2 | False | md5 |
+| Ethernet2 | - | CORE | 50 | point-to-point | - | - | - |
 
 ### Ethernet Interfaces Device Configuration
 
@@ -222,6 +226,14 @@ interface Ethernet1
    speed 100full
    no switchport
    ip address 100.64.48.23/31
+   mpls ip
+   isis enable CORE
+   isis circuit-type level-2
+   isis metric 50
+   no isis hello padding
+   isis network point-to-point
+   isis authentication mode md5
+   isis authentication key 7 $1c$sTNAlR6rKSw=
 !
 interface Ethernet2
    description P2P_LINK_TO_SP3_Ethernet2
@@ -229,7 +241,8 @@ interface Ethernet2
    mtu 9000
    no switchport
    ip address 100.64.32.7/31
-   isis enable EVPN_UNDERLAY
+   mpls ip
+   isis enable CORE
    isis metric 50
    isis network point-to-point
 ```
@@ -242,39 +255,39 @@ interface Ethernet2
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | EVPN_Overlay_Peering | default | 100.64.30.12/32 |
+| Loopback0 | LSR_Router_ID | default | 100.64.30.12/32 |
 | Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 100.64.31.12/32 |
 
 #### IPv6
 
 | Interface | Description | VRF | IPv6 Address |
 | --------- | ----------- | --- | ------------ |
-| Loopback0 | EVPN_Overlay_Peering | default | - |
+| Loopback0 | LSR_Router_ID | default | - |
 | Loopback1 | VTEP_VXLAN_Tunnel_Source | default | - |
 
 #### ISIS
 
 | Interface | ISIS instance | ISIS metric | Interface mode |
 | --------- | ------------- | ----------- | -------------- |
-| Loopback0 | EVPN_UNDERLAY | - | passive |
-| Loopback1 | EVPN_UNDERLAY | - | passive |
+| Loopback0 | CORE | - | passive |
+| Loopback1 | CORE | - | passive |
 
 ### Loopback Interfaces Device Configuration
 
 ```eos
 !
 interface Loopback0
-   description EVPN_Overlay_Peering
+   description LSR_Router_ID
    no shutdown
    ip address 100.64.30.12/32
-   isis enable EVPN_UNDERLAY
+   isis enable CORE
    isis passive
 !
 interface Loopback1
    description VTEP_VXLAN_Tunnel_Source
    no shutdown
    ip address 100.64.31.12/32
-   isis enable EVPN_UNDERLAY
+   isis enable CORE
    isis passive
 ```
 
@@ -366,7 +379,7 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 
 | Settings | Value |
 | -------- | ----- |
-| Instance | EVPN_UNDERLAY |
+| Instance | CORE |
 | Net-ID | 49.0001.0000.0033.0002.00 |
 | Type | level-2 |
 | Address Family | ipv4 unicast |
@@ -377,15 +390,16 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 
 | Interface | ISIS Instance | ISIS Metric | Interface Mode |
 | --------- | ------------- | ----------- | -------------- |
-| Ethernet2 | EVPN_UNDERLAY | 50 | point-to-point |
-| Loopback0 | EVPN_UNDERLAY | - | passive |
-| Loopback1 | EVPN_UNDERLAY | - | passive |
+| Ethernet1 | CORE | 50 | point-to-point |
+| Ethernet2 | CORE | 50 | point-to-point |
+| Loopback0 | CORE | - | passive |
+| Loopback1 | CORE | - | passive |
 
 ### Router ISIS Device Configuration
 
 ```eos
 !
-router isis EVPN_UNDERLAY
+router isis CORE
    net 49.0001.0000.0033.0002.00
    is-type level-2
    router-id ipv4 100.64.30.12
@@ -434,7 +448,6 @@ router isis EVPN_UNDERLAY
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
-| 100.64.30.11 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 | 100.64.30.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 
 ### Router BGP EVPN Address Family
@@ -465,8 +478,6 @@ router bgp 65300
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
-   neighbor 100.64.30.11 peer group EVPN-OVERLAY-PEERS
-   neighbor 100.64.30.11 description LF3
    neighbor 100.64.30.12 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.30.12 description GW3
    !
@@ -496,6 +507,35 @@ router bgp 65300
 router bfd
    multihop interval 5000 min-rx 5000 multiplier 3
 ```
+
+# MPLS
+
+## MPLS and LDP
+
+### MPLS and LDP Summary
+
+| Setting | Value |
+| -------- | ---- |
+| MPLS IP Enabled | True |
+| LDP Enabled | False |
+| LDP Router ID | - |
+| LDP Interface Disabled Default | - |
+| LDP Transport-Address Interface | - |
+
+### MPLS and LDP Configuration
+
+```eos
+!
+mpls ip
+```
+
+## MPLS Interfaces
+
+| Interface | MPLS IP Enabled | LDP Enabled | IGP Sync |
+| --------- | --------------- | ----------- | -------- |
+| Ethernet1 | True | - | - |
+| Ethernet2 | True | - | - |
+| Loopback0 | - | - | - |
 
 # Multicast
 

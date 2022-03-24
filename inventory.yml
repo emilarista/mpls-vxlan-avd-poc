@@ -99,13 +99,13 @@ all:
             VXLAN_ISLAND2:
               children:
                 SITE_2_LEAFS:
-                  vars:
-                    type: l3leaf
                   hosts:
                     GW2:
+                      type: gateway_l3leaf
                       ansible_host: 10.30.30.117
                     LF2:
                       ansible_host: 10.30.30.118
+                      type: l3leaf
                 SITE_2_SPINES:
                   vars:
                     type: spine
@@ -115,12 +115,12 @@ all:
             VXLAN_ISLAND3:
               children:
                 SITE_3_LEAFS:
-                  vars:
-                    type: l3leaf
                   hosts:
                     GW3:
+                      type: gateway_l3leaf
                       ansible_host: 10.30.30.117
                     LF3:
+                      type: l3leaf
                       ansible_host: 10.30.30.118
                 SITE_3_SPINES:
                   vars:

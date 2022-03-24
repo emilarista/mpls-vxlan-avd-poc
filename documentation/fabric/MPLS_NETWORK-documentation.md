@@ -18,9 +18,9 @@
 
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- |
-| MPLS_NETWORK | p | P-1A | 10.30.30.103/24 | - | Provisioned |
+| MPLS_NETWORK | rr | P-1A | 10.30.30.107/24 | vEOS-LAB | Provisioned |
 | MPLS_NETWORK | p | P-1B | 10.30.30.104/24 | - | Provisioned |
-| MPLS_NETWORK | p | P-2A | 10.30.30.106/24 | - | Provisioned |
+| MPLS_NETWORK | rr | P-2A | 10.30.30.108/24 | vEOS-LAB | Provisioned |
 | MPLS_NETWORK | p | P-2B | 10.30.30.107/24 | - | Provisioned |
 | MPLS_NETWORK | p | P-3A | 10.30.30.110/24 | - | Provisioned |
 | MPLS_NETWORK | p | P-3B | 10.30.30.111/24 | - | Provisioned |
@@ -43,14 +43,14 @@
 
 | Type | Node | Node Interface | Peer Type | Peer Node | Peer Interface |
 | ---- | ---- | -------------- | --------- | ----------| -------------- |
-| p | P-1A | Ethernet2 | pe | PE-1A | Ethernet2 |
-| p | P-1A | Ethernet3 | p | P-2A | Ethernet3 |
-| p | P-1A | Ethernet6 | p | P-1B | Ethernet6 |
+| rr | P-1A | Ethernet2 | pe | PE-1A | Ethernet2 |
+| rr | P-1A | Ethernet3 | rr | P-2A | Ethernet3 |
+| rr | P-1A | Ethernet6 | p | P-1B | Ethernet6 |
 | p | P-1B | Ethernet2 | pe | PE-1B | Ethernet2 |
 | p | P-1B | Ethernet3 | p | P-4A | Ethernet3 |
 | p | P-1B | Ethernet4 | p | P-3A | Ethernet4 |
-| p | P-2A | Ethernet2 | pe | PE-2 | Ethernet4 |
-| p | P-2A | Ethernet6 | p | P-2B | Ethernet6 |
+| rr | P-2A | Ethernet2 | pe | PE-2 | Ethernet4 |
+| rr | P-2A | Ethernet6 | p | P-2B | Ethernet6 |
 | p | P-2B | Ethernet2 | pe | PE-2 | Ethernet5 |
 | p | P-2B | Ethernet3 | p | P-3A | Ethernet3 |
 | p | P-2B | Ethernet4 | p | P-4A | Ethernet4 |
@@ -97,34 +97,35 @@
 | Loopback Pool | Available Addresses | Assigned addresses | Assigned Address % |
 | ------------- | ------------------- | ------------------ | ------------------ |
 | 100.70.1.0/24 | 256 | 6 | 2.35 % |
-| 100.70.3.0/24 | 256 | 8 | 3.13 % |
+| 100.70.2.0/24 | 256 | 2 | 0.79 % |
+| 100.70.3.0/24 | 256 | 6 | 2.35 % |
 
 ## Loopback0 Interfaces Node Allocation
 
 | POD | Node | Loopback0 |
 | --- | ---- | --------- |
-| MPLS_NETWORK | P-1A | 100.70.3.1/32 |
-| MPLS_NETWORK | P-1B | 100.70.3.2/32 |
-| MPLS_NETWORK | P-2A | 100.70.3.3/32 |
-| MPLS_NETWORK | P-2B | 100.70.3.4/32 |
-| MPLS_NETWORK | P-3A | 100.70.3.5/32 |
-| MPLS_NETWORK | P-3B | 100.70.3.6/32 |
-| MPLS_NETWORK | P-4A | 100.70.3.7/32 |
-| MPLS_NETWORK | P-4B | 100.70.3.8/32 |
-| MPLS_NETWORK | PE-1A | 100.70.1.1/32 |
-| MPLS_NETWORK | PE-1B | 100.70.1.2/32 |
-| MPLS_NETWORK | PE-2 | 100.70.1.3/32 |
-| MPLS_NETWORK | PE-3 | 100.70.1.4/32 |
-| MPLS_NETWORK | PE-4A | 100.70.1.5/32 |
-| MPLS_NETWORK | PE-4B | 100.70.1.6/32 |
+| MPLS_NETWORK | P-1A | 100.70.2.1/32 |
+| MPLS_NETWORK | P-1B | 100.70.3.32/32 |
+| MPLS_NETWORK | P-2A | 100.70.2.2/32 |
+| MPLS_NETWORK | P-2B | 100.70.3.34/32 |
+| MPLS_NETWORK | P-3A | 100.70.3.35/32 |
+| MPLS_NETWORK | P-3B | 100.70.3.36/32 |
+| MPLS_NETWORK | P-4A | 100.70.3.37/32 |
+| MPLS_NETWORK | P-4B | 100.70.3.38/32 |
+| MPLS_NETWORK | PE-1A | 100.70.1.11/32 |
+| MPLS_NETWORK | PE-1B | 100.70.1.12/32 |
+| MPLS_NETWORK | PE-2 | 100.70.1.13/32 |
+| MPLS_NETWORK | PE-3 | 100.70.1.14/32 |
+| MPLS_NETWORK | PE-4A | 100.70.1.15/32 |
+| MPLS_NETWORK | PE-4B | 100.70.1.16/32 |
 
 ## ISIS CLNS interfaces
 
 | POD | Node | CLNS Address |
 | --- | ---- | ------------ |
-| MPLS_NETWORK | P-1A | 49.0001.0000.0003.0001.00 |
+| MPLS_NETWORK | P-1A | 49.0001.0000.0002.0001.00 |
 | MPLS_NETWORK | P-1B | 49.0001.0000.0003.0002.00 |
-| MPLS_NETWORK | P-2A | 49.0001.0000.0003.0003.00 |
+| MPLS_NETWORK | P-2A | 49.0001.0000.0002.0002.00 |
 | MPLS_NETWORK | P-2B | 49.0001.0000.0003.0004.00 |
 | MPLS_NETWORK | P-3A | 49.0001.0000.0003.0005.00 |
 | MPLS_NETWORK | P-3B | 49.0001.0000.0003.0006.00 |

@@ -48,8 +48,35 @@ l3leaf:
           id: 1
           mgmt_ip: 10.30.30.103/24
           uplink_switch_interfaces: [ Ethernet1 ]
+
+gateway_l3leaf:
+  defaults:
+    isis_system_id_prefix: '0000.0022'
+    virtual_router_mac_address: 00:1c:73:00:dc:00
+    platform: vEOS-LAB
+    uplink_ipv4_pool: 100.64.22.0/24
+    vtep_loopback_ipv4_pool: 100.64.21.0/24
+    loopback_ipv4_pool: 100.64.20.0/24
+    loopback_ipv4_offset: 10
+    max_uplink_switches: 3
+    uplink_switches: [ SP2 ]
+    uplink_interfaces: [ Ethernet1 ]
+    spanning_tree_priority: 4096
+    spanning_tree_mode: mstp
+    evpn_route_servers: [ GW2 ]
+    bgp_defaults:
+      - 'no bgp default ipv4-unicast'
+      - 'distance bgp 20 200 200'
+      - 'graceful-restart restart-time 300'
+      - 'graceful-restart'
+  node_groups:
     GW2:
       evpn_role: server
+      evpn_gateway:
+        vxlan_to_mpls:
+          enabled: true
+          mpls_overlay_address_family: evpn
+          remote_peers: [P-1A, P-2A]
       nodes:
         GW2:
           id: 2
