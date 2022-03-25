@@ -449,23 +449,13 @@ router isis EVPN_UNDERLAY
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
-#### MPLS-OVERLAY-PEERS
-
-| Settings | Value |
-| -------- | ----- |
-| Address Family | mpls |
-| Source | Loopback0 |
-| BFD | True |
-| Send community | all |
-| Maximum routes | 0 (no limit) |
-
 ### BGP Neighbors
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
 | 100.64.20.1 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
-| 100.70.2.1 | - | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
-| 100.70.2.2 | - | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
+| 100.70.2.1 | - | default | - | - | - | - | - | - |
+| 100.70.2.2 | - | default | - | - | - | - | - | - |
 
 ### Router BGP EVPN Address Family
 
@@ -474,7 +464,6 @@ router isis EVPN_UNDERLAY
 | Peer Group | Activate |
 | ---------- | -------- |
 | EVPN-OVERLAY-PEERS | True |
-| MPLS-OVERLAY-PEERS | True |
 
 ### Router BGP Device Configuration
 
@@ -494,12 +483,6 @@ router bgp 65200
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
-   neighbor MPLS-OVERLAY-PEERS peer group
-   neighbor MPLS-OVERLAY-PEERS update-source Loopback0
-   neighbor MPLS-OVERLAY-PEERS bfd
-   neighbor MPLS-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
-   neighbor MPLS-OVERLAY-PEERS send-community
-   neighbor MPLS-OVERLAY-PEERS maximum-routes 0
    neighbor 100.64.20.1 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.20.1 description SP2
    neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
@@ -511,8 +494,6 @@ router bgp 65200
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
-      neighbor MPLS-OVERLAY-PEERS activate
-      neighbor MPLS-OVERLAY-PEERS encapsulation mpls next-hop-self source-interface Loopback0
    !
    address-family ipv4
       no neighbor EVPN-OVERLAY-PEERS activate

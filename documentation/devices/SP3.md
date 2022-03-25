@@ -18,6 +18,7 @@
   - [Internal VLAN Allocation Policy Summary](#internal-vlan-allocation-policy-summary)
   - [Internal VLAN Allocation Policy Configuration](#internal-vlan-allocation-policy-configuration)
 - [Interfaces](#interfaces)
+  - [Ethernet Interfaces](#ethernet-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
@@ -174,6 +175,56 @@ vlan internal order ascending range 3700 3900
 
 # Interfaces
 
+## Ethernet Interfaces
+
+### Ethernet Interfaces Summary
+
+#### L2
+
+| Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
+| --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
+
+*Inherited from Port-Channel Interface
+
+#### IPv4
+
+| Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
+| --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
+| Ethernet1 | P2P_LINK_TO_LF3_Ethernet1 | routed | - | 100.64.32.0/31 | default | 9000 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_GW3_Ethernet2 | routed | - | 100.64.32.6/31 | default | 9000 | false | - | - |
+
+#### ISIS
+
+| Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
+| --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
+| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
+| Ethernet2 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
+
+### Ethernet Interfaces Device Configuration
+
+```eos
+!
+interface Ethernet1
+   description P2P_LINK_TO_LF3_Ethernet1
+   no shutdown
+   mtu 9000
+   no switchport
+   ip address 100.64.32.0/31
+   isis enable EVPN_UNDERLAY
+   isis metric 50
+   isis network point-to-point
+!
+interface Ethernet2
+   description P2P_LINK_TO_GW3_Ethernet2
+   no shutdown
+   mtu 9000
+   no switchport
+   ip address 100.64.32.6/31
+   isis enable EVPN_UNDERLAY
+   isis metric 50
+   isis network point-to-point
+```
+
 ## Loopback Interfaces
 
 ### Loopback Interfaces Summary
@@ -275,6 +326,8 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 
 | Interface | ISIS Instance | ISIS Metric | Interface Mode |
 | --------- | ------------- | ----------- | -------------- |
+| Ethernet1 | EVPN_UNDERLAY | 50 | point-to-point |
+| Ethernet2 | EVPN_UNDERLAY | 50 | point-to-point |
 | Loopback0 | EVPN_UNDERLAY | - | passive |
 
 ### Router ISIS Device Configuration
