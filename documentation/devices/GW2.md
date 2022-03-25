@@ -428,10 +428,6 @@ router isis EVPN_UNDERLAY
 | ------ | --------- |
 | 65200|  100.64.20.12 |
 
-| BGP AS | Cluster ID |
-| ------ | --------- |
-| 65200|  100.64.20.12 |
-
 | BGP Tuning |
 | ---------- |
 | no bgp default ipv4-unicast |
@@ -448,11 +444,16 @@ router isis EVPN_UNDERLAY
 | -------- | ----- |
 | Address Family | evpn |
 | Remote AS | 65200 |
-| Route Reflector Client | Yes |
 | Source | Loopback0 |
 | BFD | True |
 | Send community | all |
 | Maximum routes | 0 (no limit) |
+
+### BGP Neighbors
+
+| Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
+| -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
+| 100.64.20.1 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 
 ### Router BGP EVPN Address Family
 
@@ -468,7 +469,6 @@ router isis EVPN_UNDERLAY
 !
 router bgp 65200
    router-id 100.64.20.12
-   bgp cluster-id 100.64.20.12
    no bgp default ipv4-unicast
    distance bgp 20 200 200
    graceful-restart restart-time 300
@@ -477,11 +477,12 @@ router bgp 65200
    neighbor EVPN-OVERLAY-PEERS peer group
    neighbor EVPN-OVERLAY-PEERS remote-as 65200
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
-   neighbor EVPN-OVERLAY-PEERS route-reflector-client
    neighbor EVPN-OVERLAY-PEERS bfd
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
+   neighbor 100.64.20.1 peer group EVPN-OVERLAY-PEERS
+   neighbor 100.64.20.1 description SP2
    !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in

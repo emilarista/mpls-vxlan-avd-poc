@@ -27,9 +27,9 @@ router_bgp:
         route_map_in: RM-EVPN-SOO-IN
         route_map_out: RM-EVPN-SOO-OUT
   neighbors:
-    100.64.30.12:
+    100.64.30.1:
       peer_group: EVPN-OVERLAY-PEERS
-      description: GW3
+      description: SP3
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0

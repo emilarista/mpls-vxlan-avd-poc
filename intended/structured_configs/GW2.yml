@@ -7,7 +7,6 @@ router_bgp:
   - graceful-restart restart-time 300
   - graceful-restart
   - maximum-paths 4 ecmp 4
-  bgp_cluster_id: 100.64.20.12
   peer_groups:
     EVPN-OVERLAY-PEERS:
       type: evpn
@@ -17,7 +16,6 @@ router_bgp:
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       send_community: all
       maximum_routes: 0
-      route_reflector_client: true
   address_family_ipv4:
     peer_groups:
       EVPN-OVERLAY-PEERS:
@@ -28,6 +26,10 @@ router_bgp:
         activate: true
         route_map_in: RM-EVPN-SOO-IN
         route_map_out: RM-EVPN-SOO-OUT
+  neighbors:
+    100.64.20.1:
+      peer_group: EVPN-OVERLAY-PEERS
+      description: SP2
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0

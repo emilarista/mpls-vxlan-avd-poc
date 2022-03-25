@@ -26,6 +26,8 @@
   - [Static Routes](#static-routes)
   - [Router ISIS](#router-isis)
   - [Router BGP](#router-bgp)
+- [BFD](#bfd)
+  - [Router BFD](#router-bfd)
 - [Multicast](#multicast)
 - [Filters](#filters)
 - [ACL](#acl)
@@ -298,9 +300,42 @@ router isis EVPN_UNDERLAY
 | ------ | --------- |
 | 65300|  100.64.30.1 |
 
+| BGP AS | Cluster ID |
+| ------ | --------- |
+| 65300|  100.64.30.1 |
+
 | BGP Tuning |
 | ---------- |
 | maximum-paths 4 ecmp 4 |
+
+### Router BGP Peer Groups
+
+#### EVPN-OVERLAY-PEERS
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | evpn |
+| Remote AS | 65300 |
+| Route Reflector Client | Yes |
+| Source | Loopback0 |
+| BFD | True |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
+
+### BGP Neighbors
+
+| Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
+| -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
+| 100.64.30.11 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+| 100.64.30.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+
+### Router BGP EVPN Address Family
+
+#### EVPN Peer Groups
+
+| Peer Group | Activate |
+| ---------- | -------- |
+| EVPN-OVERLAY-PEERS | True |
 
 ### Router BGP Device Configuration
 
@@ -308,7 +343,44 @@ router isis EVPN_UNDERLAY
 !
 router bgp 65300
    router-id 100.64.30.1
+   bgp cluster-id 100.64.30.1
    maximum-paths 4 ecmp 4
+   neighbor EVPN-OVERLAY-PEERS peer group
+   neighbor EVPN-OVERLAY-PEERS remote-as 65300
+   neighbor EVPN-OVERLAY-PEERS update-source Loopback0
+   neighbor EVPN-OVERLAY-PEERS route-reflector-client
+   neighbor EVPN-OVERLAY-PEERS bfd
+   neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
+   neighbor EVPN-OVERLAY-PEERS send-community
+   neighbor EVPN-OVERLAY-PEERS maximum-routes 0
+   neighbor 100.64.30.11 peer group EVPN-OVERLAY-PEERS
+   neighbor 100.64.30.11 description LF3
+   neighbor 100.64.30.12 peer group EVPN-OVERLAY-PEERS
+   neighbor 100.64.30.12 description GW3
+   !
+   address-family evpn
+      neighbor EVPN-OVERLAY-PEERS activate
+   !
+   address-family ipv4
+      no neighbor EVPN-OVERLAY-PEERS activate
+```
+
+# BFD
+
+## Router BFD
+
+### Router BFD Multihop Summary
+
+| Interval | Minimum RX | Multiplier |
+| -------- | ---------- | ---------- |
+| 5000 | 5000 | 3 |
+
+### Router BFD Device Configuration
+
+```eos
+!
+router bfd
+   multihop interval 5000 min-rx 5000 multiplier 3
 ```
 
 # Multicast

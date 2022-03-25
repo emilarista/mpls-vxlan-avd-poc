@@ -3,6 +3,32 @@ router_bgp:
   router_id: 100.64.20.1
   bgp_defaults:
   - maximum-paths 4 ecmp 4
+  bgp_cluster_id: 100.64.20.1
+  peer_groups:
+    EVPN-OVERLAY-PEERS:
+      type: evpn
+      update_source: Loopback0
+      remote_as: '65200'
+      bfd: true
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      send_community: all
+      maximum_routes: 0
+      route_reflector_client: true
+  address_family_ipv4:
+    peer_groups:
+      EVPN-OVERLAY-PEERS:
+        activate: false
+  address_family_evpn:
+    peer_groups:
+      EVPN-OVERLAY-PEERS:
+        activate: true
+  neighbors:
+    100.64.20.12:
+      peer_group: EVPN-OVERLAY-PEERS
+      description: GW2
+    100.64.20.11:
+      peer_group: EVPN-OVERLAY-PEERS
+      description: LF2
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -64,3 +90,8 @@ router_isis:
   - ipv4 unicast
   isis_af_defaults:
   - maximum-paths 4
+router_bfd:
+  multihop:
+    interval: 5000
+    min_rx: 5000
+    multiplier: 3
