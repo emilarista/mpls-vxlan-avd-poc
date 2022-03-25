@@ -16,6 +16,13 @@ router_bgp:
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       send_community: all
       maximum_routes: 0
+    MPLS-OVERLAY-PEERS:
+      type: mpls
+      update_source: Loopback0
+      bfd: true
+      send_community: all
+      maximum_routes: 0
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
   address_family_ipv4:
     peer_groups:
       EVPN-OVERLAY-PEERS:
@@ -26,10 +33,21 @@ router_bgp:
         activate: true
         route_map_in: RM-EVPN-SOO-IN
         route_map_out: RM-EVPN-SOO-OUT
+      MPLS-OVERLAY-PEERS:
+        activate: true
+        encapsulation:
+          type: mpls
+          next_hop_self_source_interface: Loopback0
   neighbors:
     100.64.30.1:
       peer_group: EVPN-OVERLAY-PEERS
       description: SP3
+    100.70.2.1:
+      peer_group: MPLS-OVERLAY-PEERS
+      description: P-1A
+    100.70.2.2:
+      peer_group: MPLS-OVERLAY-PEERS
+      description: P-2A
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -77,6 +95,15 @@ management_api_http:
   enable_vrfs:
     MGMT: {}
   enable_https: true
+struct_cfg:
+  router_bgp:
+    neighbors:
+      100.70.2.1:
+        peer_group: MPLS-OVERLAY-PEERS
+        description: P-1A
+      100.70.2.2:
+        peer_group: MPLS-OVERLAY-PEERS
+        description: P-2A
 ethernet_interfaces:
   Ethernet2:
     peer: SP3

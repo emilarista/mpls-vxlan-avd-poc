@@ -75,6 +75,12 @@ router_bgp:
     100.70.2.2:
       peer_group: RR-OVERLAY-PEERS
       description: P-2A
+    100.64.20.12:
+      peer_group: MPLS-OVERLAY-PEERS
+      description: GW2
+    100.64.30.12:
+      peer_group: MPLS-OVERLAY-PEERS
+      description: GW3
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -119,6 +125,15 @@ management_api_http:
   enable_vrfs:
     MGMT: {}
   enable_https: true
+struct_cfg:
+  router_bgp:
+    neighbors:
+      100.64.20.12:
+        peer_group: MPLS-OVERLAY-PEERS
+        description: GW2
+      100.64.30.12:
+        peer_group: MPLS-OVERLAY-PEERS
+        description: GW3
 loopback_interfaces:
   Loopback0:
     description: MPLS_Overlay_peering

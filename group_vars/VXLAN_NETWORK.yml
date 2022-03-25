@@ -6,8 +6,8 @@ bgp_peer_groups:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
   ipv4_underlay_peers:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
-  # mpls_overlay_peers:
-  #   password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+  mpls_overlay_peers:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
 
 # node_type_keys:
 #   spine:

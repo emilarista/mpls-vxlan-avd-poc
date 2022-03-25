@@ -50,13 +50,22 @@ l3leaf:
           uplink_switch_interfaces: [ Ethernet1 ]
     GW3:
       node_sid_base: 2000
-      # mpls_route_servers: [P-1A, P-2A]
+      # mpls_route_reflectors: [ P-1A, P-2A ]
       # mpls_overlay_role: client
       evpn_gateway:
         vxlan_to_mpls:
           enabled: true
           mpls_overlay_address_family: evpn
           mpls_underlay: isis-sr
+      structured_config:
+        router_bgp:
+          neighbors:
+            100.70.2.1:
+              peer_group: MPLS-OVERLAY-PEERS
+              description: P-1A
+            100.70.2.2:
+              peer_group: MPLS-OVERLAY-PEERS
+              description: P-2A
       nodes:
         GW3:
           id: 2

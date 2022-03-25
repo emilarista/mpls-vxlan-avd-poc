@@ -142,6 +142,15 @@ rr:
     P1-2:
       bgp_cluster_id: 12.12.12.12
       # evpn_gw:
+      structured_config:
+        router_bgp:
+          neighbors:
+            100.64.20.12:
+              peer_group: MPLS-OVERLAY-PEERS
+              description: GW2
+            100.64.30.12:
+              peer_group: MPLS-OVERLAY-PEERS
+              description: GW3
       nodes:
         P-1A:
           id: 1
