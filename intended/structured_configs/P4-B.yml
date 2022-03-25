@@ -1,0 +1,135 @@
+static_routes:
+- vrf: MGMT
+  destination_address_prefix: 0.0.0.0/0
+  gateway: 10.30.30.1
+service_routing_protocols_model: multi-agent
+ip_routing: true
+daemon_terminattr:
+  cvaddrs:
+  - 10.20.20.20:9910
+  cvauth:
+    method: key
+    key: dudeface
+  cvvrf: MGMT
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  disable_aaa: false
+vlan_internal_order:
+  allocation: ascending
+  range:
+    beginning: 3700
+    ending: 3900
+name_server:
+  source:
+    vrf: MGMT
+  nodes:
+  - 8.8.8.8
+  - 8.8.4.4
+spanning_tree:
+  mode: none
+vrfs:
+  MGMT:
+    ip_routing: false
+management_interfaces:
+  Management1:
+    description: oob_management
+    shutdown: false
+    vrf: MGMT
+    ip_address: 172.16.32.208/24
+    gateway: 10.30.30.1
+    type: oob
+management_api_http:
+  enable_vrfs:
+    MGMT: {}
+  enable_https: true
+loopback_interfaces:
+  Loopback0:
+    description: LSR_Router_ID
+    shutdown: false
+    ip_address: 100.70.3.38/32
+    mpls:
+      ip: true
+    isis_enable: CORE
+    isis_passive: true
+    node_segment:
+      ipv4_index: 308
+router_isis:
+  instance: CORE
+  log_adjacency_changes: true
+  net: 49.0001.0000.0003.0008.00
+  router_id: 100.70.3.38
+  is_type: level-2
+  advertise:
+    passive_only: true
+  timers:
+    local_convergence:
+      delay: 15000
+      protected_prefixes: true
+  address_family:
+  - ipv4 unicast
+  isis_af_defaults:
+  - maximum-paths 4
+  - fast-reroute ti-lfa mode link-protection
+  segment_routing_mpls:
+    router_id: 100.70.3.38
+    enabled: true
+mpls:
+  ip: true
+ethernet_interfaces:
+  Ethernet2:
+    peer: PE-4B
+    peer_interface: Ethernet2
+    peer_type: pe
+    description: P2P_LINK_TO_PE-4B_Ethernet2
+    type: routed
+    shutdown: false
+    mtu: 9178
+    ip_address: 100.64.48.36/31
+    speed: 100full
+    isis_enable: CORE
+    isis_metric: 50
+    isis_network_point_to_point: true
+    isis_hello_padding: false
+    isis_circuit_type: level-2
+    isis_authentication_mode: md5
+    isis_authentication_key: $1c$sTNAlR6rKSw=
+    mpls:
+      ip: true
+  Ethernet3:
+    peer: P3-B
+    peer_interface: Ethernet3
+    peer_type: p
+    description: P2P_LINK_TO_P3-B_Ethernet3
+    type: routed
+    shutdown: false
+    mtu: 9178
+    ip_address: 100.64.48.21/31
+    speed: 100full
+    isis_enable: CORE
+    isis_metric: 50
+    isis_network_point_to_point: true
+    isis_hello_padding: false
+    isis_circuit_type: level-2
+    isis_authentication_mode: md5
+    isis_authentication_key: $1c$sTNAlR6rKSw=
+    mpls:
+      ip: true
+  Ethernet6:
+    peer: P4-A
+    peer_interface: Ethernet6
+    peer_type: p
+    description: P2P_LINK_TO_P4-A_Ethernet6
+    type: routed
+    shutdown: false
+    mtu: 9178
+    ip_address: 100.64.48.37/31
+    speed: 100full
+    isis_enable: CORE
+    isis_metric: 50
+    isis_network_point_to_point: true
+    isis_hello_padding: false
+    isis_circuit_type: level-2
+    isis_authentication_mode: md5
+    isis_authentication_key: $1c$sTNAlR6rKSw=
+    mpls:
+      ip: true

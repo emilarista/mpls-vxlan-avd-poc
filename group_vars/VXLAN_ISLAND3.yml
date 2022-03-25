@@ -15,12 +15,12 @@ spine:
     loopback_ipv4_pool: 100.64.30.0/24
     isis_system_id_prefix: '0000.0030'
   nodes:
-    # Island 2
     SP3:
       evpn_role: server
       id: 1
       mgmt_ip: 10.30.30.102/24
 
+# Leaf switches
 l3leaf:
   defaults:
     isis_system_id_prefix: '0000.0033'
@@ -48,10 +48,8 @@ l3leaf:
           id: 1
           mgmt_ip: 10.30.30.103/24
           uplink_switch_interfaces: [ Ethernet1 ]
-    GW3:
+    P3-GW:
       node_sid_base: 2000
-      # mpls_route_reflectors: [ P-1A, P-2A ]
-      # mpls_overlay_role: client
       evpn_gateway:
         vxlan_to_mpls:
           enabled: true
@@ -67,30 +65,9 @@ l3leaf:
               peer_group: MPLS-OVERLAY-PEERS
               description: P-2A
       nodes:
-        GW3:
+        P3-GW:
           id: 2
-          mgmt_ip: 10.30.30.105/24
+          mgmt_ip: 172.16.32.219/24
           uplink_switch_interfaces: [ Ethernet2 ]
           uplink_interfaces: [ Ethernet2 ]
-
-# gateway_l3leaf:
-#   defaults:
-#     isis_system_id_prefix: '0000.0033'
-#     virtual_router_mac_address: 00:1c:73:00:dc:00
-#     platform: vEOS-LAB
-#     uplink_ipv4_pool: 100.64.32.0/24
-#     vtep_loopback_ipv4_pool: 100.64.31.0/24
-#     loopback_ipv4_pool: 100.64.30.0/24
-#     loopback_ipv4_offset: 10
-#     max_uplink_switches: 3
-#     uplink_switches: [ SP3 ]
-#     uplink_interfaces: [ Ethernet1 ]
-#     spanning_tree_priority: 4096
-#     spanning_tree_mode: mstp
-#     bgp_defaults:
-#       - 'no bgp default ipv4-unicast'
-#       - 'distance bgp 20 200 200'
-#       - 'graceful-restart restart-time 300'
-#       - 'graceful-restart'
-#   node_groups:
 

@@ -44,30 +44,24 @@ p:
     isis_system_id_prefix: '0000.0003'
     loopback_ipv4_offset: 30
   nodes:
-    # P-1A:
-    #   id: 1
-    #   mgmt_ip: 10.30.30.103/24
-    P-1B:
+    P1-B:
       id: 2
-      mgmt_ip: 10.30.30.104/24
-    # P-2A:
-    #   id: 3
-    #   mgmt_ip: 10.30.30.106/24
-    P-2B:
+      mgmt_ip: 172.16.32.203/24
+    P2-B:
       id: 4
-      mgmt_ip: 10.30.30.107/24
-    P-3A:
+      mgmt_ip: 172.16.32.204/24
+    P3-A:
       id: 5
-      mgmt_ip: 10.30.30.110/24
-    P-3B:
+      mgmt_ip: 172.16.32.205/24
+    P3-B:
       id: 6
-      mgmt_ip: 10.30.30.111/24
-    P-4A:
+      mgmt_ip: 172.16.32.207/24
+    P4-A:
       id: 7
-      mgmt_ip: 10.30.30.115/24
-    P-4B:
+      mgmt_ip: 172.16.32.206/24
+    P4-B:
       id: 8
-      mgmt_ip: 10.30.30.116/24
+      mgmt_ip: 172.16.32.208/24
 
 pe:
   platform: vEOS-LAB
@@ -87,7 +81,7 @@ pe:
       - 'distance bgp 20 200 200'
       - 'graceful-restart restart-time 300'
       - 'graceful-restart'
-    mpls_route_reflectors: [ P-1A, P-2A ]
+    mpls_route_reflectors: [ P1-A, P2-A ]
   node_groups:
     SITE1:
       spanning_tree_root_super: true
@@ -97,32 +91,32 @@ pe:
       nodes:
         PE-1A:
           id: 1
-          mgmt_ip: 10.30.30.101/24
+          mgmt_ip: 172.16.32.209/24
         PE-1B:
           id: 2
-          mgmt_ip: 10.30.30.102/24
+          mgmt_ip: 172.16.32.210/24
 
     SITE2:
       nodes:
         PE-2:
           id: 3
-          mgmt_ip: 10.30.30.105/24
+          mgmt_ip: 172.16.32.212/24
 
     SITE3:
       nodes:
         PE-3:
           id: 4
-          mgmt_ip: 10.30.30.109/24
+          mgmt_ip: 172.16.32.214/24
 
     SITE4:
       spanning_tree_root_super: true
       nodes:
         PE-4A:
           id: 5
-          mgmt_ip: 10.30.30.113/24
+          mgmt_ip: 172.16.32.216/24
         PE-4B:
           id: 6
-          mgmt_ip: 10.30.30.114/24
+          mgmt_ip: 172.16.32.217/24
 
 rr:
   defaults:
@@ -152,9 +146,9 @@ rr:
               peer_group: MPLS-OVERLAY-PEERS
               description: GW3
       nodes:
-        P-1A:
+        P1-A:
           id: 1
-          mgmt_ip: 10.30.30.107/24
-        P-2A:
+          mgmt_ip: 172.16.32.209/24
+        P2-A:
           id: 2
-          mgmt_ip: 10.30.30.108/24
+          mgmt_ip: 172.16.32.202/24

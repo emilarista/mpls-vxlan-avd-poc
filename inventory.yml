@@ -27,16 +27,16 @@ all:
                     type: pe
                   hosts:
                     PE-1A:
-                      ansible_host: 10.30.30.101
+                      ansible_host: 172.16.32.209
                     PE-1B:
-                      ansible_host: 10.30.30.102
+                      ansible_host: 172.16.32.210
                 SITE1_P:
                   hosts:
-                    P-1A:
-                      ansible_host: 10.30.30.103
+                    P1-A:
+                      ansible_host: 172.16.32.201
                       type: rr
-                    P-1B:
-                      ansible_host: 10.30.30.104
+                    P1-B:
+                      ansible_host: 172.16.32.203
                       type: p
 
             SITE2:
@@ -46,16 +46,16 @@ all:
                     type: pe
                   hosts:
                     PE-2:
-                      ansible_host: 10.30.30.105
+                      ansible_host: 172.16.32.212
                 SITE2_P:
                   vars:
                     type: p
                   hosts:
-                    P-2A:
-                      ansible_host: 10.30.30.106
+                    P2-A:
+                      ansible_host: 172.16.32.202
                       type: rr
-                    P-2B:
-                      ansible_host: 10.30.30.107
+                    P2-B:
+                      ansible_host: 172.16.32.204
                       type: p
 
             SITE3:
@@ -65,15 +65,15 @@ all:
                     type: pe
                   hosts:
                     PE-3:
-                      ansible_host: 10.30.30.109
+                      ansible_host: 172.16.32.214
                 SITE3_P:
                   vars:
                     type: p
                   hosts:
-                    P-3A:
-                      ansible_host: 10.30.30.110
-                    P-3B:
-                      ansible_host: 10.30.30.111
+                    P3-A:
+                      ansible_host: 172.16.32.205
+                    P3-B:
+                      ansible_host: 172.16.32.207
 
             SITE4:
               children:
@@ -82,17 +82,17 @@ all:
                     type: pe
                   hosts:
                     PE-4A:
-                      ansible_host: 10.30.30.113
+                      ansible_host: 172.16.32.216
                     PE-4B:
-                      ansible_host: 10.30.30.114
+                      ansible_host: 172.16.32.217
                 SITE4_P:
                   vars:
                     type: p
                   hosts:
-                    P-4A:
-                      ansible_host: 10.30.30.115
-                    P-4B:
-                      ansible_host: 10.30.30.116
+                    P4-A:
+                      ansible_host: 172.16.32.206
+                    P4-B:
+                      ansible_host: 172.16.32.208
 
         VXLAN_NETWORK:
           children:
@@ -100,9 +100,9 @@ all:
               children:
                 SITE_2_LEAFS:
                   hosts:
-                    GW2:
+                    P2-GW:
                       type: l3leaf
-                      ansible_host: 10.30.30.117
+                      ansible_host: 172.16.32.222
                     LF2:
                       ansible_host: 10.30.30.118
                       type: l3leaf
@@ -116,9 +116,9 @@ all:
               children:
                 SITE_3_LEAFS:
                   hosts:
-                    GW3:
+                    P3-GW:
                       type: l3leaf
-                      ansible_host: 10.30.30.117
+                      ansible_host: 172.16.32.219
                     LF3:
                       type: l3leaf
                       ansible_host: 10.30.30.118

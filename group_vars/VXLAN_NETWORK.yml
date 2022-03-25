@@ -8,26 +8,3 @@ bgp_peer_groups:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
   mpls_overlay_peers:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
-
-# node_type_keys:
-#   spine:
-#     type: spine
-#     default_evpn_role: server
-#   l3leaf:
-#     type: l3leaf
-#     connected_endpoints: true
-#     default_evpn_role: client
-#     mlag_support: true
-#     network_services:
-#       l2: true
-#       l3: true
-#     vtep: true
-#   gateway_l3leaf:
-#     type: gateway_l3leaf
-#     connected_endpoints: true
-#     default_evpn_role: client
-#     mlag_support: true
-#     network_services:
-#       l2: true
-#       l3: true
-#     vtep: true

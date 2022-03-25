@@ -191,7 +191,7 @@ vlan internal order ascending range 3700 3900
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
 | Ethernet1 | P2P_LINK_TO_LF2_Ethernet1 | routed | - | 100.64.22.0/31 | default | 9000 | false | - | - |
-| Ethernet2 | P2P_LINK_TO_GW2_Ethernet2 | routed | - | 100.64.22.6/31 | default | 9000 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_P2-GW_Ethernet2 | routed | - | 100.64.22.6/31 | default | 9000 | false | - | - |
 
 #### ISIS
 
@@ -215,7 +215,7 @@ interface Ethernet1
    isis network point-to-point
 !
 interface Ethernet2
-   description P2P_LINK_TO_GW2_Ethernet2
+   description P2P_LINK_TO_P2-GW_Ethernet2
    no shutdown
    mtu 9000
    no switchport
@@ -409,7 +409,7 @@ router bgp 65200
    neighbor 100.64.20.11 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.20.11 description LF2
    neighbor 100.64.20.12 peer group EVPN-OVERLAY-PEERS
-   neighbor 100.64.20.12 description GW2
+   neighbor 100.64.20.12 description P2-GW
    !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS activate

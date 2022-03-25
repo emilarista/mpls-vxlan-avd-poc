@@ -42,10 +42,10 @@ router_bgp:
   neighbors:
     100.70.2.1:
       peer_group: MPLS-OVERLAY-PEERS
-      description: P-1A
+      description: P1-A
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
-      description: P-2A
+      description: P2-A
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -86,7 +86,7 @@ management_interfaces:
     description: oob_management
     shutdown: false
     vrf: MGMT
-    ip_address: 10.30.30.109/24
+    ip_address: 172.16.32.214/24
     gateway: 10.30.30.1
     type: oob
 management_api_http:
@@ -128,10 +128,10 @@ mpls:
   ip: true
 ethernet_interfaces:
   Ethernet4:
-    peer: P-3A
+    peer: P3-A
     peer_interface: Ethernet2
     peer_type: p
-    description: P2P_LINK_TO_P-3A_Ethernet2
+    description: P2P_LINK_TO_P3-A_Ethernet2
     type: routed
     shutdown: false
     mtu: 9178
@@ -147,10 +147,10 @@ ethernet_interfaces:
     mpls:
       ip: true
   Ethernet5:
-    peer: P-3B
+    peer: P3-B
     peer_interface: Ethernet2
     peer_type: p
-    description: P2P_LINK_TO_P-3B_Ethernet2
+    description: P2P_LINK_TO_P3-B_Ethernet2
     type: routed
     shutdown: false
     mtu: 9178

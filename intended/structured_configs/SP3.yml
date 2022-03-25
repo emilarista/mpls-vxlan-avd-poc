@@ -23,12 +23,12 @@ router_bgp:
       EVPN-OVERLAY-PEERS:
         activate: true
   neighbors:
-    100.64.30.12:
-      peer_group: EVPN-OVERLAY-PEERS
-      description: GW3
     100.64.30.11:
       peer_group: EVPN-OVERLAY-PEERS
       description: LF3
+    100.64.30.12:
+      peer_group: EVPN-OVERLAY-PEERS
+      description: P3-GW
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -87,10 +87,10 @@ ethernet_interfaces:
     isis_metric: 50
     isis_network_point_to_point: true
   Ethernet2:
-    peer: GW3
+    peer: P3-GW
     peer_interface: Ethernet2
     peer_type: l3leaf
-    description: P2P_LINK_TO_GW3_Ethernet2
+    description: P2P_LINK_TO_P3-GW_Ethernet2
     mtu: 9000
     type: routed
     shutdown: false

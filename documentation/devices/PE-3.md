@@ -55,7 +55,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 10.30.30.109/24 | 10.30.30.1 |
+| Management1 | oob_management | oob | MGMT | 172.16.32.214/24 | 10.30.30.1 |
 
 #### IPv6
 
@@ -71,7 +71,7 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 10.30.30.109/24
+   ip address 172.16.32.214/24
 ```
 
 ## Name Servers
@@ -205,8 +205,8 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet4 | P2P_LINK_TO_P-3A_Ethernet2 | routed | - | 100.64.48.13/31 | default | 9178 | false | - | - |
-| Ethernet5 | P2P_LINK_TO_P-3B_Ethernet2 | routed | - | 100.64.48.19/31 | default | 9178 | false | - | - |
+| Ethernet4 | P2P_LINK_TO_P3-A_Ethernet2 | routed | - | 100.64.48.13/31 | default | 9178 | false | - | - |
+| Ethernet5 | P2P_LINK_TO_P3-B_Ethernet2 | routed | - | 100.64.48.19/31 | default | 9178 | false | - | - |
 
 #### ISIS
 
@@ -220,7 +220,7 @@ vlan internal order ascending range 3700 3900
 ```eos
 !
 interface Ethernet4
-   description P2P_LINK_TO_P-3A_Ethernet2
+   description P2P_LINK_TO_P3-A_Ethernet2
    no shutdown
    mtu 9178
    speed 100full
@@ -236,7 +236,7 @@ interface Ethernet4
    isis authentication key 7 $1c$sTNAlR6rKSw=
 !
 interface Ethernet5
-   description P2P_LINK_TO_P-3B_Ethernet2
+   description P2P_LINK_TO_P3-B_Ethernet2
    no shutdown
    mtu 9178
    speed 100full
@@ -469,9 +469,9 @@ router bgp 65000
    neighbor MPLS-OVERLAY-PEERS send-community
    neighbor MPLS-OVERLAY-PEERS maximum-routes 0
    neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
-   neighbor 100.70.2.1 description P-1A
+   neighbor 100.70.2.1 description P1-A
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
-   neighbor 100.70.2.2 description P-2A
+   neighbor 100.70.2.2 description P2-A
    !
    address-family evpn
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
