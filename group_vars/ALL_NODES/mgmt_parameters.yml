@@ -1,14 +1,14 @@
 ---
-# local_users:
-#   emil:
-#     privilege: 15
-#     role: network-admin
-#     sha512_password: "$6$kiCAKn8fb8T12ClP$UchWUxo0y/CpYptWYxj7pC8uzjoUJnvi4lSg1c009mqJG2inlUDQdTi/YVY4M0dzgf4LOkaVtL7U11ZRkP7Rm/"
+local_users:
+  admin:
+    privilege: 15
+    role: network-admin
+    sha512_password: "$6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw."
 
-#   cvpadmin:
-#     privilege: 15
-#     role: network-admin
-#     sha512_password: "$6$WRH0YV9I461XA.qn$BYsYGThSIHOh4ic8qdjnHWq9Zi/l0W8Ws4DZ5Y5yI3hBBWGP03W3ggXWdY7MTqVA8plRvaazG/U8CeMPkT5aE."
+  cvpadmin:
+    privilege: 15
+    role: network-admin
+    sha512_password: "$6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1"
 
 internal_vlan_order:
   allocation: ascending
@@ -20,13 +20,26 @@ management_security:
   password:
     encryption_key_common: true
 
-# Cloud Vision server information
-cvp_instance_ip: 10.20.20.20
-
 # OOB Management network default gateway.
-mgmt_gateway: 10.30.30.1
+mgmt_gateway: 172.16.32.1
 
 # dns servers.
 name_servers:
   - 8.8.8.8
   - 8.8.4.4
+
+dns_domain: clearshark.net
+
+clock:
+  timezone: America/New_York
+
+ntp:
+  local_interface:
+    name: Management1
+    vrf: MGMT
+  servers:
+    - name: time-a.nist.gov
+      iburst: true
+      preferred: true
+      version: 4
+      vrf: MGMT

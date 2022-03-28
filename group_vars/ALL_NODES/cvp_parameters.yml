@@ -1,2 +1,28 @@
 ---
-cvp_ingestauth_key: dudeface
+# Cloud Vision server information
+# cvp_instance_ips: [ "172.16.30.33" ]
+
+# # Auth token for telemetry authentication
+# cvp_token_file: "/tmp/token"
+
+# cvp_ingestauth_key: dudeface
+
+daemon_terminattr:
+  # Address of the gRPC server on CloudVision
+  # TCP 9910 is used on on-prem
+  # TCP 443 is used on CV as a Service
+  cvaddrs: # For single cluster
+    - 172.16.30.33:9910
+  # Authentication scheme used to connect to CloudVision
+  cvauth:
+    method: "token"
+    token_file: "/tmp/token"
+  # The default compression scheme when streaming to CloudVision is gzip since TerminAttr 1.6.1 and CVP 2019.1.0. There is no need to change the compression scheme.
+  cvvrf: MGMT
+  # Stream states from EOS GNMI servers (Openconfig) to CloudVision
+  # Available as of TerminAttr v1.13.1
+  ingestexclude: "/Sysdb/cell/1/agent,/Sysdb/cell/2/agent"
+  # Exclude paths from the shared memory table
+  smashexcludes: "ale,flexCounter,hardware,kni,pulse,strata"
+  # Enable log file collection; /var/log/messages is streamed by default if no path is set.
+  taillogs: "/var/log/messages"

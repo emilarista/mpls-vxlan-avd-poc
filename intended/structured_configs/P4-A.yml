@@ -1,19 +1,9 @@
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
-  gateway: 10.30.30.1
+  gateway: 172.16.32.1
 service_routing_protocols_model: multi-agent
 ip_routing: true
-daemon_terminattr:
-  cvaddrs:
-  - 10.20.20.20:9910
-  cvauth:
-    method: key
-    key: dudeface
-  cvvrf: MGMT
-  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
-  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
-  disable_aaa: false
 vlan_internal_order:
   allocation: ascending
   range:
@@ -27,6 +17,15 @@ name_server:
   - 8.8.4.4
 spanning_tree:
   mode: none
+local_users:
+  admin:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
+  cvpadmin:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
 vrfs:
   MGMT:
     ip_routing: false
@@ -36,7 +35,7 @@ management_interfaces:
     shutdown: false
     vrf: MGMT
     ip_address: 172.16.32.206/24
-    gateway: 10.30.30.1
+    gateway: 172.16.32.1
     type: oob
 management_api_http:
   enable_vrfs:

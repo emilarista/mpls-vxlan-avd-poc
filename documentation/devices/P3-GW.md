@@ -3,9 +3,13 @@
 
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
+  - [DNS Domain](#dns-domain)
   - [Name Servers](#name-servers)
+  - [Clock Settings](#clock-settings)
+  - [NTP](#ntp)
   - [Management API HTTP](#management-api-http)
 - [Authentication](#authentication)
+  - [Local Users](#local-users)
 - [Management Security](#management-security)
   - [Management Security Summary](#management-security-summary)
   - [Management Security Configuration](#management-security-configuration)
@@ -55,7 +59,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 172.16.32.219/24 | 10.30.30.1 |
+| Management1 | oob_management | oob | MGMT | 172.16.32.219/24 | 172.16.32.1 |
 
 #### IPv6
 
@@ -74,6 +78,17 @@ interface Management1
    ip address 172.16.32.219/24
 ```
 
+## DNS Domain
+
+### DNS domain: clearshark.net
+
+### DNS Domain Device Configuration
+
+```eos
+dns domain clearshark.net
+!
+```
+
 ## Name Servers
 
 ### Name Servers Summary
@@ -88,6 +103,43 @@ interface Management1
 ```eos
 ip name-server vrf MGMT 8.8.4.4
 ip name-server vrf MGMT 8.8.8.8
+```
+
+## Clock Settings
+
+### Clock Timezone Settings
+
+Clock Timezone is set to **America/New_York**.
+
+### Clock Configuration
+
+```eos
+!
+clock timezone America/New_York
+```
+
+## NTP
+
+### NTP Summary
+
+#### NTP Local Interface
+
+| Interface | VRF |
+| --------- | --- |
+| Management1 | MGMT |
+
+#### NTP Servers
+
+| Server | VRF | Preferred | Burst | iBurst | Version | Min Poll | Max Poll | Local-interface | Key |
+| ------ | --- | --------- | ----- | ------ | ------- | -------- | -------- | --------------- | --- |
+| time-a.nist.gov | MGMT | True | - | True | 4 | - | - | - | - |
+
+### NTP Device Configuration
+
+```eos
+!
+ntp local-interface vrf MGMT Management1
+ntp server vrf MGMT time-a.nist.gov prefer iburst version 4
 ```
 
 ## Management API HTTP
@@ -118,6 +170,23 @@ management api http-commands
 
 # Authentication
 
+## Local Users
+
+### Local Users Summary
+
+| User | Privilege | Role |
+| ---- | --------- | ---- |
+| admin | 15 | network-admin |
+| cvpadmin | 15 | network-admin |
+
+### Local Users Device Configuration
+
+```eos
+!
+username admin privilege 15 role network-admin secret sha512 $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
+username cvpadmin privilege 15 role network-admin secret sha512 $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
+```
+
 # Management Security
 
 ## Management Security Summary
@@ -142,14 +211,14 @@ management security
 
 | CV Compression | CloudVision Servers | VRF | Authentication | Smash Excludes | Ingest Exclude | Bypass AAA |
 | -------------- | ------------------- | --- | -------------- | -------------- | -------------- | ---------- |
-| gzip | 10.20.20.20:9910 | MGMT | key,dudeface | ale,flexCounter,hardware,kni,pulse,strata | /Sysdb/cell/1/agent,/Sysdb/cell/2/agent | False |
+| gzip | 172.16.30.33:9910 | MGMT | token,/tmp/token | ale,flexCounter,hardware,kni,pulse,strata | /Sysdb/cell/1/agent,/Sysdb/cell/2/agent | False |
 
 ### TerminAttr Daemon Device Configuration
 
 ```eos
 !
 daemon TerminAttr
-   exec /usr/bin/TerminAttr -cvaddr=10.20.20.20:9910 -cvauth=key,dudeface -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs
+   exec /usr/bin/TerminAttr -cvaddr=172.16.30.33:9910 -cvauth=token,/tmp/token -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs=/var/log/messages
    no shutdown
 ```
 
@@ -365,13 +434,13 @@ no ip routing vrf MGMT
 
 | VRF | Destination Prefix | Next Hop IP             | Exit interface      | Administrative Distance       | Tag               | Route Name                    | Metric         |
 | --- | ------------------ | ----------------------- | ------------------- | ----------------------------- | ----------------- | ----------------------------- | -------------- |
-| MGMT | 0.0.0.0/0 | 10.30.30.1 | - | 1 | - | - | - |
+| MGMT | 0.0.0.0/0 | 172.16.32.1 | - | 1 | - | - | - |
 
 ### Static Routes Device Configuration
 
 ```eos
 !
-ip route vrf MGMT 0.0.0.0/0 10.30.30.1
+ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 ```
 
 ## Router ISIS
