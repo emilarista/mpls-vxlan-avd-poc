@@ -2,52 +2,48 @@
 # This file is maintained by avd_sync.py script.
 # Port profiles may be edited manually, but servers will be overwritten on next run.
 port_profiles:
-  TENANT_A_WAN_SERVICE_10:
+  TENANT_A_CORE_L2VLANS:
     mode: trunk
-    vlans: 10
+    vlans: "10,11"
     spanning_tree_portfast: edge
-  TENANT_B_2020:
-    mode: trunk
-    vlans: 2020
-    spanning_tree_portfast: edge
+  # TENANT_B_2020:
+  #   mode: trunk
+  #   vlans: 2020
+  #   spanning_tree_portfast: edge
 cpes:
-  CPE_TENANT_A_SITE1:
+  CPE1_SITE1_DUALHOMED:
     adapters:
     - endpoint_ports:
-      - Ethernet1
-      - Ethernet2
+      - Ethernet4
+      - Ethernet5
       switch_ports:
-      - Ethernet5
-      - Ethernet5
+      - Ethernet3
+      - Ethernet3
       switches:
-      - pe1
-      - pe2
+      - PE-1A
+      - PE-1B
+      profile: TENANT_A_CORE_L2VLANS
       port_channel:
         description: EVPN-A-A-PortChannel
         mode: active
-        # ESI stuff for main port channel, subinterfaces below use own values.
-        short_esi: 0303:0202:0101
-        subinterfaces:
-          - number: 111
-            short_esi: 0303:0202:0111
-          - number: 222
-            short_esi: 0303:0202:0222
-          - number: 333
-            short_esi: 0303:0202:0222
-            vlan_id: 434
-            encapsulation_vlan:
-              client_dot1q: 333
-
+        short_esi: 0101:0303:0405
     rack: Undefined
 
-  CPE_TENANT_A_SITE5:
+  CPE4_SITE4_DUALHOMED:
     adapters:
-    - profile: TENANT_A_WAN_SERVICE_10
-      endpoint_ports:
-      - eth0
-      switch_ports:
+    - endpoint_ports:
+      - Ethernet4
       - Ethernet5
+      switch_ports:
+      - Ethernet3
+      - Ethernet3
       switches:
-      - pe5
+      - PE-4A
+      - PE-4B
+      profile: TENANT_A_CORE_L2VLANS
+      port_channel:
+        description: EVPN-A-A-PortChannel
+        mode: active
+        short_esi: 0404:0303:0405
     rack: Undefined
 

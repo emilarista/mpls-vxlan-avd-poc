@@ -99,43 +99,45 @@ all:
               children:
                 SITE_2_LEAFS:
                   hosts:
-                    P2-GW:
+                    GW2:
                       type: l3leaf
                       ansible_host: 172.16.32.222
-                    LF2:
+                    SPE6:
                       ansible_host: 10.30.30.118
                       type: l3leaf
-                SITE_2_SPINES:
-                  vars:
-                    type: spine
-                  hosts:
-                    SP2:
-                      ansible_host: 10.30.30.119
+                # SITE_2_SPINES:
+                #   vars:
+                #     type: spine
+                #   hosts:
+                #     SP2:
+                #       ansible_host: 10.30.30.119
+
             VXLAN_ISLAND3:
               children:
                 SITE_3_LEAFS:
                   hosts:
-                    P3-GW:
+                    GW3:
                       type: l3leaf
                       ansible_host: 172.16.32.219
-                    LF3:
+                    SPE5:
                       type: l3leaf
                       ansible_host: 10.30.30.118
-                SITE_3_SPINES:
-                  vars:
-                    type: spine
-                  hosts:
-                    SP3:
-                      ansible_host: 10.30.30.119
+                # SITE_3_SPINES:
+                #   vars:
+                #     type: spine
+                #   hosts:
+                #     SP3:
+                #       ansible_host: 10.30.30.119
 
-    # MPLS_TENANTS:
-    #   children:
-    #     PE:
+    TENANTS:
+      children:
+        SITE1_PE:
+        SITE2_PE:
+        SITE3_PE:
+        SITE4_PE:
+        SITE_2_LEAFS:
+        SITE_3_LEAFS:
 
     # MPLS_ENDPOINT_CONNECTIONS:
     #   children:
     #     PE:
-
-    # LOCAL_USERS:
-    #   children:
-    #     MPLS_FABRIC:

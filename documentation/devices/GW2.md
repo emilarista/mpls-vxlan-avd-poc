@@ -3,9 +3,13 @@
 
 - [Management](#management)
   - [Management Interfaces](#management-interfaces)
+  - [DNS Domain](#dns-domain)
   - [Name Servers](#name-servers)
+  - [Clock Settings](#clock-settings)
+  - [NTP](#ntp)
   - [Management API HTTP](#management-api-http)
 - [Authentication](#authentication)
+  - [Local Users](#local-users)
 - [Management Security](#management-security)
   - [Management Security Summary](#management-security-summary)
   - [Management Security Configuration](#management-security-configuration)
@@ -55,7 +59,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 10.30.30.105/24 | 10.30.30.1 |
+| Management1 | oob_management | oob | MGMT | 172.16.32.222/24 | 172.16.32.1 |
 
 #### IPv6
 
@@ -71,7 +75,18 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 10.30.30.105/24
+   ip address 172.16.32.222/24
+```
+
+## DNS Domain
+
+### DNS domain: clearshark.net
+
+### DNS Domain Device Configuration
+
+```eos
+dns domain clearshark.net
+!
 ```
 
 ## Name Servers
@@ -88,6 +103,43 @@ interface Management1
 ```eos
 ip name-server vrf MGMT 8.8.4.4
 ip name-server vrf MGMT 8.8.8.8
+```
+
+## Clock Settings
+
+### Clock Timezone Settings
+
+Clock Timezone is set to **America/New_York**.
+
+### Clock Configuration
+
+```eos
+!
+clock timezone America/New_York
+```
+
+## NTP
+
+### NTP Summary
+
+#### NTP Local Interface
+
+| Interface | VRF |
+| --------- | --- |
+| Management1 | MGMT |
+
+#### NTP Servers
+
+| Server | VRF | Preferred | Burst | iBurst | Version | Min Poll | Max Poll | Local-interface | Key |
+| ------ | --- | --------- | ----- | ------ | ------- | -------- | -------- | --------------- | --- |
+| time-a.nist.gov | MGMT | True | - | True | 4 | - | - | - | - |
+
+### NTP Device Configuration
+
+```eos
+!
+ntp local-interface vrf MGMT Management1
+ntp server vrf MGMT time-a.nist.gov prefer iburst version 4
 ```
 
 ## Management API HTTP
@@ -118,6 +170,23 @@ management api http-commands
 
 # Authentication
 
+## Local Users
+
+### Local Users Summary
+
+| User | Privilege | Role |
+| ---- | --------- | ---- |
+| admin | 15 | network-admin |
+| cvpadmin | 15 | network-admin |
+
+### Local Users Device Configuration
+
+```eos
+!
+username admin privilege 15 role network-admin secret sha512 $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
+username cvpadmin privilege 15 role network-admin secret sha512 $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
+```
+
 # Management Security
 
 ## Management Security Summary
@@ -142,14 +211,14 @@ management security
 
 | CV Compression | CloudVision Servers | VRF | Authentication | Smash Excludes | Ingest Exclude | Bypass AAA |
 | -------------- | ------------------- | --- | -------------- | -------------- | -------------- | ---------- |
-| gzip | 10.20.20.20:9910 | MGMT | key,dudeface | ale,flexCounter,hardware,kni,pulse,strata | /Sysdb/cell/1/agent,/Sysdb/cell/2/agent | False |
+| gzip | 172.16.30.33:9910 | MGMT | token,/tmp/token | ale,flexCounter,hardware,kni,pulse,strata | /Sysdb/cell/1/agent,/Sysdb/cell/2/agent | False |
 
 ### TerminAttr Daemon Device Configuration
 
 ```eos
 !
 daemon TerminAttr
-   exec /usr/bin/TerminAttr -cvaddr=10.20.20.20:9910 -cvauth=key,dudeface -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs
+   exec /usr/bin/TerminAttr -cvaddr=172.16.30.33:9910 -cvauth=token,/tmp/token -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs=/var/log/messages
    no shutdown
 ```
 
@@ -205,42 +274,24 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_P-2A_Ethernet5 | routed | - | 100.64.48.27/31 | default | 9178 | false | - | - |
-| Ethernet2 | P2P_LINK_TO_SP2_Ethernet2 | routed | - | 100.64.22.7/31 | default | 9000 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_SPE6_Ethernet1 | routed | - | 100.64.22.6/31 | default | 9000 | false | - | - |
 
 #### ISIS
 
 | Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
 | --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
-| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | level-2 | False | md5 |
-| Ethernet2 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
+| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
 
 ### Ethernet Interfaces Device Configuration
 
 ```eos
 !
 interface Ethernet1
-   description P2P_LINK_TO_P-2A_Ethernet5
-   no shutdown
-   mtu 9178
-   speed 100full
-   no switchport
-   ip address 100.64.48.27/31
-   mpls ip
-   isis enable EVPN_UNDERLAY
-   isis circuit-type level-2
-   isis metric 50
-   no isis hello padding
-   isis network point-to-point
-   isis authentication mode md5
-   isis authentication key 7 $1c$sTNAlR6rKSw=
-!
-interface Ethernet2
-   description P2P_LINK_TO_SP2_Ethernet2
+   description P2P_LINK_TO_SPE6_Ethernet1
    no shutdown
    mtu 9000
    no switchport
-   ip address 100.64.22.7/31
+   ip address 100.64.22.6/31
    mpls ip
    isis enable EVPN_UNDERLAY
    isis metric 50
@@ -255,8 +306,8 @@ interface Ethernet2
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | EVPN_Overlay_Peering | default | 100.64.20.12/32 |
-| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 100.64.21.12/32 |
+| Loopback0 | EVPN_Overlay_Peering | default | 100.64.20.11/32 |
+| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 100.64.21.11/32 |
 
 #### IPv6
 
@@ -279,15 +330,15 @@ interface Ethernet2
 interface Loopback0
    description EVPN_Overlay_Peering
    no shutdown
-   ip address 100.64.20.12/32
+   ip address 100.64.20.11/32
    isis enable EVPN_UNDERLAY
    isis passive
-   node-segment ipv4 index 2002
+   node-segment ipv4 index 2001
 !
 interface Loopback1
    description VTEP_VXLAN_Tunnel_Source
    no shutdown
-   ip address 100.64.21.12/32
+   ip address 100.64.21.11/32
    isis enable EVPN_UNDERLAY
    isis passive
 ```
@@ -365,13 +416,13 @@ no ip routing vrf MGMT
 
 | VRF | Destination Prefix | Next Hop IP             | Exit interface      | Administrative Distance       | Tag               | Route Name                    | Metric         |
 | --- | ------------------ | ----------------------- | ------------------- | ----------------------------- | ----------------- | ----------------------------- | -------------- |
-| MGMT | 0.0.0.0/0 | 10.30.30.1 | - | 1 | - | - | - |
+| MGMT | 0.0.0.0/0 | 172.16.32.1 | - | 1 | - | - | - |
 
 ### Static Routes Device Configuration
 
 ```eos
 !
-ip route vrf MGMT 0.0.0.0/0 10.30.30.1
+ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 ```
 
 ## Router ISIS
@@ -381,10 +432,10 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 | Settings | Value |
 | -------- | ----- |
 | Instance | EVPN_UNDERLAY |
-| Net-ID | 49.0001.0000.0022.0002.00 |
+| Net-ID | 49.0001.0000.0021.0001.00 |
 | Type | level-2 |
 | Address Family | ipv4 unicast |
-| Router-ID | 100.64.20.12 |
+| Router-ID | 100.64.20.11 |
 | Log Adjacency Changes | True |
 | SR MPLS Enabled | True |
 
@@ -393,7 +444,6 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 | Interface | ISIS Instance | ISIS Metric | Interface Mode |
 | --------- | ------------- | ----------- | -------------- |
 | Ethernet1 | EVPN_UNDERLAY | 50 | point-to-point |
-| Ethernet2 | EVPN_UNDERLAY | 50 | point-to-point |
 | Loopback0 | EVPN_UNDERLAY | - | passive |
 | Loopback1 | EVPN_UNDERLAY | - | passive |
 
@@ -401,16 +451,16 @@ ip route vrf MGMT 0.0.0.0/0 10.30.30.1
 
 | Loopback | IPv4 Index | IPv6 Index |
 | -------- | ---------- | ---------- |
-| Loopback0 | 2002 | - |
+| Loopback0 | 2001 | - |
 
 ### Router ISIS Device Configuration
 
 ```eos
 !
 router isis EVPN_UNDERLAY
-   net 49.0001.0000.0022.0002.00
+   net 49.0001.0000.0021.0001.00
    is-type level-2
-   router-id ipv4 100.64.20.12
+   router-id ipv4 100.64.20.11
    log-adjacency-changes
    !
    address-family ipv4 unicast
@@ -426,7 +476,11 @@ router isis EVPN_UNDERLAY
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65200|  100.64.20.12 |
+| 65200|  100.64.20.11 |
+
+| BGP AS | Cluster ID |
+| ------ | --------- |
+| 65200|  100.64.20.11 |
 
 | BGP Tuning |
 | ---------- |
@@ -444,6 +498,7 @@ router isis EVPN_UNDERLAY
 | -------- | ----- |
 | Address Family | evpn |
 | Remote AS | 65200 |
+| Route Reflector Client | Yes |
 | Source | Loopback0 |
 | BFD | True |
 | Send community | all |
@@ -453,7 +508,7 @@ router isis EVPN_UNDERLAY
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
-| 100.64.20.1 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+| 100.64.20.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 | 100.70.2.1 | - | default | - | - | - | - | - | - |
 | 100.70.2.2 | - | default | - | - | - | - | - | - |
 
@@ -470,7 +525,8 @@ router isis EVPN_UNDERLAY
 ```eos
 !
 router bgp 65200
-   router-id 100.64.20.12
+   router-id 100.64.20.11
+   bgp cluster-id 100.64.20.11
    no bgp default ipv4-unicast
    distance bgp 20 200 200
    graceful-restart restart-time 300
@@ -479,12 +535,13 @@ router bgp 65200
    neighbor EVPN-OVERLAY-PEERS peer group
    neighbor EVPN-OVERLAY-PEERS remote-as 65200
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
+   neighbor EVPN-OVERLAY-PEERS route-reflector-client
    neighbor EVPN-OVERLAY-PEERS bfd
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
-   neighbor 100.64.20.1 peer group EVPN-OVERLAY-PEERS
-   neighbor 100.64.20.1 description SP2
+   neighbor 100.64.20.12 peer group EVPN-OVERLAY-PEERS
+   neighbor 100.64.20.12 description SPE6
    neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.1 description P-1A
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
@@ -543,7 +600,6 @@ mpls ip
 | Interface | MPLS IP Enabled | LDP Enabled | IGP Sync |
 | --------- | --------------- | ----------- | -------- |
 | Ethernet1 | True | - | - |
-| Ethernet2 | True | - | - |
 | Loopback0 | - | - | - |
 
 # Multicast
@@ -577,7 +633,7 @@ mpls ip
 
 | Sequence | Type | Match and/or Set |
 | -------- | ---- | ---------------- |
-| 10 | permit | set extcommunity soo 100.64.21.12:1 additive |
+| 10 | permit | set extcommunity soo 100.64.21.11:1 additive |
 
 ### Route-maps Device Configuration
 
@@ -589,7 +645,7 @@ route-map RM-EVPN-SOO-IN deny 10
 route-map RM-EVPN-SOO-IN permit 20
 !
 route-map RM-EVPN-SOO-OUT permit 10
-   set extcommunity soo 100.64.21.12:1 additive
+   set extcommunity soo 100.64.21.11:1 additive
 ```
 
 ## IP Extended Community Lists
@@ -598,13 +654,13 @@ route-map RM-EVPN-SOO-OUT permit 10
 
 | List Name | Type | Extended Communities |
 | --------- | ---- | -------------------- |
-| ECL-EVPN-SOO | permit | soo 100.64.21.12:1 |
+| ECL-EVPN-SOO | permit | soo 100.64.21.11:1 |
 
 ### IP Extended Community Lists configuration
 
 ```eos
 !
-ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.21.12:1
+ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.21.11:1
 ```
 
 # ACL

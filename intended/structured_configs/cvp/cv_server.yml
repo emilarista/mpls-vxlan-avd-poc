@@ -1,0 +1,125 @@
+---
+CVP_DEVICES:
+  - fqdn: LF2
+    parentContainerName: SITE_2_LEAFS
+    configlets:
+      - POC-AVD_LF2
+  - fqdn: LF3
+    parentContainerName: SITE_3_LEAFS
+    configlets:
+      - POC-AVD_LF3
+  - fqdn: P1-A
+    parentContainerName: SITE1_P
+    configlets:
+      - POC-AVD_P1-A
+  - fqdn: P1-B
+    parentContainerName: SITE1_P
+    configlets:
+      - POC-AVD_P1-B
+  - fqdn: P2-A
+    parentContainerName: SITE2_P
+    configlets:
+      - POC-AVD_P2-A
+  - fqdn: P2-B
+    parentContainerName: SITE2_P
+    configlets:
+      - POC-AVD_P2-B
+  - fqdn: P2-GW
+    parentContainerName: SITE_2_LEAFS
+    configlets:
+      - POC-AVD_P2-GW
+  - fqdn: P3-A
+    parentContainerName: SITE3_P
+    configlets:
+      - POC-AVD_P3-A
+  - fqdn: P3-B
+    parentContainerName: SITE3_P
+    configlets:
+      - POC-AVD_P3-B
+  - fqdn: P3-GW
+    parentContainerName: SITE_3_LEAFS
+    configlets:
+      - POC-AVD_P3-GW
+  - fqdn: P4-A
+    parentContainerName: SITE4_P
+    configlets:
+      - POC-AVD_P4-A
+  - fqdn: P4-B
+    parentContainerName: SITE4_P
+    configlets:
+      - POC-AVD_P4-B
+  - fqdn: PE-1A
+    parentContainerName: SITE1_PE
+    configlets:
+      - POC-AVD_PE-1A
+  - fqdn: PE-1B
+    parentContainerName: SITE1_PE
+    configlets:
+      - POC-AVD_PE-1B
+  - fqdn: PE-2
+    parentContainerName: SITE2_PE
+    configlets:
+      - POC-AVD_PE-2
+  - fqdn: PE-3
+    parentContainerName: SITE3_PE
+    configlets:
+      - POC-AVD_PE-3
+  - fqdn: PE-4A
+    parentContainerName: SITE4_PE
+    configlets:
+      - POC-AVD_PE-4A
+  - fqdn: PE-4B
+    parentContainerName: SITE4_PE
+    configlets:
+      - POC-AVD_PE-4B
+  - fqdn: SP2
+    parentContainerName: SITE_2_SPINES
+    configlets:
+      - POC-AVD_SP2
+  - fqdn: SP3
+    parentContainerName: SITE_3_SPINES
+    configlets:
+      - POC-AVD_SP3
+CVP_CONTAINERS:
+  ALL_NODES:
+    parentContainerName: Tenant
+  MPLS_NETWORK:
+    parentContainerName: ALL_NODES
+  SITE1:
+    parentContainerName: MPLS_NETWORK
+  SITE1_P:
+    parentContainerName: SITE1
+  SITE1_PE:
+    parentContainerName: SITE1
+  SITE2:
+    parentContainerName: MPLS_NETWORK
+  SITE2_P:
+    parentContainerName: SITE2
+  SITE2_PE:
+    parentContainerName: SITE2
+  SITE3:
+    parentContainerName: MPLS_NETWORK
+  SITE3_P:
+    parentContainerName: SITE3
+  SITE3_PE:
+    parentContainerName: SITE3
+  SITE4:
+    parentContainerName: MPLS_NETWORK
+  SITE4_P:
+    parentContainerName: SITE4
+  SITE4_PE:
+    parentContainerName: SITE4
+  SITE_2_LEAFS:
+    parentContainerName: VXLAN_ISLAND2
+  SITE_2_SPINES:
+    parentContainerName: VXLAN_ISLAND2
+  SITE_3_LEAFS:
+    parentContainerName: VXLAN_ISLAND3
+  SITE_3_SPINES:
+    parentContainerName: VXLAN_ISLAND3
+  VXLAN_ISLAND2:
+    parentContainerName: VXLAN_NETWORK
+  VXLAN_ISLAND3:
+    parentContainerName: VXLAN_NETWORK
+  VXLAN_NETWORK:
+    parentContainerName: ALL_NODES

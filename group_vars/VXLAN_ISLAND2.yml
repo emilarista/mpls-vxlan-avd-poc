@@ -9,21 +9,21 @@ bgp_as: 65200
 dc_name: VXLAN_ISLAND2
 
 # Spine Switches
-spine:
-  defaults:
-    platform: vEOS-LAB
-    loopback_ipv4_pool: 100.64.20.0/24
-    isis_system_id_prefix: '0000.0020'
-  nodes:
-    # Island 2
-    SP2:
-      evpn_role: server
-      id: 1
-      mgmt_ip: 10.30.30.102/24
+# spine:
+#   defaults:
+#     platform: vEOS-LAB
+#     loopback_ipv4_pool: 100.64.20.0/24
+#     isis_system_id_prefix: '0000.0020'
+#   nodes:
+#     # Island 2
+#     SP2:
+#       evpn_role: server
+#       id: 1
+#       mgmt_ip: 10.30.30.102/24
 
 l3leaf:
   defaults:
-    isis_system_id_prefix: '0000.0022'
+    isis_system_id_prefix: '0000.0021'
     virtual_router_mac_address: 00:1c:73:00:dc:00
     platform: vEOS-LAB
     uplink_ipv4_pool: 100.64.22.0/24
@@ -31,27 +31,20 @@ l3leaf:
     loopback_ipv4_pool: 100.64.20.0/24
     loopback_ipv4_offset: 10
     max_uplink_switches: 3
-    uplink_switches: [ SP2 ]
     uplink_interfaces: [ Ethernet1 ]
     spanning_tree_priority: 4096
     spanning_tree_mode: mstp
-    evpn_route_servers: [ SP2 ]
     bgp_defaults:
       - 'no bgp default ipv4-unicast'
       - 'distance bgp 20 200 200'
       - 'graceful-restart restart-time 300'
       - 'graceful-restart'
   node_groups:
-    LF2:
-      nodes:
-        LF2:
-          id: 1
-          mgmt_ip: 10.30.30.103/24
-          uplink_switch_interfaces: [ Ethernet1 ]
-    P2-GW:
+    GW2:
       node_sid_base: 2000
       # mpls_route_reflectors: [ P-1A, P-2A ]
       # mpls_overlay_role: client
+      evpn_role: server
       evpn_gateway:
         vxlan_to_mpls:
           enabled: true
@@ -67,8 +60,17 @@ l3leaf:
               peer_group: MPLS-OVERLAY-PEERS
               description: P-2A
       nodes:
-        P2-GW:
-          id: 2
+        GW2:
+          id: 1
           mgmt_ip: 172.16.32.222/24
           uplink_switch_interfaces: [ Ethernet2 ]
           uplink_interfaces: [ Ethernet2 ]
+
+    SPE6:
+      uplink_switches: [ GW2 ]
+      evpn_route_servers: [ GW2 ]
+      nodes:
+        SPE6:
+          id: 2
+          mgmt_ip: 10.30.30.103/24
+          uplink_switch_interfaces: [ Ethernet1 ]

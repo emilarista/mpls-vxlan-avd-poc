@@ -86,8 +86,8 @@ pe:
     SITE1:
       spanning_tree_root_super: true
       filter:
-        tenants: []
-        tags: []
+        tenants: [all]
+        tags: [site1]
       nodes:
         PE-1A:
           id: 1
@@ -97,18 +97,27 @@ pe:
           mgmt_ip: 172.16.32.210/24
 
     SITE2:
+      filter:
+        tenants: [all]
+        tags: [site2]
       nodes:
         PE-2:
           id: 3
           mgmt_ip: 172.16.32.212/24
 
     SITE3:
+      filter:
+        tenants: [all]
+        tags: [site3]
       nodes:
         PE-3:
           id: 4
           mgmt_ip: 172.16.32.214/24
 
     SITE4:
+      filter:
+        tenants: [all]
+        tags: [site4]
       spanning_tree_root_super: true
       nodes:
         PE-4A:

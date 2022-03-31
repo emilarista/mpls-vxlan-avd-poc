@@ -1,4 +1,4 @@
-# GW3
+# SPE5
 # Table of Contents
 
 - [Management](#management)
@@ -35,9 +35,6 @@
   - [Router BGP](#router-bgp)
 - [BFD](#bfd)
   - [Router BFD](#router-bfd)
-- [MPLS](#mpls)
-  - [MPLS and LDP](#mpls-and-ldp)
-  - [MPLS Interfaces](#mpls-interfaces)
 - [Multicast](#multicast)
   - [IP IGMP Snooping](#ip-igmp-snooping)
 - [Filters](#filters)
@@ -59,7 +56,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 172.16.32.219/24 | 172.16.32.1 |
+| Management1 | oob_management | oob | MGMT | 10.30.30.103/24 | 172.16.32.1 |
 
 #### IPv6
 
@@ -75,7 +72,7 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 172.16.32.219/24
+   ip address 10.30.30.103/24
 ```
 
 ## DNS Domain
@@ -274,7 +271,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_SPE5_Ethernet1 | routed | - | 100.64.32.6/31 | default | 9000 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_GW3_Ethernet1 | routed | - | 100.64.32.7/31 | default | 9000 | false | - | - |
 
 #### ISIS
 
@@ -287,12 +284,11 @@ vlan internal order ascending range 3700 3900
 ```eos
 !
 interface Ethernet1
-   description P2P_LINK_TO_SPE5_Ethernet1
+   description P2P_LINK_TO_GW3_Ethernet1
    no shutdown
    mtu 9000
    no switchport
-   ip address 100.64.32.6/31
-   mpls ip
+   ip address 100.64.32.7/31
    isis enable EVPN_UNDERLAY
    isis metric 50
    isis network point-to-point
@@ -306,8 +302,8 @@ interface Ethernet1
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | EVPN_Overlay_Peering | default | 100.64.30.11/32 |
-| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 100.64.31.11/32 |
+| Loopback0 | EVPN_Overlay_Peering | default | 100.64.30.12/32 |
+| Loopback1 | VTEP_VXLAN_Tunnel_Source | default | 100.64.31.12/32 |
 
 #### IPv6
 
@@ -330,15 +326,14 @@ interface Ethernet1
 interface Loopback0
    description EVPN_Overlay_Peering
    no shutdown
-   ip address 100.64.30.11/32
+   ip address 100.64.30.12/32
    isis enable EVPN_UNDERLAY
    isis passive
-   node-segment ipv4 index 2001
 !
 interface Loopback1
    description VTEP_VXLAN_Tunnel_Source
    no shutdown
-   ip address 100.64.31.11/32
+   ip address 100.64.31.12/32
    isis enable EVPN_UNDERLAY
    isis passive
 ```
@@ -357,7 +352,7 @@ interface Loopback1
 ```eos
 !
 interface Vxlan1
-   description GW3_VTEP
+   description SPE5_VTEP
    vxlan source-interface Loopback1
    vxlan udp-port 4789
 ```
@@ -432,12 +427,11 @@ ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 | Settings | Value |
 | -------- | ----- |
 | Instance | EVPN_UNDERLAY |
-| Net-ID | 49.0001.0000.0031.0001.00 |
+| Net-ID | 49.0001.0000.0031.0002.00 |
 | Type | level-2 |
 | Address Family | ipv4 unicast |
-| Router-ID | 100.64.30.11 |
+| Router-ID | 100.64.30.12 |
 | Log Adjacency Changes | True |
-| SR MPLS Enabled | True |
 
 ### ISIS Interfaces Summary
 
@@ -447,27 +441,19 @@ ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 | Loopback0 | EVPN_UNDERLAY | - | passive |
 | Loopback1 | EVPN_UNDERLAY | - | passive |
 
-### ISIS Segment-routing Node-SID
-
-| Loopback | IPv4 Index | IPv6 Index |
-| -------- | ---------- | ---------- |
-| Loopback0 | 2001 | - |
-
 ### Router ISIS Device Configuration
 
 ```eos
 !
 router isis EVPN_UNDERLAY
-   net 49.0001.0000.0031.0001.00
+   net 49.0001.0000.0031.0002.00
    is-type level-2
-   router-id ipv4 100.64.30.11
+   router-id ipv4 100.64.30.12
    log-adjacency-changes
    !
    address-family ipv4 unicast
       maximum-paths 4
    !
-   segment-routing mpls
-      no shutdown
 ```
 
 ## Router BGP
@@ -476,11 +462,7 @@ router isis EVPN_UNDERLAY
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65300|  100.64.30.11 |
-
-| BGP AS | Cluster ID |
-| ------ | --------- |
-| 65300|  100.64.30.11 |
+| 65300|  100.64.30.12 |
 
 | BGP Tuning |
 | ---------- |
@@ -498,7 +480,6 @@ router isis EVPN_UNDERLAY
 | -------- | ----- |
 | Address Family | evpn |
 | Remote AS | 65300 |
-| Route Reflector Client | Yes |
 | Source | Loopback0 |
 | BFD | True |
 | Send community | all |
@@ -508,9 +489,7 @@ router isis EVPN_UNDERLAY
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
-| 100.64.30.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
-| 100.70.2.1 | - | default | - | - | - | - | - | - |
-| 100.70.2.2 | - | default | - | - | - | - | - | - |
+| 100.64.30.11 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 
 ### Router BGP EVPN Address Family
 
@@ -525,8 +504,7 @@ router isis EVPN_UNDERLAY
 ```eos
 !
 router bgp 65300
-   router-id 100.64.30.11
-   bgp cluster-id 100.64.30.11
+   router-id 100.64.30.12
    no bgp default ipv4-unicast
    distance bgp 20 200 200
    graceful-restart restart-time 300
@@ -535,17 +513,12 @@ router bgp 65300
    neighbor EVPN-OVERLAY-PEERS peer group
    neighbor EVPN-OVERLAY-PEERS remote-as 65300
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
-   neighbor EVPN-OVERLAY-PEERS route-reflector-client
    neighbor EVPN-OVERLAY-PEERS bfd
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
-   neighbor 100.64.30.12 peer group EVPN-OVERLAY-PEERS
-   neighbor 100.64.30.12 description SPE5
-   neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
-   neighbor 100.70.2.1 description P-1A
-   neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
-   neighbor 100.70.2.2 description P-2A
+   neighbor 100.64.30.11 peer group EVPN-OVERLAY-PEERS
+   neighbor 100.64.30.11 description GW3
    !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
@@ -573,34 +546,6 @@ router bgp 65300
 router bfd
    multihop interval 5000 min-rx 5000 multiplier 3
 ```
-
-# MPLS
-
-## MPLS and LDP
-
-### MPLS and LDP Summary
-
-| Setting | Value |
-| -------- | ---- |
-| MPLS IP Enabled | True |
-| LDP Enabled | False |
-| LDP Router ID | - |
-| LDP Interface Disabled Default | - |
-| LDP Transport-Address Interface | - |
-
-### MPLS and LDP Configuration
-
-```eos
-!
-mpls ip
-```
-
-## MPLS Interfaces
-
-| Interface | MPLS IP Enabled | LDP Enabled | IGP Sync |
-| --------- | --------------- | ----------- | -------- |
-| Ethernet1 | True | - | - |
-| Loopback0 | - | - | - |
 
 # Multicast
 
@@ -633,7 +578,7 @@ mpls ip
 
 | Sequence | Type | Match and/or Set |
 | -------- | ---- | ---------------- |
-| 10 | permit | set extcommunity soo 100.64.31.11:1 additive |
+| 10 | permit | set extcommunity soo 100.64.31.12:1 additive |
 
 ### Route-maps Device Configuration
 
@@ -645,7 +590,7 @@ route-map RM-EVPN-SOO-IN deny 10
 route-map RM-EVPN-SOO-IN permit 20
 !
 route-map RM-EVPN-SOO-OUT permit 10
-   set extcommunity soo 100.64.31.11:1 additive
+   set extcommunity soo 100.64.31.12:1 additive
 ```
 
 ## IP Extended Community Lists
@@ -654,13 +599,13 @@ route-map RM-EVPN-SOO-OUT permit 10
 
 | List Name | Type | Extended Communities |
 | --------- | ---- | -------------------- |
-| ECL-EVPN-SOO | permit | soo 100.64.31.11:1 |
+| ECL-EVPN-SOO | permit | soo 100.64.31.12:1 |
 
 ### IP Extended Community Lists configuration
 
 ```eos
 !
-ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.31.11:1
+ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.31.12:1
 ```
 
 # ACL

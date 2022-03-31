@@ -1,25 +1,26 @@
 ---
 tenants:
 
-
-# tenants:
 #   TENANT_A:
 #     mac_vrf_id_base: 10000
 #     pseudowire_rt_base: 1000
 #     point_to_point_services:
-#       # simple p2p pseudowire, no redundancy, port-based
+#       # p2p pseudowire, vlan-based, no redundancy, 3 subinterfaces PE-2 to PE-3
 #       - name: TEN_A_site2_site5_eline_port_based
 #         type: vpws-pseudowire
-#         endpoints: # Or alternative name: "termination"
-#           - id: 26
-#             nodes: ["pe2"]
-#             interfaces: ["Ethernet6"]
-#           - id: 57
-#             nodes: ["pe5"]
-#             interfaces: ["Ethernet7"]
-#         lldp_disable: true
-#       # pw with ESI active-active port channel on one side, single interface on other side.
-#       # multiple subinterfaces will be created, own pw on each, IDs generated from endpoint.id + subif number.
+#         subinterfaces:
+#           - number: 100
+#           - number: 101
+#           - number: 102
+#         endpoints:
+#           - id: 23
+#             nodes: ["PE-2"]
+#             interfaces: ["Ethernet3"]
+#           - id: 33
+#             nodes: ["PE-3"]
+#             interfaces: ["Ethernet3"]
+# #       # pw with ESI active-active port channel on one side, single interface on other side.
+# #       # multiple subinterfaces will be created, own pw on each, IDs generated from endpoint.id + subif number.
 #       - name: TEN_A_site3_site5_eline_vlan_based
 #         type: vpws-pseudowire
 #         subinterfaces:
@@ -48,15 +49,19 @@ tenants:
 #               mode: active
 #             nodes: ["pe5", "pe5"]
 #             interfaces: ["Ethernet8", "Ethernet9"]
-#             # error_correction:
-#             #   fire_code: true
 
-#     l2vlans:
-#       10:
-#         name: TENANT_A_L2_SERVICE
-#         tags:
-#           - site1-2
-#           - site5
+    # l2vlans:
+    #   10:
+    #     name: TENANT_A_L2_SERVICE_10
+    #     tags:
+    #       - site1
+    #       - site4
+    #   11:
+    #     name: TENANT_A_L2_SERVICE_11
+    #     tags:
+    #       - site1
+    #       - site4
+
 #   TENANT_B:
 #     pseudowire_rt_base: 2000
 #     mac_vrf_id_base: 20000
