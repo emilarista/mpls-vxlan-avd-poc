@@ -46,22 +46,22 @@ p:
   nodes:
     P1-B:
       id: 2
-      mgmt_ip: 172.16.32.203/24
+      mgmt_ip: 10.83.30.243/22
     P2-B:
       id: 4
-      mgmt_ip: 172.16.32.204/24
+      mgmt_ip: 10.83.30.246/22
     P3-A:
       id: 5
-      mgmt_ip: 172.16.32.205/24
+      mgmt_ip: 10.83.31.243/22
     P3-B:
       id: 6
-      mgmt_ip: 172.16.32.207/24
+      mgmt_ip: 10.83.31.244/22
     P4-A:
       id: 7
-      mgmt_ip: 172.16.32.206/24
+      mgmt_ip: 10.83.30.240/22
     P4-B:
       id: 8
-      mgmt_ip: 172.16.32.208/24
+      mgmt_ip: 10.83.31.240/22
 
 pe:
   platform: vEOS-LAB
@@ -91,10 +91,10 @@ pe:
       nodes:
         PE-1A:
           id: 1
-          mgmt_ip: 172.16.32.209/24
+          mgmt_ip: 10.83.30.242/22
         PE-1B:
           id: 2
-          mgmt_ip: 172.16.32.210/24
+          mgmt_ip: 10.83.30.241/22
 
     SITE2:
       filter:
@@ -103,7 +103,7 @@ pe:
       nodes:
         PE-2:
           id: 3
-          mgmt_ip: 172.16.32.212/24
+          mgmt_ip: 10.83.30.245/22
 
     SITE3:
       filter:
@@ -112,7 +112,7 @@ pe:
       nodes:
         PE-3:
           id: 4
-          mgmt_ip: 172.16.32.214/24
+          mgmt_ip: 10.83.31.245/22
 
     SITE4:
       filter:
@@ -122,10 +122,10 @@ pe:
       nodes:
         PE-4A:
           id: 5
-          mgmt_ip: 172.16.32.216/24
+          mgmt_ip: 10.83.31.241/22
         PE-4B:
           id: 6
-          mgmt_ip: 172.16.32.217/24
+          mgmt_ip: 10.83.31.242/22
 
 rr:
   defaults:
@@ -157,7 +157,7 @@ rr:
       nodes:
         P1-A:
           id: 1
-          mgmt_ip: 172.16.32.209/24
+          mgmt_ip: 10.83.30.244/22
         P2-A:
           id: 2
-          mgmt_ip: 172.16.32.202/24
+          mgmt_ip: 10.83.30.247/22

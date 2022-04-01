@@ -1,5 +1,5 @@
 ---
-- name: Build Switch configuration
+- name: Build and deploy switch configuration for VXLAN_NETWORK
   hosts: VXLAN_NETWORK
   connection: local
   gather_facts: false
@@ -21,10 +21,10 @@
     - name: deploy configuration to devices
       tags: [deploy, never]
       import_role:
-         name: arista.avd.eos_config_deploy_eapi
-      when: eosconfig.changed
+        name: arista.avd.eos_config_deploy_eapi
+      # when: eosconfig.changed
 
-- name: Build Switch configuration
+- name: Build and deploy switch configuration for MPLS_NETWORK
   hosts: MPLS_NETWORK
   connection: local
   gather_facts: false
@@ -46,5 +46,5 @@
     - name: deploy configuration to devices
       tags: [deploy, never]
       import_role:
-         name: arista.avd.eos_config_deploy_eapi
-      when: eosconfig.changed
+        name: arista.avd.eos_config_deploy_eapi
+      # when: eosconfig.changed

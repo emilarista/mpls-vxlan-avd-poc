@@ -59,7 +59,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 172.16.32.212/24 | 172.16.32.1 |
+| Management1 | oob_management | oob | MGMT | 10.83.30.245/22 | 10.83.28.1 |
 
 #### IPv6
 
@@ -75,7 +75,7 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 172.16.32.212/24
+   ip address 10.83.30.245/22
 ```
 
 ## DNS Domain
@@ -178,13 +178,15 @@ management api http-commands
 | ---- | --------- | ---- |
 | admin | 15 | network-admin |
 | cvpadmin | 15 | network-admin |
+| emil | 15 | network-admin |
 
 ### Local Users Device Configuration
 
 ```eos
 !
-username admin privilege 15 role network-admin secret sha512 $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
+username admin privilege 15 role network-admin nopassword
 username cvpadmin privilege 15 role network-admin secret sha512 $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
+username emil privilege 15 role network-admin secret sha512 $6$MpV4C4845hWsbUmn$exArYvtdPq4rnaSCMNdLy.hIZh0c0Q1Nnmy514hds/2A45g4nggx7kbhWDQmZ4SOt4FZcCFNw6TE//d73PzhJ.
 ```
 
 # Management Security
@@ -410,13 +412,13 @@ no ip routing vrf MGMT
 
 | VRF | Destination Prefix | Next Hop IP             | Exit interface      | Administrative Distance       | Tag               | Route Name                    | Metric         |
 | --- | ------------------ | ----------------------- | ------------------- | ----------------------------- | ----------------- | ----------------------------- | -------------- |
-| MGMT | 0.0.0.0/0 | 172.16.32.1 | - | 1 | - | - | - |
+| MGMT | 0.0.0.0/0 | 10.83.28.1 | - | 1 | - | - | - |
 
 ### Static Routes Device Configuration
 
 ```eos
 !
-ip route vrf MGMT 0.0.0.0/0 172.16.32.1
+ip route vrf MGMT 0.0.0.0/0 10.83.28.1
 ```
 
 ## Router ISIS

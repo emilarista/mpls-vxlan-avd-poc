@@ -51,7 +51,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 172.16.32.206/24 | 172.16.32.1 |
+| Management1 | oob_management | oob | MGMT | 10.83.30.240/22 | 10.83.28.1 |
 
 #### IPv6
 
@@ -67,7 +67,7 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 172.16.32.206/24
+   ip address 10.83.30.240/22
 ```
 
 ## DNS Domain
@@ -170,13 +170,15 @@ management api http-commands
 | ---- | --------- | ---- |
 | admin | 15 | network-admin |
 | cvpadmin | 15 | network-admin |
+| emil | 15 | network-admin |
 
 ### Local Users Device Configuration
 
 ```eos
 !
-username admin privilege 15 role network-admin secret sha512 $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
+username admin privilege 15 role network-admin nopassword
 username cvpadmin privilege 15 role network-admin secret sha512 $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
+username emil privilege 15 role network-admin secret sha512 $6$MpV4C4845hWsbUmn$exArYvtdPq4rnaSCMNdLy.hIZh0c0Q1Nnmy514hds/2A45g4nggx7kbhWDQmZ4SOt4FZcCFNw6TE//d73PzhJ.
 ```
 
 # Management Security
@@ -262,7 +264,7 @@ vlan internal order ascending range 3700 3900
 | Ethernet2 | P2P_LINK_TO_PE-4A_Ethernet2 | routed | - | 100.64.48.36/31 | default | 9178 | false | - | - |
 | Ethernet3 | P2P_LINK_TO_P1-B_Ethernet3 | routed | - | 100.64.48.11/31 | default | 9178 | false | - | - |
 | Ethernet4 | P2P_LINK_TO_P2-B_Ethernet4 | routed | - | 100.64.48.35/31 | default | 9178 | false | - | - |
-| Ethernet6 | P2P_LINK_TO_P4-B_Ethernet6 | routed | - | 100.64.48.36/31 | default | 9178 | false | - | - |
+| Ethernet6 | P2P_LINK_TO_P4-B_Ethernet6 | routed | - | 100.64.48.38/31 | default | 9178 | false | - | - |
 
 #### ISIS
 
@@ -331,7 +333,7 @@ interface Ethernet6
    mtu 9178
    speed 100full
    no switchport
-   ip address 100.64.48.36/31
+   ip address 100.64.48.38/31
    mpls ip
    isis enable CORE
    isis circuit-type level-2
@@ -418,13 +420,13 @@ no ip routing vrf MGMT
 
 | VRF | Destination Prefix | Next Hop IP             | Exit interface      | Administrative Distance       | Tag               | Route Name                    | Metric         |
 | --- | ------------------ | ----------------------- | ------------------- | ----------------------------- | ----------------- | ----------------------------- | -------------- |
-| MGMT | 0.0.0.0/0 | 172.16.32.1 | - | 1 | - | - | - |
+| MGMT | 0.0.0.0/0 | 10.83.28.1 | - | 1 | - | - | - |
 
 ### Static Routes Device Configuration
 
 ```eos
 !
-ip route vrf MGMT 0.0.0.0/0 172.16.32.1
+ip route vrf MGMT 0.0.0.0/0 10.83.28.1
 ```
 
 ## Router ISIS

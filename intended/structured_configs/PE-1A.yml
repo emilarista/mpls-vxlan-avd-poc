@@ -49,7 +49,7 @@ router_bgp:
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
-  gateway: 172.16.32.1
+  gateway: 10.83.28.1
 service_routing_protocols_model: multi-agent
 ip_routing: true
 vlan_internal_order:
@@ -73,11 +73,15 @@ local_users:
   admin:
     privilege: 15
     role: network-admin
-    sha512_password: $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
+    no_password: true
   cvpadmin:
     privilege: 15
     role: network-admin
     sha512_password: $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
+  emil:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$MpV4C4845hWsbUmn$exArYvtdPq4rnaSCMNdLy.hIZh0c0Q1Nnmy514hds/2A45g4nggx7kbhWDQmZ4SOt4FZcCFNw6TE//d73PzhJ.
 vrfs:
   MGMT:
     ip_routing: false
@@ -86,8 +90,8 @@ management_interfaces:
     description: oob_management
     shutdown: false
     vrf: MGMT
-    ip_address: 172.16.32.209/24
-    gateway: 172.16.32.1
+    ip_address: 10.83.30.242/22
+    gateway: 10.83.28.1
     type: oob
 management_api_http:
   enable_vrfs:

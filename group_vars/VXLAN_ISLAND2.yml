@@ -62,7 +62,7 @@ l3leaf:
       nodes:
         GW2:
           id: 1
-          mgmt_ip: 172.16.32.222/24
+          mgmt_ip: 10.83.30.248/22
           uplink_switch_interfaces: [ Ethernet2 ]
           uplink_interfaces: [ Ethernet2 ]
 
@@ -72,5 +72,5 @@ l3leaf:
       nodes:
         SPE6:
           id: 2
-          mgmt_ip: 10.30.30.103/24
+          mgmt_ip: 10.83.30.249/22
           uplink_switch_interfaces: [ Ethernet1 ]

@@ -18,20 +18,20 @@
 
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- |
-| MPLS_NETWORK | rr | P1-A | 172.16.32.209/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | p | P1-B | 172.16.32.203/24 | - | Provisioned |
-| MPLS_NETWORK | rr | P2-A | 172.16.32.202/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | p | P2-B | 172.16.32.204/24 | - | Provisioned |
-| MPLS_NETWORK | p | P3-A | 172.16.32.205/24 | - | Provisioned |
-| MPLS_NETWORK | p | P3-B | 172.16.32.207/24 | - | Provisioned |
-| MPLS_NETWORK | p | P4-A | 172.16.32.206/24 | - | Provisioned |
-| MPLS_NETWORK | p | P4-B | 172.16.32.208/24 | - | Provisioned |
-| MPLS_NETWORK | pe | PE-1A | 172.16.32.209/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | pe | PE-1B | 172.16.32.210/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | pe | PE-2 | 172.16.32.212/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | pe | PE-3 | 172.16.32.214/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | pe | PE-4A | 172.16.32.216/24 | vEOS-LAB | Provisioned |
-| MPLS_NETWORK | pe | PE-4B | 172.16.32.217/24 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | rr | P1-A | 10.83.30.244/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | p | P1-B | 10.83.30.243/22 | - | Provisioned |
+| MPLS_NETWORK | rr | P2-A | 10.83.30.247/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | p | P2-B | 10.83.30.246/22 | - | Provisioned |
+| MPLS_NETWORK | p | P3-A | 10.83.31.243/22 | - | Provisioned |
+| MPLS_NETWORK | p | P3-B | 10.83.31.244/22 | - | Provisioned |
+| MPLS_NETWORK | p | P4-A | 10.83.30.240/22 | - | Provisioned |
+| MPLS_NETWORK | p | P4-B | 10.83.31.240/22 | - | Provisioned |
+| MPLS_NETWORK | pe | PE-1A | 10.83.30.242/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | pe | PE-1B | 10.83.30.241/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | pe | PE-2 | 10.83.30.245/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | pe | PE-3 | 10.83.31.245/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | pe | PE-4A | 10.83.31.241/22 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | pe | PE-4B | 10.83.31.242/22 | vEOS-LAB | Provisioned |
 
 > Provision status is based on Ansible inventory declaration and do not represent real status from CloudVision.
 
@@ -89,8 +89,8 @@
 | P3-B | Ethernet2 | 100.64.48.18/31 | PE-3 | Ethernet5 | 100.64.48.19/31 |
 | P3-B | Ethernet3 | 100.64.48.20/31 | P4-B | Ethernet3 | 100.64.48.21/31 |
 | P4-A | Ethernet2 | 100.64.48.36/31 | PE-4A | Ethernet2 | 100.64.48.37/31 |
-| P4-A | Ethernet6 | 100.64.48.36/31 | P4-B | Ethernet6 | 100.64.48.37/31 |
-| P4-B | Ethernet2 | 100.64.48.36/31 | PE-4B | Ethernet2 | 100.64.48.37/31 |
+| P4-A | Ethernet6 | 100.64.48.38/31 | P4-B | Ethernet6 | 100.64.48.39/31 |
+| P4-B | Ethernet2 | 100.64.48.40/31 | PE-4B | Ethernet2 | 100.64.48.41/31 |
 
 ## Loopback Interfaces (BGP EVPN Peering)
 
