@@ -1,0 +1,26 @@
+---
+- name: Validate fabric state
+  hosts: VXLAN_NETWORK
+  connection: httpapi
+  gather_facts: false
+  collections:
+    - arista.avd
+  ignore_unreachable: true
+
+  tasks:
+    - name: Run validation tasks
+      import_role:
+        name: arista.avd.eos_validate_state
+
+- name: Validate fabric state
+  hosts: MPLS_NETWORK
+  connection: httpapi
+  gather_facts: false
+  collections:
+    - arista.avd
+  ignore_unreachable: true
+
+  tasks:
+    - name: Run validation tasks
+      import_role:
+        name: arista.avd.eos_validate_state

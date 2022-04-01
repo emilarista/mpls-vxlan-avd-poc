@@ -113,12 +113,12 @@ core_interfaces:
       profile: default_bb_profile
 
     - nodes: [ P4-A, P4-B ]
-      id: 19
+      id: 20
       interfaces: [ Ethernet6, Ethernet6 ]
       profile: default_bb_profile
 
     # P4-B links
     - nodes: [ P4-B, PE-4B ]
-      id: 19
+      id: 21
       interfaces: [ Ethernet2, Ethernet2 ]
       profile: default_bb_profile

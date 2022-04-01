@@ -1,0 +1,5 @@
+loopback0_reachability:
+  loopback0_range: ['100.64.20.11', '100.64.30.11', '100.64.30.12', '100.64.20.12']
+
+vtep_reachability:
+  vtep_ip_reachability: ['100.64.21.11', '100.64.31.11', '100.64.31.12', '100.64.21.12']
