@@ -1,0 +1,131 @@
+---
+all:
+  children:
+    CVP:
+      hosts:
+        cv_server:
+          ansible_host: 172.16.30.33
+          ansible_user: cvpadmin
+          ansible_password: admin1234!
+          ansible_connection: httpapi
+          ansible_httpapi_use_ssl: true
+          ansible_httpapi_validate_certs: false
+          ansible_network_os: eos
+          ansible_httpapi_port: 443
+          # Configuration to get Virtual Env information
+          ansible_python_interpreter: $(which python3)
+
+    ALL_NODES:
+      children:
+        MPLS_NETWORK:
+          children:
+            SITE1:
+              children:
+                SITE1_PE:
+                  vars:
+                    type: pe
+                  hosts:
+                    PE-1A:
+                      ansible_host: 10.83.30.242
+                    PE-1B:
+                      ansible_host: 10.83.30.241
+                SITE1_P:
+                  hosts:
+                    P1-A:
+                      ansible_host: 10.83.30.244
+                      type: rr
+                    P1-B:
+                      ansible_host: 10.83.30.243
+                      type: p
+
+            SITE2:
+              children:
+                SITE2_PE:
+                  vars:
+                    type: pe
+                  hosts:
+                    PE-2:
+                      ansible_host: 10.83.30.245
+                SITE2_P:
+                  vars:
+                    type: p
+                  hosts:
+                    P2-A:
+                      ansible_host: 10.83.30.247
+                      type: rr
+                    P2-B:
+                      ansible_host: 10.83.30.246
+                      type: p
+
+            SITE3:
+              children:
+                SITE3_PE:
+                  vars:
+                    type: pe
+                  hosts:
+                    PE-3:
+                      ansible_host: 10.83.31.245
+                SITE3_P:
+                  vars:
+                    type: p
+                  hosts:
+                    P3-A:
+                      ansible_host: 10.83.31.243
+                    P3-B:
+                      ansible_host: 10.83.31.244
+
+            SITE4:
+              children:
+                SITE4_PE:
+                  vars:
+                    type: pe
+                  hosts:
+                    PE-4A:
+                      ansible_host: 10.83.31.241
+                    PE-4B:
+                      ansible_host: 10.83.31.242
+                SITE4_P:
+                  vars:
+                    type: p
+                  hosts:
+                    P4-A:
+                      ansible_host: 10.83.30.240
+                    P4-B:
+                      ansible_host: 10.83.31.240
+
+        VXLAN_NETWORK:
+          children:
+            VXLAN_ISLAND2:
+              children:
+                SITE_2_LEAFS:
+                  hosts:
+                    GW2:
+                      type: l3leaf
+                      ansible_host: 10.83.30.248
+                    SPE6:
+                      ansible_host: 10.83.30.249
+                      type: l3leaf
+
+            VXLAN_ISLAND3:
+              children:
+                SITE_3_LEAFS:
+                  hosts:
+                    GW3:
+                      type: l3leaf
+                      ansible_host: 10.83.31.246
+                    SPE5:
+                      type: l3leaf
+                      ansible_host: 10.83.31.247
+
+    TENANTS:
+      children:
+        SITE1_PE:
+        SITE2_PE:
+        SITE3_PE:
+        SITE4_PE:
+        SITE_2_LEAFS:
+        SITE_3_LEAFS:
+
+    # MPLS_ENDPOINT_CONNECTIONS:
+    #   children:
+    #     PE:
