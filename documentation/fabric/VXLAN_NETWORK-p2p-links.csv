@@ -1,3 +1,3 @@
 Type,Node,Node Interface,Leaf IP Address,Peer Type,Peer Node,Peer Interface,Peer IP Address
-l3leaf,GW2,Ethernet1,100.64.22.6/31,l3leaf,SPE6,Ethernet1,100.64.22.7/31
-l3leaf,GW3,Ethernet1,100.64.32.6/31,l3leaf,SPE5,Ethernet1,100.64.32.7/31
+l3leaf,SPE5,Ethernet1,100.64.32.7/31,l3leaf,GW3,Ethernet1,100.64.48.23/31
+l3leaf,SPE6,Ethernet1,100.64.22.7/31,l3leaf,GW2,Ethernet1,100.64.48.27/31

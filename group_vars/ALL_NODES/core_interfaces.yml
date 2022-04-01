@@ -6,7 +6,7 @@ core_interfaces:
   p2p_links_profiles:
     - name: default_bb_profile
       speed: 100full
-      mtu: 9178
+      mtu: 1500
       isis_hello_padding: false
       isis_metric: 50
       ip_pool: underlay_pool

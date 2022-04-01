@@ -174,7 +174,7 @@ ethernet_interfaces:
     description: P2P_LINK_TO_PE-2_Ethernet4
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.28/31
     speed: 100full
     isis_enable: CORE
@@ -193,7 +193,7 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P1-A_Ethernet3
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.5/31
     speed: 100full
     isis_enable: CORE
@@ -206,13 +206,13 @@ ethernet_interfaces:
     mpls:
       ip: true
   Ethernet5:
-    peer: P2-GW
+    peer: GW2
     peer_interface: Ethernet1
     peer_type: other
-    description: P2P_LINK_TO_P2-GW_Ethernet1
+    description: P2P_LINK_TO_GW2_Ethernet1
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.26/31
     speed: 100full
     isis_enable: CORE
@@ -231,7 +231,7 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P2-B_Ethernet6
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.30/31
     speed: 100full
     isis_enable: CORE

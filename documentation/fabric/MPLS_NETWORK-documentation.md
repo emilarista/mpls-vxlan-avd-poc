@@ -89,8 +89,8 @@
 | P3-B | Ethernet2 | 100.64.48.18/31 | PE-3 | Ethernet5 | 100.64.48.19/31 |
 | P3-B | Ethernet3 | 100.64.48.20/31 | P4-B | Ethernet3 | 100.64.48.21/31 |
 | P4-A | Ethernet2 | 100.64.48.36/31 | PE-4A | Ethernet2 | 100.64.48.37/31 |
-| P4-A | Ethernet6 | 100.64.48.36/31 | P4-B | Ethernet6 | 100.64.48.37/31 |
-| P4-B | Ethernet2 | 100.64.48.36/31 | PE-4B | Ethernet2 | 100.64.48.37/31 |
+| P4-A | Ethernet6 | 100.64.48.38/31 | P4-B | Ethernet6 | 100.64.48.39/31 |
+| P4-B | Ethernet2 | 100.64.48.40/31 | PE-4B | Ethernet2 | 100.64.48.41/31 |
 
 ## Loopback Interfaces (BGP EVPN Peering)
 

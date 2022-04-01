@@ -259,9 +259,9 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet2 | P2P_LINK_TO_PE-4B_Ethernet2 | routed | - | 100.64.48.36/31 | default | 9178 | false | - | - |
-| Ethernet3 | P2P_LINK_TO_P3-B_Ethernet3 | routed | - | 100.64.48.21/31 | default | 9178 | false | - | - |
-| Ethernet6 | P2P_LINK_TO_P4-A_Ethernet6 | routed | - | 100.64.48.37/31 | default | 9178 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_PE-4B_Ethernet2 | routed | - | 100.64.48.40/31 | default | 1500 | false | - | - |
+| Ethernet3 | P2P_LINK_TO_P3-B_Ethernet3 | routed | - | 100.64.48.21/31 | default | 1500 | false | - | - |
+| Ethernet6 | P2P_LINK_TO_P4-A_Ethernet6 | routed | - | 100.64.48.39/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
@@ -278,10 +278,10 @@ vlan internal order ascending range 3700 3900
 interface Ethernet2
    description P2P_LINK_TO_PE-4B_Ethernet2
    no shutdown
-   mtu 9178
+   mtu 1500
    speed 100full
    no switchport
-   ip address 100.64.48.36/31
+   ip address 100.64.48.40/31
    mpls ip
    isis enable CORE
    isis circuit-type level-2
@@ -294,7 +294,7 @@ interface Ethernet2
 interface Ethernet3
    description P2P_LINK_TO_P3-B_Ethernet3
    no shutdown
-   mtu 9178
+   mtu 1500
    speed 100full
    no switchport
    ip address 100.64.48.21/31
@@ -310,10 +310,10 @@ interface Ethernet3
 interface Ethernet6
    description P2P_LINK_TO_P4-A_Ethernet6
    no shutdown
-   mtu 9178
+   mtu 1500
    speed 100full
    no switchport
-   ip address 100.64.48.37/31
+   ip address 100.64.48.39/31
    mpls ip
    isis enable CORE
    isis circuit-type level-2

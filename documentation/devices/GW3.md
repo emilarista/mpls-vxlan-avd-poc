@@ -274,28 +274,33 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_SPE5_Ethernet1 | routed | - | 100.64.32.6/31 | default | 9000 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_P3-B_Ethernet5 | routed | - | 100.64.48.23/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
 | Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
 | --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
-| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
+| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | level-2 | False | md5 |
 
 ### Ethernet Interfaces Device Configuration
 
 ```eos
 !
 interface Ethernet1
-   description P2P_LINK_TO_SPE5_Ethernet1
+   description P2P_LINK_TO_P3-B_Ethernet5
    no shutdown
-   mtu 9000
+   mtu 1500
+   speed 100full
    no switchport
-   ip address 100.64.32.6/31
+   ip address 100.64.48.23/31
    mpls ip
    isis enable EVPN_UNDERLAY
+   isis circuit-type level-2
    isis metric 50
+   no isis hello padding
    isis network point-to-point
+   isis authentication mode md5
+   isis authentication key 7 $1c$sTNAlR6rKSw=
 ```
 
 ## Loopback Interfaces
@@ -437,6 +442,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 | Address Family | ipv4 unicast |
 | Router-ID | 100.64.30.11 |
 | Log Adjacency Changes | True |
+| Advertise Passive-only | True |
 | SR MPLS Enabled | True |
 
 ### ISIS Interfaces Summary
@@ -462,6 +468,7 @@ router isis EVPN_UNDERLAY
    is-type level-2
    router-id ipv4 100.64.30.11
    log-adjacency-changes
+   advertise passive-only
    !
    address-family ipv4 unicast
       maximum-paths 4

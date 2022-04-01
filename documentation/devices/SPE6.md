@@ -271,7 +271,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_GW2_Ethernet1 | routed | - | 100.64.22.7/31 | default | 9000 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_GW2_Ethernet1 | routed | - | 100.64.22.7/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
@@ -286,7 +286,7 @@ vlan internal order ascending range 3700 3900
 interface Ethernet1
    description P2P_LINK_TO_GW2_Ethernet1
    no shutdown
-   mtu 9000
+   mtu 1500
    no switchport
    ip address 100.64.22.7/31
    isis enable EVPN_UNDERLAY
@@ -432,6 +432,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 | Address Family | ipv4 unicast |
 | Router-ID | 100.64.20.12 |
 | Log Adjacency Changes | True |
+| Advertise Passive-only | True |
 
 ### ISIS Interfaces Summary
 
@@ -450,6 +451,7 @@ router isis EVPN_UNDERLAY
    is-type level-2
    router-id ipv4 100.64.20.12
    log-adjacency-changes
+   advertise passive-only
    !
    address-family ipv4 unicast
       maximum-paths 4

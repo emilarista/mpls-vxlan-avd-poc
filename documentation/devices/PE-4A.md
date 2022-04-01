@@ -277,7 +277,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet2 | P2P_LINK_TO_P4-A_Ethernet2 | routed | - | 100.64.48.37/31 | default | 9178 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_P4-A_Ethernet2 | routed | - | 100.64.48.37/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
@@ -292,7 +292,7 @@ vlan internal order ascending range 3700 3900
 interface Ethernet2
    description P2P_LINK_TO_P4-A_Ethernet2
    no shutdown
-   mtu 9178
+   mtu 1500
    speed 100full
    no switchport
    ip address 100.64.48.37/31

@@ -1,6 +1,12 @@
 ---
 fabric_name: VXLAN_NETWORK
 
+design:
+  type: "l3ls-evpn"
+
+underlay_routing_protocol: isis
+overlay_routing_protocol: ibgp
+
 bgp_peer_groups:
   evpn_overlay_peers:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
@@ -8,3 +14,9 @@ bgp_peer_groups:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
   mpls_overlay_peers:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+
+p2p_uplinks_mtu: 1500
+
+custom_structured_configuration_router_isis:
+  advertise:
+    passive_only: true

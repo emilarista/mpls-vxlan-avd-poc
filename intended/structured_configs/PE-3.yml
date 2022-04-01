@@ -133,7 +133,7 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P3-A_Ethernet2
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.13/31
     speed: 100full
     isis_enable: CORE
@@ -152,7 +152,7 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P3-B_Ethernet2
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.19/31
     speed: 100full
     isis_enable: CORE

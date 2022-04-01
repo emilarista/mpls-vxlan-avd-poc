@@ -15,5 +15,5 @@ p,P3-A,Ethernet6,100.64.48.14/31,p,P3-B,Ethernet6,100.64.48.15/31
 p,P3-B,Ethernet2,100.64.48.18/31,pe,PE-3,Ethernet5,100.64.48.19/31
 p,P3-B,Ethernet3,100.64.48.20/31,p,P4-B,Ethernet3,100.64.48.21/31
 p,P4-A,Ethernet2,100.64.48.36/31,pe,PE-4A,Ethernet2,100.64.48.37/31
-p,P4-A,Ethernet6,100.64.48.36/31,p,P4-B,Ethernet6,100.64.48.37/31
-p,P4-B,Ethernet2,100.64.48.36/31,pe,PE-4B,Ethernet2,100.64.48.37/31
+p,P4-A,Ethernet6,100.64.48.38/31,p,P4-B,Ethernet6,100.64.48.39/31
+p,P4-B,Ethernet2,100.64.48.40/31,pe,PE-4B,Ethernet2,100.64.48.41/31

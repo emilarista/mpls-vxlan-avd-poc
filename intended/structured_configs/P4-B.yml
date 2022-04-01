@@ -82,8 +82,8 @@ ethernet_interfaces:
     description: P2P_LINK_TO_PE-4B_Ethernet2
     type: routed
     shutdown: false
-    mtu: 9178
-    ip_address: 100.64.48.36/31
+    mtu: 1500
+    ip_address: 100.64.48.40/31
     speed: 100full
     isis_enable: CORE
     isis_metric: 50
@@ -101,7 +101,7 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P3-B_Ethernet3
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.21/31
     speed: 100full
     isis_enable: CORE
@@ -120,8 +120,8 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P4-A_Ethernet6
     type: routed
     shutdown: false
-    mtu: 9178
-    ip_address: 100.64.48.37/31
+    mtu: 1500
+    ip_address: 100.64.48.39/31
     speed: 100full
     isis_enable: CORE
     isis_metric: 50
