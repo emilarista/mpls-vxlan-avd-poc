@@ -98,12 +98,12 @@ struct_cfg:
         peer_group: MPLS-OVERLAY-PEERS
         description: P-2A
 ethernet_interfaces:
-  Ethernet1:
+  Ethernet2:
     peer: SPE6
     peer_interface: Ethernet1
     peer_type: l3leaf
     description: P2P_LINK_TO_SPE6_Ethernet1
-    mtu: 9000
+    mtu: 1500
     mpls:
       ip: true
     type: routed
@@ -112,6 +112,24 @@ ethernet_interfaces:
     isis_enable: EVPN_UNDERLAY
     isis_metric: 50
     isis_network_point_to_point: true
+  Ethernet1:
+    peer: P2-A
+    peer_interface: Ethernet5
+    peer_type: other
+    description: P2P_LINK_TO_P2-A_Ethernet5
+    type: routed
+    shutdown: false
+    mtu: 1500
+    ip_address: 100.64.48.27/31
+    isis_enable: EVPN_UNDERLAY
+    isis_metric: 50
+    isis_network_point_to_point: true
+    isis_hello_padding: false
+    isis_circuit_type: level-2
+    isis_authentication_mode: md5
+    isis_authentication_key: $1c$sTNAlR6rKSw=
+    mpls:
+      ip: true
 loopback_interfaces:
   Loopback0:
     description: EVPN_Overlay_Peering
@@ -135,7 +153,7 @@ router_isis:
   net: 49.0001.0000.0021.0001.00
   router_id: 100.64.20.11
   no_passive_interfaces:
-  - Ethernet1
+  - Ethernet2
   - Loopback1
   is_type: level-2
   advertise:

@@ -1,9 +1,4 @@
 ---
-design:
-  type: "l3ls-evpn"
-
-underlay_routing_protocol: isis
-overlay_routing_protocol: ibgp
 bgp_as: 65200
 
 dc_name: VXLAN_ISLAND2
@@ -63,8 +58,6 @@ l3leaf:
         GW2:
           id: 1
           mgmt_ip: 10.83.30.248/22
-          uplink_switch_interfaces: [ Ethernet2 ]
-          uplink_interfaces: [ Ethernet2 ]
 
     SPE6:
       uplink_switches: [ GW2 ]
@@ -73,4 +66,5 @@ l3leaf:
         SPE6:
           id: 2
           mgmt_ip: 10.83.30.249/22
-          uplink_switch_interfaces: [ Ethernet1 ]
+          uplink_switch_interfaces: [ Ethernet2 ]
+          uplink_interfaces: [ Ethernet1 ]

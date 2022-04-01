@@ -33,8 +33,8 @@
 
 | Type | Node | Node Interface | Peer Type | Peer Node | Peer Interface |
 | ---- | ---- | -------------- | --------- | ----------| -------------- |
-| l3leaf | GW2 | Ethernet1 | l3leaf | SPE6 | Ethernet1 |
-| l3leaf | GW3 | Ethernet1 | l3leaf | SPE5 | Ethernet1 |
+| l3leaf | GW2 | Ethernet2 | l3leaf | SPE6 | Ethernet1 |
+| l3leaf | GW3 | Ethernet2 | l3leaf | SPE5 | Ethernet1 |
 
 # Fabric IP Allocation
 
@@ -49,8 +49,8 @@
 
 | Node | Node Interface | Node IP Address | Peer Node | Peer Interface | Peer IP Address |
 | ---- | -------------- | --------------- | --------- | -------------- | --------------- |
-| GW2 | Ethernet1 | 100.64.22.6/31 | SPE6 | Ethernet1 | 100.64.22.7/31 |
-| GW3 | Ethernet1 | 100.64.32.6/31 | SPE5 | Ethernet1 | 100.64.32.7/31 |
+| GW2 | Ethernet2 | 100.64.22.6/31 | SPE6 | Ethernet1 | 100.64.22.7/31 |
+| GW3 | Ethernet2 | 100.64.32.6/31 | SPE5 | Ethernet1 | 100.64.32.7/31 |
 
 ## Loopback Interfaces (BGP EVPN Peering)
 

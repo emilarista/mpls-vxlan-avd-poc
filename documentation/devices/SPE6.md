@@ -273,7 +273,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_GW2_Ethernet1 | routed | - | 100.64.22.7/31 | default | 9000 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_GW2_Ethernet2 | routed | - | 100.64.22.7/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
@@ -286,9 +286,9 @@ vlan internal order ascending range 3700 3900
 ```eos
 !
 interface Ethernet1
-   description P2P_LINK_TO_GW2_Ethernet1
+   description P2P_LINK_TO_GW2_Ethernet2
    no shutdown
-   mtu 9000
+   mtu 1500
    no switchport
    ip address 100.64.22.7/31
    isis enable EVPN_UNDERLAY

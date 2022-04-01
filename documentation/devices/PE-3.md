@@ -276,8 +276,8 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet4 | P2P_LINK_TO_P3-A_Ethernet2 | routed | - | 100.64.48.13/31 | default | 9178 | false | - | - |
-| Ethernet5 | P2P_LINK_TO_P3-B_Ethernet2 | routed | - | 100.64.48.19/31 | default | 9178 | false | - | - |
+| Ethernet4 | P2P_LINK_TO_P3-A_Ethernet2 | routed | - | 100.64.48.13/31 | default | 1500 | false | - | - |
+| Ethernet5 | P2P_LINK_TO_P3-B_Ethernet2 | routed | - | 100.64.48.19/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
@@ -293,8 +293,7 @@ vlan internal order ascending range 3700 3900
 interface Ethernet4
    description P2P_LINK_TO_P3-A_Ethernet2
    no shutdown
-   mtu 9178
-   speed 100full
+   mtu 1500
    no switchport
    ip address 100.64.48.13/31
    mpls ip
@@ -309,8 +308,7 @@ interface Ethernet4
 interface Ethernet5
    description P2P_LINK_TO_P3-B_Ethernet2
    no shutdown
-   mtu 9178
-   speed 100full
+   mtu 1500
    no switchport
    ip address 100.64.48.19/31
    mpls ip

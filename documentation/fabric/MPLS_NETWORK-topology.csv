@@ -8,7 +8,7 @@ p,P1-B,Ethernet4,p,P3-A,Ethernet4
 p,P1-B,Ethernet6,rr,P1-A,Ethernet6
 rr,P2-A,Ethernet2,pe,PE-2,Ethernet4
 rr,P2-A,Ethernet3,rr,P1-A,Ethernet3
-rr,P2-A,Ethernet5,other,P2-GW,Ethernet1
+rr,P2-A,Ethernet5,other,GW2,Ethernet1
 rr,P2-A,Ethernet6,p,P2-B,Ethernet6
 p,P2-B,Ethernet2,pe,PE-2,Ethernet5
 p,P2-B,Ethernet3,p,P3-A,Ethernet3
@@ -20,7 +20,7 @@ p,P3-A,Ethernet4,p,P1-B,Ethernet4
 p,P3-A,Ethernet6,p,P3-B,Ethernet6
 p,P3-B,Ethernet2,pe,PE-3,Ethernet5
 p,P3-B,Ethernet3,p,P4-B,Ethernet3
-p,P3-B,Ethernet5,other,P3-GW,Ethernet1
+p,P3-B,Ethernet5,other,GW3,Ethernet1
 p,P3-B,Ethernet6,p,P3-A,Ethernet6
 p,P4-A,Ethernet2,pe,PE-4A,Ethernet2
 p,P4-A,Ethernet3,p,P1-B,Ethernet3

@@ -276,22 +276,39 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_SPE6_Ethernet1 | routed | - | 100.64.22.6/31 | default | 9000 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_P2-A_Ethernet5 | routed | - | 100.64.48.27/31 | default | 1500 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_SPE6_Ethernet1 | routed | - | 100.64.22.6/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
 | Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
 | --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
-| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
+| Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | level-2 | False | md5 |
+| Ethernet2 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
 
 ### Ethernet Interfaces Device Configuration
 
 ```eos
 !
 interface Ethernet1
+   description P2P_LINK_TO_P2-A_Ethernet5
+   no shutdown
+   mtu 1500
+   no switchport
+   ip address 100.64.48.27/31
+   mpls ip
+   isis enable EVPN_UNDERLAY
+   isis circuit-type level-2
+   isis metric 50
+   no isis hello padding
+   isis network point-to-point
+   isis authentication mode md5
+   isis authentication key 7 $1c$sTNAlR6rKSw=
+!
+interface Ethernet2
    description P2P_LINK_TO_SPE6_Ethernet1
    no shutdown
-   mtu 9000
+   mtu 1500
    no switchport
    ip address 100.64.22.6/31
    mpls ip
@@ -446,6 +463,7 @@ ip route vrf MGMT 0.0.0.0/0 10.83.28.1
 | Interface | ISIS Instance | ISIS Metric | Interface Mode |
 | --------- | ------------- | ----------- | -------------- |
 | Ethernet1 | EVPN_UNDERLAY | 50 | point-to-point |
+| Ethernet2 | EVPN_UNDERLAY | 50 | point-to-point |
 | Loopback0 | EVPN_UNDERLAY | - | passive |
 | Loopback1 | EVPN_UNDERLAY | - | passive |
 
@@ -602,6 +620,7 @@ mpls ip
 | Interface | MPLS IP Enabled | LDP Enabled | IGP Sync |
 | --------- | --------------- | ----------- | -------- |
 | Ethernet1 | True | - | - |
+| Ethernet2 | True | - | - |
 | Loopback0 | - | - | - |
 
 # Multicast

@@ -138,9 +138,8 @@ ethernet_interfaces:
     description: P2P_LINK_TO_P4-A_Ethernet2
     type: routed
     shutdown: false
-    mtu: 9178
+    mtu: 1500
     ip_address: 100.64.48.37/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true
