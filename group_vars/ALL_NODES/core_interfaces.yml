@@ -74,13 +74,13 @@ core_interfaces:
       interfaces: [ Ethernet3, Ethernet3 ]
       profile: default_bb_profile
 
-    - nodes: [ P3-B, P3-GW ]
+    - nodes: [ P3-B, GW3 ]
       id: 12
       interfaces: [ Ethernet5, Ethernet1 ]
       profile: default_bb_profile
 
     # P2-A links
-    - nodes: [ P2-A, P2-GW ]
+    - nodes: [ P2-A, GW2 ]
       id: 14
       interfaces: [ Ethernet5, Ethernet1 ]
       profile: default_bb_profile
