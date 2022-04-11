@@ -281,7 +281,6 @@ interface Ethernet2
    description P2P_LINK_TO_PE-4A_Ethernet2
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.36/31
    mpls ip
@@ -297,7 +296,6 @@ interface Ethernet3
    description P2P_LINK_TO_P1-B_Ethernet3
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.11/31
    mpls ip
@@ -313,7 +311,6 @@ interface Ethernet4
    description P2P_LINK_TO_P2-B_Ethernet4
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.35/31
    mpls ip
@@ -329,7 +326,6 @@ interface Ethernet6
    description P2P_LINK_TO_P4-B_Ethernet6
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.38/31
    mpls ip

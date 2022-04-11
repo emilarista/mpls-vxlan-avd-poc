@@ -100,34 +100,26 @@ all:
                 SITE_2_LEAFS:
                   hosts:
                     GW2:
+                      is_deployed: false
                       type: l3leaf
                       ansible_host: 172.16.32.222
                     SPE6:
-                      ansible_host: 10.30.30.118
+                      is_deployed: false
+                      ansible_host: 172.16.32.223
                       type: l3leaf
-                # SITE_2_SPINES:
-                #   vars:
-                #     type: spine
-                #   hosts:
-                #     SP2:
-                #       ansible_host: 10.30.30.119
 
             VXLAN_ISLAND3:
               children:
                 SITE_3_LEAFS:
                   hosts:
                     GW3:
+                      is_deployed: false
                       type: l3leaf
                       ansible_host: 172.16.32.219
                     SPE5:
+                      is_deployed: false
                       type: l3leaf
-                      ansible_host: 10.30.30.118
-                # SITE_3_SPINES:
-                #   vars:
-                #     type: spine
-                #   hosts:
-                #     SP3:
-                #       ansible_host: 10.30.30.119
+                      ansible_host: 172.16.32.225
 
     TENANTS:
       children:
@@ -138,6 +130,11 @@ all:
         SITE_2_LEAFS:
         SITE_3_LEAFS:
 
-    # MPLS_ENDPOINT_CONNECTIONS:
-    #   children:
-    #     PE:
+    ENDPOINT_CONNECTIONS:
+      children:
+        SITE1_PE:
+        SITE2_PE:
+        SITE3_PE:
+        SITE4_PE:
+        SITE_3_LEAFS:
+        SITE_2_LEAFS:

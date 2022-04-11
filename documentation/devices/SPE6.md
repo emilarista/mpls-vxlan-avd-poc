@@ -21,9 +21,13 @@
 - [Internal VLAN Allocation Policy](#internal-vlan-allocation-policy)
   - [Internal VLAN Allocation Policy Summary](#internal-vlan-allocation-policy-summary)
   - [Internal VLAN Allocation Policy Configuration](#internal-vlan-allocation-policy-configuration)
+- [VLANs](#vlans)
+  - [VLANs Summary](#vlans-summary)
+  - [VLANs Device Configuration](#vlans-device-configuration)
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
+  - [VLAN Interfaces](#vlan-interfaces)
   - [VXLAN Interface](#vxlan-interface)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
@@ -56,7 +60,7 @@
 
 | Management Interface | description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | oob_management | oob | MGMT | 10.30.30.103/24 | 172.16.32.1 |
+| Management1 | oob_management | oob | MGMT | 172.16.32.223/24 | 172.16.32.1 |
 
 #### IPv6
 
@@ -72,7 +76,7 @@ interface Management1
    description oob_management
    no shutdown
    vrf MGMT
-   ip address 10.30.30.103/24
+   ip address 172.16.32.223/24
 ```
 
 ## DNS Domain
@@ -254,6 +258,26 @@ spanning-tree mst 0 priority 4096
 vlan internal order ascending range 3700 3900
 ```
 
+# VLANs
+
+## VLANs Summary
+
+| VLAN ID | Name | Trunk Groups |
+| ------- | ---- | ------------ |
+| 231 | TENANT_A_VXLAN_231 | - |
+| 232 | TENANT_A_VXLAN_232 | - |
+
+## VLANs Device Configuration
+
+```eos
+!
+vlan 231
+   name TENANT_A_VXLAN_231
+!
+vlan 232
+   name TENANT_A_VXLAN_232
+```
+
 # Interfaces
 
 ## Ethernet Interfaces
@@ -264,6 +288,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
+| Ethernet3 |  CPE6_VXLAN_Ethernet1 | trunk | 231,232 | - | - | - |
 
 *Inherited from Port-Channel Interface
 
@@ -271,7 +296,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | P2P_LINK_TO_GW2_Ethernet1 | routed | - | 100.64.22.7/31 | default | 1500 | false | - | - |
+| Ethernet1 | P2P_LINK_TO_GW2_Ethernet2 | routed | - | 100.64.22.7/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
@@ -284,7 +309,7 @@ vlan internal order ascending range 3700 3900
 ```eos
 !
 interface Ethernet1
-   description P2P_LINK_TO_GW2_Ethernet1
+   description P2P_LINK_TO_GW2_Ethernet2
    no shutdown
    mtu 1500
    no switchport
@@ -292,6 +317,14 @@ interface Ethernet1
    isis enable EVPN_UNDERLAY
    isis metric 50
    isis network point-to-point
+!
+interface Ethernet3
+   description CPE6_VXLAN_Ethernet1
+   no shutdown
+   switchport trunk allowed vlan 231,232
+   switchport mode trunk
+   switchport
+   spanning-tree portfast
 ```
 
 ## Loopback Interfaces
@@ -338,6 +371,40 @@ interface Loopback1
    isis passive
 ```
 
+## VLAN Interfaces
+
+### VLAN Interfaces Summary
+
+| Interface | Description | VRF |  MTU | Shutdown |
+| --------- | ----------- | --- | ---- | -------- |
+| Vlan231 | TENANT_A_VXLAN_231 | TENANT_A_L3VPN | - | false |
+| Vlan232 | TENANT_A_VXLAN_232 | TENANT_A_L3VPN | - | false |
+
+#### IPv4
+
+| Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
+| --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
+| Vlan231 |  TENANT_A_L3VPN  |  -  |  23.23.10.1/24  |  -  |  -  |  -  |  -  |
+| Vlan232 |  TENANT_A_L3VPN  |  -  |  23.23.20.1/24  |  -  |  -  |  -  |  -  |
+
+
+### VLAN Interfaces Device Configuration
+
+```eos
+!
+interface Vlan231
+   description TENANT_A_VXLAN_231
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 23.23.10.1/24
+!
+interface Vlan232
+   description TENANT_A_VXLAN_232
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 23.23.20.1/24
+```
+
 ## VXLAN Interface
 
 ### VXLAN Interface Summary
@@ -347,6 +414,19 @@ interface Loopback1
 | Source Interface | Loopback1 |
 | UDP port | 4789 |
 
+#### VLAN to VNI, Flood List and Multicast Group Mappings
+
+| VLAN | VNI | Flood List | Multicast Group |
+| ---- | --- | ---------- | --------------- |
+| 231 | 10231 | - | - |
+| 232 | 10232 | - | - |
+
+#### VRF to VNI and Multicast Group Mappings
+
+| VRF | VNI | Multicast Group |
+| ---- | --- | --------------- |
+| TENANT_A_L3VPN | 10 | - |
+
 ### VXLAN Interface Device Configuration
 
 ```eos
@@ -355,6 +435,9 @@ interface Vxlan1
    description SPE6_VTEP
    vxlan source-interface Loopback1
    vxlan udp-port 4789
+   vxlan vlan 231 vni 10231
+   vxlan vlan 232 vni 10232
+   vxlan vrf TENANT_A_L3VPN vni 10
 ```
 
 # Routing
@@ -388,6 +471,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 | --- | --------------- |
 | default | true |
 | MGMT | false |
+| TENANT_A_L3VPN | true |
 
 ### IP Routing Device Configuration
 
@@ -395,6 +479,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 !
 ip routing
 no ip routing vrf MGMT
+ip routing vrf TENANT_A_L3VPN
 ```
 ## IPv6 Routing
 
@@ -404,6 +489,7 @@ no ip routing vrf MGMT
 | --- | --------------- |
 | default | false |
 | MGMT | false |
+| TENANT_A_L3VPN | false |
 
 ## Static Routes
 
@@ -464,7 +550,7 @@ router isis EVPN_UNDERLAY
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65200|  100.64.20.12 |
+| 65001|  100.64.20.12 |
 
 | BGP Tuning |
 | ---------- |
@@ -481,7 +567,7 @@ router isis EVPN_UNDERLAY
 | Settings | Value |
 | -------- | ----- |
 | Address Family | evpn |
-| Remote AS | 65200 |
+| Remote AS | 65001 |
 | Source | Loopback0 |
 | BFD | True |
 | Send community | all |
@@ -501,11 +587,24 @@ router isis EVPN_UNDERLAY
 | ---------- | -------- |
 | EVPN-OVERLAY-PEERS | True |
 
+### Router BGP VLANs
+
+| VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
+| ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
+| 231 | 100.64.20.12:10231 | 65000:10231 | - | - | learned |
+| 232 | 100.64.20.12:10232 | 65000:10232 | - | - | learned |
+
+### Router BGP VRFs
+
+| VRF | Route-Distinguisher | Redistribute |
+| --- | ------------------- | ------------ |
+| TENANT_A_L3VPN | 100.64.20.12:10 | connected |
+
 ### Router BGP Device Configuration
 
 ```eos
 !
-router bgp 65200
+router bgp 65001
    router-id 100.64.20.12
    no bgp default ipv4-unicast
    distance bgp 20 200 200
@@ -513,7 +612,7 @@ router bgp 65200
    graceful-restart
    maximum-paths 4 ecmp 4
    neighbor EVPN-OVERLAY-PEERS peer group
-   neighbor EVPN-OVERLAY-PEERS remote-as 65200
+   neighbor EVPN-OVERLAY-PEERS remote-as 65001
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS bfd
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
@@ -522,6 +621,16 @@ router bgp 65200
    neighbor 100.64.20.11 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.20.11 description GW2
    !
+   vlan 231
+      rd 100.64.20.12:10231
+      route-target both 65000:10231
+      redistribute learned
+   !
+   vlan 232
+      rd 100.64.20.12:10232
+      route-target both 65000:10232
+      redistribute learned
+   !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
@@ -529,6 +638,13 @@ router bgp 65200
    !
    address-family ipv4
       no neighbor EVPN-OVERLAY-PEERS activate
+   !
+   vrf TENANT_A_L3VPN
+      rd 100.64.20.12:10
+      route-target import evpn 65000:10
+      route-target export evpn 65000:10
+      router-id 100.64.20.12
+      redistribute connected
 ```
 
 # BFD
@@ -619,12 +735,15 @@ ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.21.12:1
 | VRF Name | IP Routing |
 | -------- | ---------- |
 | MGMT | disabled |
+| TENANT_A_L3VPN | enabled |
 
 ## VRF Instances Device Configuration
 
 ```eos
 !
 vrf instance MGMT
+!
+vrf instance TENANT_A_L3VPN
 ```
 
 # Quality Of Service

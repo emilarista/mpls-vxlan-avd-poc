@@ -21,9 +21,14 @@
 - [Internal VLAN Allocation Policy](#internal-vlan-allocation-policy)
   - [Internal VLAN Allocation Policy Summary](#internal-vlan-allocation-policy-summary)
   - [Internal VLAN Allocation Policy Configuration](#internal-vlan-allocation-policy-configuration)
+- [VLANs](#vlans)
+  - [VLANs Summary](#vlans-summary)
+  - [VLANs Device Configuration](#vlans-device-configuration)
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
+  - [Port-Channel Interfaces](#port-channel-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
+  - [VLAN Interfaces](#vlan-interfaces)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
   - [Virtual Router MAC Address](#virtual-router-mac-address)
@@ -260,6 +265,22 @@ spanning-tree mst 0 priority 4096
 vlan internal order ascending range 3700 3900
 ```
 
+# VLANs
+
+## VLANs Summary
+
+| VLAN ID | Name | Trunk Groups |
+| ------- | ---- | ------------ |
+| 144 | TENANT_A_MH_L2SERVICE | - |
+
+## VLANs Device Configuration
+
+```eos
+!
+vlan 144
+   name TENANT_A_MH_L2SERVICE
+```
+
 # Interfaces
 
 ## Ethernet Interfaces
@@ -270,6 +291,7 @@ vlan internal order ascending range 3700 3900
 
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
+| Ethernet3 | CPE1_SITE1_DUALHOMED_Ethernet5 | *trunk | *144 | *- | *- | 3 |
 
 *Inherited from Port-Channel Interface
 
@@ -293,7 +315,6 @@ interface Ethernet2
    description P2P_LINK_TO_P1-B_Ethernet2
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.7/31
    mpls ip
@@ -304,6 +325,38 @@ interface Ethernet2
    isis network point-to-point
    isis authentication mode md5
    isis authentication key 7 $1c$sTNAlR6rKSw=
+!
+interface Ethernet3
+   description CPE1_SITE1_DUALHOMED_Ethernet5
+   no shutdown
+   channel-group 3 mode active
+```
+
+## Port-Channel Interfaces
+
+### Port-Channel Interfaces Summary
+
+#### L2
+
+| Interface | Description | Type | Mode | VLANs | Native VLAN | Trunk Group | LACP Fallback Timeout | LACP Fallback Mode | MLAG ID | EVPN ESI |
+| --------- | ----------- | ---- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
+| Port-Channel3 | CPE1_SITE1_DUALHOMED_EVPN-A-A-PortChannel | switched | trunk | 144 | - | - | - | - | - | 0000:0000:0101:0303:0405 |
+
+### Port-Channel Interfaces Device Configuration
+
+```eos
+!
+interface Port-Channel3
+   description CPE1_SITE1_DUALHOMED_EVPN-A-A-PortChannel
+   no shutdown
+   switchport
+   switchport trunk allowed vlan 144
+   switchport mode trunk
+   evpn ethernet-segment
+      identifier 0000:0000:0101:0303:0405
+      route-target import 01:01:03:03:04:05
+   lacp system-id 0101.0303.0405
+   spanning-tree portfast
 ```
 
 ## Loopback Interfaces
@@ -341,6 +394,32 @@ interface Loopback0
    node-segment ipv4 index 102
 ```
 
+## VLAN Interfaces
+
+### VLAN Interfaces Summary
+
+| Interface | Description | VRF |  MTU | Shutdown |
+| --------- | ----------- | --- | ---- | -------- |
+| Vlan144 | TENANT_A_MH_L2SERVICE | TENANT_A_L3VPN | - | false |
+
+#### IPv4
+
+| Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
+| --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
+| Vlan144 |  TENANT_A_L3VPN  |  -  |  14.14.200.1/24  |  -  |  -  |  -  |  -  |
+
+
+### VLAN Interfaces Device Configuration
+
+```eos
+!
+interface Vlan144
+   description TENANT_A_MH_L2SERVICE
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 14.14.200.1/24
+```
+
 # Routing
 ## Service Routing Protocols Model
 
@@ -372,6 +451,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 | --- | --------------- |
 | default | true |
 | MGMT | false |
+| TENANT_A_L3VPN | true |
 
 ### IP Routing Device Configuration
 
@@ -379,6 +459,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 !
 ip routing
 no ip routing vrf MGMT
+ip routing vrf TENANT_A_L3VPN
 ```
 ## IPv6 Routing
 
@@ -388,6 +469,7 @@ no ip routing vrf MGMT
 | --- | --------------- |
 | default | false |
 | MGMT | false |
+| TENANT_A_L3VPN | false |
 
 ## Static Routes
 
@@ -503,6 +585,18 @@ router isis CORE
 | ------------------------------ | ------------------------------ |
 | mpls | Loopback0 |
 
+### Router BGP VLANs
+
+| VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
+| ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
+| 144 | 100.70.1.12:10144 | 65000:10144 | - | - | learned |
+
+### Router BGP VRFs
+
+| VRF | Route-Distinguisher | Redistribute |
+| --- | ------------------- | ------------ |
+| TENANT_A_L3VPN | 100.70.1.12:10 | connected |
+
 ### Router BGP Device Configuration
 
 ```eos
@@ -526,6 +620,11 @@ router bgp 65000
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.2 description P2-A
    !
+   vlan 144
+      rd 100.70.1.12:10144
+      route-target both 65000:10144
+      redistribute learned
+   !
    address-family evpn
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
       neighbor MPLS-OVERLAY-PEERS activate
@@ -540,6 +639,13 @@ router bgp 65000
    address-family vpn-ipv6
       neighbor MPLS-OVERLAY-PEERS activate
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
+   !
+   vrf TENANT_A_L3VPN
+      rd 100.70.1.12:10
+      route-target import evpn 65000:10
+      route-target export evpn 65000:10
+      router-id 100.70.1.12
+      redistribute connected
 ```
 
 # BFD
@@ -628,12 +734,15 @@ patch panel
 | VRF Name | IP Routing |
 | -------- | ---------- |
 | MGMT | disabled |
+| TENANT_A_L3VPN | enabled |
 
 ## VRF Instances Device Configuration
 
 ```eos
 !
 vrf instance MGMT
+!
+vrf instance TENANT_A_L3VPN
 ```
 
 # Quality Of Service

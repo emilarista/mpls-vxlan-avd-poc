@@ -46,6 +46,28 @@ router_bgp:
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
       description: P2-A
+  vrfs:
+    TENANT_A_L3VPN:
+      router_id: 100.70.1.14
+      rd: 100.70.1.14:10
+      route_targets:
+        import:
+          evpn:
+          - '65000:10'
+        export:
+          evpn:
+          - '65000:10'
+      redistribute_routes:
+      - connected
+  vpws:
+  - name: TENANT_A
+    rd: 100.70.1.14:1000
+    route_targets:
+      import_export: 65000:1000
+    pseudowires:
+    - name: TEN_A_site2_site5_eline_vlan_based_21
+      id_local: 3321
+      id_remote: 2321
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -80,6 +102,9 @@ local_users:
 vrfs:
   MGMT:
     ip_routing: false
+  TENANT_A_L3VPN:
+    tenant: TENANT_A
+    ip_routing: true
 management_interfaces:
   Management1:
     description: oob_management
@@ -135,7 +160,6 @@ ethernet_interfaces:
     shutdown: false
     mtu: 1500
     ip_address: 100.64.48.13/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true
@@ -154,7 +178,6 @@ ethernet_interfaces:
     shutdown: false
     mtu: 1500
     ip_address: 100.64.48.19/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true
@@ -164,12 +187,44 @@ ethernet_interfaces:
     isis_authentication_key: $1c$sTNAlR6rKSw=
     mpls:
       ip: true
+  Ethernet3.22:
+    type: l3dot1q
+    encapsulation_dot1q_vlan: 22
+    peer_type: l3_interface
+    vrf: TENANT_A_L3VPN
+    ip_address: 23.23.202.1/24
+    shutdown: false
+    description: TENANT_A_SITE_3_L3VPN
+  Ethernet3.21:
+    type: l2dot1q
+    encapsulation_vlan:
+      client:
+        dot1q:
+          vlan: 21
+      network:
+        client: true
+    peer_type: l3_interface
+    shutdown: false
+  Ethernet3:
+    type: routed
+    peer_type: l3_interface
+    shutdown: false
 router_bfd:
   multihop:
     interval: 5000
     min_rx: 5000
     multiplier: 3
-patch_panel: {}
+patch_panel:
+  patches:
+  - name: TEN_A_site2_site5_eline_vlan_based_21
+    enabled: true
+    connectors:
+    - id: 1
+      type: interface
+      endpoint: Ethernet3.21
+    - id: 2
+      type: pseudowire
+      endpoint: bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_vlan_based_21
 ip_igmp_snooping:
   globally_enabled: true
 ip_virtual_router_mac_address: 00:1c:73:00:dc:00

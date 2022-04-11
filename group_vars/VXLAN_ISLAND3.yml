@@ -1,5 +1,5 @@
 ---
-bgp_as: 65300
+bgp_as: 65002
 
 dc_name: VXLAN_ISLAND3
 
@@ -36,6 +36,9 @@ l3leaf:
       - 'graceful-restart'
   node_groups:
     GW3:
+      filter:
+        tenants: [ all ]
+        tags: [ vxlan-site5 ]
       node_sid_base: 2000
       evpn_role: server
       evpn_gateway:
@@ -43,6 +46,7 @@ l3leaf:
           enabled: true
           mpls_overlay_address_family: evpn
           mpls_underlay: isis-sr
+          mpls_remote_as: 65000
       structured_config:
         router_bgp:
           neighbors:
@@ -56,14 +60,16 @@ l3leaf:
         GW3:
           id: 1
           mgmt_ip: 172.16.32.219/24
-          uplink_switch_interfaces: [ Ethernet2 ]
-          uplink_interfaces: [ Ethernet2 ]
 
     SPE5:
+      filter:
+        tenants: [ all ]
+        tags: [ vxlan-site5 ]
       uplink_switches: [ GW3 ]
       evpn_route_servers: [ GW3 ]
       nodes:
         SPE5:
           id: 2
-          mgmt_ip: 10.30.30.103/24
-          uplink_switch_interfaces: [ Ethernet1 ]
+          mgmt_ip: 172.16.32.225/24
+          uplink_switch_interfaces: [ Ethernet2 ]
+          uplink_interfaces: [ Ethernet1 ]

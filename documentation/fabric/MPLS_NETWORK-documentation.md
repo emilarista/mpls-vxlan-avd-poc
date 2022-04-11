@@ -18,7 +18,7 @@
 
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- |
-| MPLS_NETWORK | rr | P1-A | 172.16.32.209/24 | vEOS-LAB | Provisioned |
+| MPLS_NETWORK | rr | P1-A | 172.16.32.201/24 | vEOS-LAB | Provisioned |
 | MPLS_NETWORK | p | P1-B | 172.16.32.203/24 | - | Provisioned |
 | MPLS_NETWORK | rr | P2-A | 172.16.32.202/24 | vEOS-LAB | Provisioned |
 | MPLS_NETWORK | p | P2-B | 172.16.32.204/24 | - | Provisioned |

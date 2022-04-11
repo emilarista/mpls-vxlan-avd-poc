@@ -21,9 +21,13 @@
 - [Internal VLAN Allocation Policy](#internal-vlan-allocation-policy)
   - [Internal VLAN Allocation Policy Summary](#internal-vlan-allocation-policy-summary)
   - [Internal VLAN Allocation Policy Configuration](#internal-vlan-allocation-policy-configuration)
+- [VLANs](#vlans)
+  - [VLANs Summary](#vlans-summary)
+  - [VLANs Device Configuration](#vlans-device-configuration)
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
+  - [VLAN Interfaces](#vlan-interfaces)
   - [VXLAN Interface](#vxlan-interface)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
@@ -257,6 +261,26 @@ spanning-tree mst 0 priority 4096
 vlan internal order ascending range 3700 3900
 ```
 
+# VLANs
+
+## VLANs Summary
+
+| VLAN ID | Name | Trunk Groups |
+| ------- | ---- | ------------ |
+| 231 | TENANT_A_VXLAN_231 | - |
+| 232 | TENANT_A_VXLAN_232 | - |
+
+## VLANs Device Configuration
+
+```eos
+!
+vlan 231
+   name TENANT_A_VXLAN_231
+!
+vlan 232
+   name TENANT_A_VXLAN_232
+```
+
 # Interfaces
 
 ## Ethernet Interfaces
@@ -275,12 +299,14 @@ vlan internal order ascending range 3700 3900
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
 | Ethernet1 | P2P_LINK_TO_P3-B_Ethernet5 | routed | - | 100.64.48.23/31 | default | 1500 | false | - | - |
+| Ethernet2 | P2P_LINK_TO_SPE5_Ethernet1 | routed | - | 100.64.32.6/31 | default | 1500 | false | - | - |
 
 #### ISIS
 
 | Interface | Channel Group | ISIS Instance | ISIS Metric | Mode | ISIS Circuit Type | Hello Padding | Authentication Mode |
 | --------- | ------------- | ------------- | ----------- | ---- | ----------------- | ------------- | ------------------- |
 | Ethernet1 | - | EVPN_UNDERLAY | 50 | point-to-point | level-2 | False | md5 |
+| Ethernet2 | - | EVPN_UNDERLAY | 50 | point-to-point | - | - | - |
 
 ### Ethernet Interfaces Device Configuration
 
@@ -290,7 +316,6 @@ interface Ethernet1
    description P2P_LINK_TO_P3-B_Ethernet5
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.23/31
    mpls ip
@@ -301,6 +326,17 @@ interface Ethernet1
    isis network point-to-point
    isis authentication mode md5
    isis authentication key 7 $1c$sTNAlR6rKSw=
+!
+interface Ethernet2
+   description P2P_LINK_TO_SPE5_Ethernet1
+   no shutdown
+   mtu 1500
+   no switchport
+   ip address 100.64.32.6/31
+   mpls ip
+   isis enable EVPN_UNDERLAY
+   isis metric 50
+   isis network point-to-point
 ```
 
 ## Loopback Interfaces
@@ -348,6 +384,40 @@ interface Loopback1
    isis passive
 ```
 
+## VLAN Interfaces
+
+### VLAN Interfaces Summary
+
+| Interface | Description | VRF |  MTU | Shutdown |
+| --------- | ----------- | --- | ---- | -------- |
+| Vlan231 | TENANT_A_VXLAN_231 | TENANT_A_L3VPN | - | false |
+| Vlan232 | TENANT_A_VXLAN_232 | TENANT_A_L3VPN | - | false |
+
+#### IPv4
+
+| Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
+| --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
+| Vlan231 |  TENANT_A_L3VPN  |  -  |  23.23.10.1/24  |  -  |  -  |  -  |  -  |
+| Vlan232 |  TENANT_A_L3VPN  |  -  |  23.23.20.1/24  |  -  |  -  |  -  |  -  |
+
+
+### VLAN Interfaces Device Configuration
+
+```eos
+!
+interface Vlan231
+   description TENANT_A_VXLAN_231
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 23.23.10.1/24
+!
+interface Vlan232
+   description TENANT_A_VXLAN_232
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 23.23.20.1/24
+```
+
 ## VXLAN Interface
 
 ### VXLAN Interface Summary
@@ -357,6 +427,19 @@ interface Loopback1
 | Source Interface | Loopback1 |
 | UDP port | 4789 |
 
+#### VLAN to VNI, Flood List and Multicast Group Mappings
+
+| VLAN | VNI | Flood List | Multicast Group |
+| ---- | --- | ---------- | --------------- |
+| 231 | 10231 | - | - |
+| 232 | 10232 | - | - |
+
+#### VRF to VNI and Multicast Group Mappings
+
+| VRF | VNI | Multicast Group |
+| ---- | --- | --------------- |
+| TENANT_A_L3VPN | 10 | - |
+
 ### VXLAN Interface Device Configuration
 
 ```eos
@@ -365,6 +448,9 @@ interface Vxlan1
    description GW3_VTEP
    vxlan source-interface Loopback1
    vxlan udp-port 4789
+   vxlan vlan 231 vni 10231
+   vxlan vlan 232 vni 10232
+   vxlan vrf TENANT_A_L3VPN vni 10
 ```
 
 # Routing
@@ -398,6 +484,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 | --- | --------------- |
 | default | true |
 | MGMT | false |
+| TENANT_A_L3VPN | true |
 
 ### IP Routing Device Configuration
 
@@ -405,6 +492,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 !
 ip routing
 no ip routing vrf MGMT
+ip routing vrf TENANT_A_L3VPN
 ```
 ## IPv6 Routing
 
@@ -414,6 +502,7 @@ no ip routing vrf MGMT
 | --- | --------------- |
 | default | false |
 | MGMT | false |
+| TENANT_A_L3VPN | false |
 
 ## Static Routes
 
@@ -450,6 +539,7 @@ ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 | Interface | ISIS Instance | ISIS Metric | Interface Mode |
 | --------- | ------------- | ----------- | -------------- |
 | Ethernet1 | EVPN_UNDERLAY | 50 | point-to-point |
+| Ethernet2 | EVPN_UNDERLAY | 50 | point-to-point |
 | Loopback0 | EVPN_UNDERLAY | - | passive |
 | Loopback1 | EVPN_UNDERLAY | - | passive |
 
@@ -483,11 +573,11 @@ router isis EVPN_UNDERLAY
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65300|  100.64.30.11 |
+| 65002|  100.64.30.11 |
 
 | BGP AS | Cluster ID |
 | ------ | --------- |
-| 65300|  100.64.30.11 |
+| 65002|  100.64.30.11 |
 
 | BGP Tuning |
 | ---------- |
@@ -504,10 +594,23 @@ router isis EVPN_UNDERLAY
 | Settings | Value |
 | -------- | ----- |
 | Address Family | evpn |
-| Remote AS | 65300 |
+| Remote AS | 65002 |
 | Route Reflector Client | Yes |
 | Source | Loopback0 |
 | BFD | True |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
+
+#### MPLS-OVERLAY-PEERS
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | mpls |
+| Remote AS | 65000 |
+| Local AS | 65000 |
+| Source | Loopback0 |
+| BFD | True |
+| Ebgp multihop | 10 |
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
@@ -516,8 +619,8 @@ router isis EVPN_UNDERLAY
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
 | 100.64.30.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
-| 100.70.2.1 | - | default | - | - | - | - | - | - |
-| 100.70.2.2 | - | default | - | - | - | - | - | - |
+| 100.70.2.1 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
+| 100.70.2.2 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 
 ### Router BGP EVPN Address Family
 
@@ -526,12 +629,26 @@ router isis EVPN_UNDERLAY
 | Peer Group | Activate |
 | ---------- | -------- |
 | EVPN-OVERLAY-PEERS | True |
+| MPLS-OVERLAY-PEERS | True |
+
+### Router BGP VLANs
+
+| VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
+| ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
+| 231 | 100.64.30.11:10231 | 65000:10231 | - | - | learned |
+| 232 | 100.64.30.11:10232 | 65000:10232 | - | - | learned |
+
+### Router BGP VRFs
+
+| VRF | Route-Distinguisher | Redistribute |
+| --- | ------------------- | ------------ |
+| TENANT_A_L3VPN | 100.64.30.11:10 | connected |
 
 ### Router BGP Device Configuration
 
 ```eos
 !
-router bgp 65300
+router bgp 65002
    router-id 100.64.30.11
    bgp cluster-id 100.64.30.11
    no bgp default ipv4-unicast
@@ -540,13 +657,22 @@ router bgp 65300
    graceful-restart
    maximum-paths 4 ecmp 4
    neighbor EVPN-OVERLAY-PEERS peer group
-   neighbor EVPN-OVERLAY-PEERS remote-as 65300
+   neighbor EVPN-OVERLAY-PEERS remote-as 65002
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS route-reflector-client
    neighbor EVPN-OVERLAY-PEERS bfd
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
+   neighbor MPLS-OVERLAY-PEERS peer group
+   neighbor MPLS-OVERLAY-PEERS remote-as 65000
+   neighbor MPLS-OVERLAY-PEERS local-as 65000 no-prepend replace-as
+   neighbor MPLS-OVERLAY-PEERS update-source Loopback0
+   neighbor MPLS-OVERLAY-PEERS bfd
+   neighbor MPLS-OVERLAY-PEERS ebgp-multihop 10
+   neighbor MPLS-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
+   neighbor MPLS-OVERLAY-PEERS send-community
+   neighbor MPLS-OVERLAY-PEERS maximum-routes 0
    neighbor 100.64.30.12 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.30.12 description SPE5
    neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
@@ -554,13 +680,32 @@ router bgp 65300
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.2 description P-2A
    !
+   vlan 231
+      rd 100.64.30.11:10231
+      route-target both 65000:10231
+      redistribute learned
+   !
+   vlan 232
+      rd 100.64.30.11:10232
+      route-target both 65000:10232
+      redistribute learned
+   !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
+      neighbor MPLS-OVERLAY-PEERS activate
+      neighbor MPLS-OVERLAY-PEERS encapsulation mpls next-hop-self source-interface Loopback0
    !
    address-family ipv4
       no neighbor EVPN-OVERLAY-PEERS activate
+   !
+   vrf TENANT_A_L3VPN
+      rd 100.64.30.11:10
+      route-target import evpn 65000:10
+      route-target export evpn 65000:10
+      router-id 100.64.30.11
+      redistribute connected
 ```
 
 # BFD
@@ -607,6 +752,7 @@ mpls ip
 | Interface | MPLS IP Enabled | LDP Enabled | IGP Sync |
 | --------- | --------------- | ----------- | -------- |
 | Ethernet1 | True | - | - |
+| Ethernet2 | True | - | - |
 | Loopback0 | - | - | - |
 
 # Multicast
@@ -679,12 +825,15 @@ ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.31.11:1
 | VRF Name | IP Routing |
 | -------- | ---------- |
 | MGMT | disabled |
+| TENANT_A_L3VPN | enabled |
 
 ## VRF Instances Device Configuration
 
 ```eos
 !
 vrf instance MGMT
+!
+vrf instance TENANT_A_L3VPN
 ```
 
 # Quality Of Service

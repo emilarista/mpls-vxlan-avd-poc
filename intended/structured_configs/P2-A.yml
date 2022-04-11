@@ -19,6 +19,7 @@ router_bgp:
       send_community: all
       maximum_routes: 0
       route_reflector_client: true
+      ebgp_multihop: 10
     RR-OVERLAY-PEERS:
       type: mpls
       update_source: Loopback0
@@ -75,10 +76,10 @@ router_bgp:
     100.70.2.1:
       peer_group: RR-OVERLAY-PEERS
       description: P1-A
-    100.64.20.12:
+    100.64.20.11:
       peer_group: MPLS-OVERLAY-PEERS
       description: GW2
-    100.64.30.12:
+    100.64.30.11:
       peer_group: MPLS-OVERLAY-PEERS
       description: GW3
 static_routes:
@@ -126,11 +127,14 @@ management_api_http:
   enable_https: true
 struct_cfg:
   router_bgp:
+    peer_groups:
+      MPLS-OVERLAY-PEERS:
+        ebgp_multihop: 10
     neighbors:
-      100.64.20.12:
+      100.64.20.11:
         peer_group: MPLS-OVERLAY-PEERS
         description: GW2
-      100.64.30.12:
+      100.64.30.11:
         peer_group: MPLS-OVERLAY-PEERS
         description: GW3
 loopback_interfaces:
@@ -176,7 +180,6 @@ ethernet_interfaces:
     shutdown: false
     mtu: 1500
     ip_address: 100.64.48.28/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true
@@ -195,7 +198,6 @@ ethernet_interfaces:
     shutdown: false
     mtu: 1500
     ip_address: 100.64.48.5/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true
@@ -214,7 +216,6 @@ ethernet_interfaces:
     shutdown: false
     mtu: 1500
     ip_address: 100.64.48.26/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true
@@ -233,7 +234,6 @@ ethernet_interfaces:
     shutdown: false
     mtu: 1500
     ip_address: 100.64.48.30/31
-    speed: 100full
     isis_enable: CORE
     isis_metric: 50
     isis_network_point_to_point: true

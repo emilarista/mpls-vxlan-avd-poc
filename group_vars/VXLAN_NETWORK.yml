@@ -1,6 +1,8 @@
 ---
 fabric_name: VXLAN_NETWORK
 
+evpn_ebgp_multihop: 10
+
 design:
   type: "l3ls-evpn"
 
@@ -15,8 +17,13 @@ bgp_peer_groups:
   mpls_overlay_peers:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
 
+# p2p_uplinks_mtu: 9178
 p2p_uplinks_mtu: 1500
 
 custom_structured_configuration_router_isis:
   advertise:
     passive_only: true
+
+connected_endpoints_keys:
+  cpes:
+    type: cpe

@@ -2,14 +2,14 @@
 # This file is maintained by avd_sync.py script.
 # Port profiles may be edited manually, but servers will be overwritten on next run.
 port_profiles:
-  TENANT_A_CORE_L2VLANS:
+  TENANT_A_CORE_MULTIHOMED:
     mode: trunk
-    vlans: "10,11"
+    vlans: "144"
     spanning_tree_portfast: edge
-  # TENANT_B_2020:
-  #   mode: trunk
-  #   vlans: 2020
-  #   spanning_tree_portfast: edge
+  TENANT_A_VXLAN:
+    mode: trunk
+    vlans: "231,232"
+    spanning_tree_portfast: edge
 cpes:
   CPE1_SITE1_DUALHOMED:
     adapters:
@@ -22,7 +22,7 @@ cpes:
       switches:
       - PE-1A
       - PE-1B
-      profile: TENANT_A_CORE_L2VLANS
+      profile: TENANT_A_CORE_MULTIHOMED
       port_channel:
         description: EVPN-A-A-PortChannel
         mode: active
@@ -40,10 +40,30 @@ cpes:
       switches:
       - PE-4A
       - PE-4B
-      profile: TENANT_A_CORE_L2VLANS
+      profile: TENANT_A_CORE_MULTIHOMED
       port_channel:
         description: EVPN-A-A-PortChannel
         mode: active
         short_esi: 0404:0303:0405
     rack: Undefined
 
+  CPE5_VXLAN:
+    adapters:
+    - endpoint_ports:
+      - Ethernet1
+      switch_ports:
+      - Ethernet3
+      switches:
+      - SPE5
+      profile: TENANT_A_VXLAN
+
+
+  CPE6_VXLAN:
+    adapters:
+    - endpoint_ports:
+      - Ethernet1
+      switch_ports:
+      - Ethernet3
+      switches:
+      - SPE6
+      profile: TENANT_A_VXLAN

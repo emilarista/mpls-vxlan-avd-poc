@@ -284,7 +284,6 @@ interface Ethernet2
    description P2P_LINK_TO_PE-2_Ethernet4
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.28/31
    mpls ip
@@ -300,7 +299,6 @@ interface Ethernet3
    description P2P_LINK_TO_P1-A_Ethernet3
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.5/31
    mpls ip
@@ -316,7 +314,6 @@ interface Ethernet5
    description P2P_LINK_TO_GW2_Ethernet1
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.26/31
    mpls ip
@@ -332,7 +329,6 @@ interface Ethernet6
    description P2P_LINK_TO_P2-B_Ethernet6
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.30/31
    mpls ip
@@ -514,6 +510,7 @@ router isis CORE
 | Route Reflector Client | Yes |
 | Source | Loopback0 |
 | BFD | True |
+| Ebgp multihop | 10 |
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
@@ -532,8 +529,8 @@ router isis CORE
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
-| 100.64.20.12 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
-| 100.64.30.12 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
+| 100.64.20.11 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
+| 100.64.30.11 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 | 100.70.1.11 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 | 100.70.1.12 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 | 100.70.1.13 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
@@ -575,6 +572,7 @@ router bgp 65000
    neighbor MPLS-OVERLAY-PEERS update-source Loopback0
    neighbor MPLS-OVERLAY-PEERS route-reflector-client
    neighbor MPLS-OVERLAY-PEERS bfd
+   neighbor MPLS-OVERLAY-PEERS ebgp-multihop 10
    neighbor MPLS-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor MPLS-OVERLAY-PEERS send-community
    neighbor MPLS-OVERLAY-PEERS maximum-routes 0
@@ -585,10 +583,10 @@ router bgp 65000
    neighbor RR-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor RR-OVERLAY-PEERS send-community
    neighbor RR-OVERLAY-PEERS maximum-routes 0
-   neighbor 100.64.20.12 peer group MPLS-OVERLAY-PEERS
-   neighbor 100.64.20.12 description GW2
-   neighbor 100.64.30.12 peer group MPLS-OVERLAY-PEERS
-   neighbor 100.64.30.12 description GW3
+   neighbor 100.64.20.11 peer group MPLS-OVERLAY-PEERS
+   neighbor 100.64.20.11 description GW2
+   neighbor 100.64.30.11 peer group MPLS-OVERLAY-PEERS
+   neighbor 100.64.30.11 description GW3
    neighbor 100.70.1.11 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.1.11 description PE-1A
    neighbor 100.70.1.12 peer group MPLS-OVERLAY-PEERS

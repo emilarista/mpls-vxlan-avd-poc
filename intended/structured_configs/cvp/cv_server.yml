@@ -1,13 +1,5 @@
 ---
 CVP_DEVICES:
-  - fqdn: LF2
-    parentContainerName: SITE_2_LEAFS
-    configlets:
-      - POC-AVD_LF2
-  - fqdn: LF3
-    parentContainerName: SITE_3_LEAFS
-    configlets:
-      - POC-AVD_LF3
   - fqdn: P1-A
     parentContainerName: SITE1_P
     configlets:
@@ -24,10 +16,6 @@ CVP_DEVICES:
     parentContainerName: SITE2_P
     configlets:
       - POC-AVD_P2-B
-  - fqdn: P2-GW
-    parentContainerName: SITE_2_LEAFS
-    configlets:
-      - POC-AVD_P2-GW
   - fqdn: P3-A
     parentContainerName: SITE3_P
     configlets:
@@ -36,10 +24,6 @@ CVP_DEVICES:
     parentContainerName: SITE3_P
     configlets:
       - POC-AVD_P3-B
-  - fqdn: P3-GW
-    parentContainerName: SITE_3_LEAFS
-    configlets:
-      - POC-AVD_P3-GW
   - fqdn: P4-A
     parentContainerName: SITE4_P
     configlets:
@@ -72,14 +56,6 @@ CVP_DEVICES:
     parentContainerName: SITE4_PE
     configlets:
       - POC-AVD_PE-4B
-  - fqdn: SP2
-    parentContainerName: SITE_2_SPINES
-    configlets:
-      - POC-AVD_SP2
-  - fqdn: SP3
-    parentContainerName: SITE_3_SPINES
-    configlets:
-      - POC-AVD_SP3
 CVP_CONTAINERS:
   ALL_NODES:
     parentContainerName: Tenant
@@ -111,11 +87,7 @@ CVP_CONTAINERS:
     parentContainerName: SITE4
   SITE_2_LEAFS:
     parentContainerName: VXLAN_ISLAND2
-  SITE_2_SPINES:
-    parentContainerName: VXLAN_ISLAND2
   SITE_3_LEAFS:
-    parentContainerName: VXLAN_ISLAND3
-  SITE_3_SPINES:
     parentContainerName: VXLAN_ISLAND3
   VXLAN_ISLAND2:
     parentContainerName: VXLAN_NETWORK

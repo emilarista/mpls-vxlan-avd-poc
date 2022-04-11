@@ -3,7 +3,7 @@ local_users:
   admin:
     privilege: 15
     role: network-admin
-    sha512_password: "$6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw."
+    sha512_password: $6$.AacdhG05IikboCh$6WrVW9Q71w47MZiZI1bPhC7VedadxmhST9MEcsXRs8l6pNwjn.vRmOb0jsffRT8UTiPil4d6UBttiqmu02.pw.
 
   cvpadmin:
     privilege: 15

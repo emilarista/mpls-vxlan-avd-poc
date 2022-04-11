@@ -270,10 +270,23 @@ vlan internal order ascending range 3700 3900
 
 *Inherited from Port-Channel Interface
 
+#### Encapsulation Dot1q Interfaces
+
+| Interface | Description | Type | Vlan ID | Dot1q VLAN Tag |
+| --------- | ----------- | -----| ------- | -------------- |
+| Ethernet3.22 | TENANT_A_SITE_3_L3VPN | l3dot1q | - | 22 |
+
+#### Flexible Encapsulation Interfaces
+
+| Interface | Description | Type | Vlan ID | Client Unmatched | Client Dot1q VLAN | Client Dot1q Outer Tag | Client Dot1q Inner Tag | Network Retain Client Encapsulation | Network Dot1q VLAN | Network Dot1q Outer Tag | Network Dot1q Inner Tag |
+| --------- | ----------- | ---- | ------- | -----------------| ----------------- | ---------------------- | ---------------------- | ----------------------------------- | ------------------ | ----------------------- | ----------------------- |
+| Ethernet3.21 | - | l2dot1q | - | False | 21 | - | - | True | - | - | - |
+
 #### IPv4
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | -----| ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
+| Ethernet3.22 | TENANT_A_SITE_3_L3VPN | l3dot1q | - | 23.23.202.1/24 | TENANT_A_L3VPN | - | false | - | - |
 | Ethernet4 | P2P_LINK_TO_P3-A_Ethernet2 | routed | - | 100.64.48.13/31 | default | 1500 | false | - | - |
 | Ethernet5 | P2P_LINK_TO_P3-B_Ethernet2 | routed | - | 100.64.48.19/31 | default | 1500 | false | - | - |
 
@@ -288,11 +301,26 @@ vlan internal order ascending range 3700 3900
 
 ```eos
 !
+interface Ethernet3
+   no shutdown
+   no switchport
+!
+interface Ethernet3.21
+   no shutdown
+   encapsulation vlan
+      client dot1q 21 network client
+!
+interface Ethernet3.22
+   description TENANT_A_SITE_3_L3VPN
+   no shutdown
+   encapsulation dot1q vlan 22
+   vrf TENANT_A_L3VPN
+   ip address 23.23.202.1/24
+!
 interface Ethernet4
    description P2P_LINK_TO_P3-A_Ethernet2
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.13/31
    mpls ip
@@ -308,7 +336,6 @@ interface Ethernet5
    description P2P_LINK_TO_P3-B_Ethernet2
    no shutdown
    mtu 1500
-   speed 100full
    no switchport
    ip address 100.64.48.19/31
    mpls ip
@@ -387,6 +414,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 | --- | --------------- |
 | default | true |
 | MGMT | false |
+| TENANT_A_L3VPN | true |
 
 ### IP Routing Device Configuration
 
@@ -394,6 +422,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 !
 ip routing
 no ip routing vrf MGMT
+ip routing vrf TENANT_A_L3VPN
 ```
 ## IPv6 Routing
 
@@ -403,6 +432,7 @@ no ip routing vrf MGMT
 | --- | --------------- |
 | default | false |
 | MGMT | false |
+| TENANT_A_L3VPN | false |
 
 ## Static Routes
 
@@ -519,6 +549,18 @@ router isis CORE
 | ------------------------------ | ------------------------------ |
 | mpls | Loopback0 |
 
+### Router BGP VPWS Instances
+
+| Instance | Route-Distinguisher | Both Route-Target | MPLS Control Word | Label Flow | MTU | Pseudowire | Local ID | Remote ID |
+| -------- | ------------------- | ----------------- | ----------------- | -----------| --- | ---------- | -------- | --------- |
+| TENANT_A | 100.70.1.14:1000 | 65000:1000 | False | False | - | TEN_A_site2_site5_eline_vlan_based_21 | 3321 | 2321 |
+
+### Router BGP VRFs
+
+| VRF | Route-Distinguisher | Redistribute |
+| --- | ------------------- | ------------ |
+| TENANT_A_L3VPN | 100.70.1.14:10 | connected |
+
 ### Router BGP Device Configuration
 
 ```eos
@@ -542,6 +584,13 @@ router bgp 65000
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.2 description P2-A
    !
+   vpws TENANT_A
+      rd 100.70.1.14:1000
+      route-target import export evpn 65000:1000
+      !
+      pseudowire TEN_A_site2_site5_eline_vlan_based_21
+         evpn vpws id local 3321 remote 2321
+   !
    address-family evpn
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
       neighbor MPLS-OVERLAY-PEERS activate
@@ -556,6 +605,13 @@ router bgp 65000
    address-family vpn-ipv6
       neighbor MPLS-OVERLAY-PEERS activate
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
+   !
+   vrf TENANT_A_L3VPN
+      rd 100.70.1.14:10
+      route-target import evpn 65000:10
+      route-target export evpn 65000:10
+      router-id 100.70.1.14
+      redistribute connected
 ```
 
 # BFD
@@ -611,12 +667,17 @@ mpls ip
 
 | Patch Name | Enabled | Connector A Type | Connector A Endpoint | Connector B Type | Connector B Endpoint |
 | ---------- | ------- | ---------------- | -------------------- | ---------------- | -------------------- |
+| TEN_A_site2_site5_eline_vlan_based_21 | True | Interface | Ethernet3.21 | Pseudowire | bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_vlan_based_21 |
 
 ## Patch Panel Configuration
 
 ```eos
 !
 patch panel
+   patch TEN_A_site2_site5_eline_vlan_based_21
+      connector 1 interface Ethernet3.21
+      connector 2 pseudowire bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_vlan_based_21
+   !
 ```
 
 # Multicast
@@ -645,12 +706,15 @@ patch panel
 | VRF Name | IP Routing |
 | -------- | ---------- |
 | MGMT | disabled |
+| TENANT_A_L3VPN | enabled |
 
 ## VRF Instances Device Configuration
 
 ```eos
 !
 vrf instance MGMT
+!
+vrf instance TENANT_A_L3VPN
 ```
 
 # Quality Of Service
