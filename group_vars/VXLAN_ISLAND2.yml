@@ -3,19 +3,6 @@ bgp_as: 65001
 
 dc_name: VXLAN_ISLAND2
 
-# Spine Switches
-# spine:
-#   defaults:
-#     platform: vEOS-LAB
-#     loopback_ipv4_pool: 100.64.20.0/24
-#     isis_system_id_prefix: '0000.0020'
-#   nodes:
-#     # Island 2
-#     SP2:
-#       evpn_role: server
-#       id: 1
-#       mgmt_ip: 10.30.30.102/24
-
 l3leaf:
   defaults:
     isis_system_id_prefix: '0000.0021'
@@ -49,6 +36,10 @@ l3leaf:
           mpls_overlay_address_family: evpn
           mpls_underlay: isis-sr
           mpls_remote_as: 65000
+        evpn_l2_dci:
+          enabled: true
+        evpn_l3_dci:
+          enabled: true
       structured_config:
         router_bgp:
           neighbors:

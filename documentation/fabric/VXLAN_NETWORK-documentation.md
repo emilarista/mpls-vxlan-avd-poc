@@ -19,8 +19,8 @@
 | POD | Type | Node | Management IP | Platform | Provisioned in CloudVision |
 | --- | ---- | ---- | ------------- | -------- | -------------------------- |
 | VXLAN_ISLAND2 | l3leaf | GW2 | 172.16.32.222/24 | vEOS-LAB | Not Available |
-| VXLAN_ISLAND3 | l3leaf | GW3 | 172.16.32.219/24 | vEOS-LAB | Not Available |
-| VXLAN_ISLAND3 | l3leaf | SPE5 | 172.16.32.225/24 | vEOS-LAB | Not Available |
+| VXLAN_ISLAND3 | l3leaf | GW3 | 172.16.32.219/24 | vEOS-LAB | Provisioned |
+| VXLAN_ISLAND3 | l3leaf | SPE5 | 172.16.32.225/24 | vEOS-LAB | Provisioned |
 | VXLAN_ISLAND2 | l3leaf | SPE6 | 172.16.32.223/24 | vEOS-LAB | Not Available |
 
 > Provision status is based on Ansible inventory declaration and do not represent real status from CloudVision.

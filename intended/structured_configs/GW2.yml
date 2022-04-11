@@ -28,6 +28,15 @@ router_bgp:
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       remote_as: '65000'
       local_as: '65000'
+    REMOTE-DOMAIN:
+      type: evpn
+      update_source: Loopback0
+      remote_as: '65002'
+      ebgp_multihop: 15
+      bfd: true
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      send_community: all
+      maximum_routes: 0
   address_family_ipv4:
     peer_groups:
       EVPN-OVERLAY-PEERS:
@@ -42,6 +51,13 @@ router_bgp:
         activate: true
         encapsulation: mpls
         next_hop_self_source_interface: Loopback0
+      REMOTE-DOMAIN:
+        activate: true
+        domain_remote: true
+    neighbor_default:
+      next_hop_self_received_evpn_routes:
+        enable: true
+        inter_domain: true
   neighbors:
     100.64.20.12:
       peer_group: EVPN-OVERLAY-PEERS
@@ -52,6 +68,9 @@ router_bgp:
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
       description: P-2A
+    100.64.30.11:
+      peer_group: REMOTE-DOMAIN
+      description: GW3
   vrfs:
     TENANT_A_L3VPN:
       router_id: 100.64.20.11
@@ -69,17 +88,29 @@ router_bgp:
     231:
       tenant: TENANT_A
       rd: 100.64.20.11:10231
+      rd_evpn_domain:
+        domain: remote
+        rd: 100.64.20.11:10231
       route_targets:
         both:
         - 65000:10231
+        import_export_evpn_domains:
+        - domain: remote
+          route_target: 65000:10231
       redistribute_routes:
       - learned
     232:
       tenant: TENANT_A
       rd: 100.64.20.11:10232
+      rd_evpn_domain:
+        domain: remote
+        rd: 100.64.20.11:10232
       route_targets:
         both:
         - 65000:10232
+        import_export_evpn_domains:
+        - domain: remote
+          route_target: 65000:10232
       redistribute_routes:
       - learned
 static_routes:

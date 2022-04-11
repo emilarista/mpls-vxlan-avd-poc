@@ -1,5 +1,9 @@
 ---
 CVP_DEVICES:
+  - fqdn: GW3
+    parentContainerName: SITE_3_LEAFS
+    configlets:
+      - POC-AVD_GW3
   - fqdn: P1-A
     parentContainerName: SITE1_P
     configlets:
@@ -56,6 +60,10 @@ CVP_DEVICES:
     parentContainerName: SITE4_PE
     configlets:
       - POC-AVD_PE-4B
+  - fqdn: SPE5
+    parentContainerName: SITE_3_LEAFS
+    configlets:
+      - POC-AVD_SPE5
 CVP_CONTAINERS:
   ALL_NODES:
     parentContainerName: Tenant
