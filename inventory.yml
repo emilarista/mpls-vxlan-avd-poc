@@ -138,6 +138,9 @@ all:
         SITE_2_LEAFS:
         SITE_3_LEAFS:
 
-    # MPLS_ENDPOINT_CONNECTIONS:
-    #   children:
-    #     PE:
+    ENDPOINT_CONNECTIONS:
+      children:
+        SITE1_PE:
+        SITE2_PE:
+        SITE3_PE:
+        SITE4_PE:

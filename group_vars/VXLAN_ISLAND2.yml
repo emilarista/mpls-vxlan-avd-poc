@@ -1,5 +1,5 @@
 ---
-bgp_as: 65200
+bgp_as: 65001
 
 dc_name: VXLAN_ISLAND2
 

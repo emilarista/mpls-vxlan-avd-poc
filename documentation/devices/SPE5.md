@@ -492,7 +492,7 @@ router isis EVPN_UNDERLAY
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65300|  100.64.30.12 |
+| 65002|  100.64.30.12 |
 
 | BGP Tuning |
 | ---------- |
@@ -509,7 +509,7 @@ router isis EVPN_UNDERLAY
 | Settings | Value |
 | -------- | ----- |
 | Address Family | evpn |
-| Remote AS | 65300 |
+| Remote AS | 65002 |
 | Source | Loopback0 |
 | BFD | True |
 | Send community | all |
@@ -539,7 +539,7 @@ router isis EVPN_UNDERLAY
 
 ```eos
 !
-router bgp 65300
+router bgp 65002
    router-id 100.64.30.12
    no bgp default ipv4-unicast
    distance bgp 20 200 200
@@ -547,7 +547,7 @@ router bgp 65300
    graceful-restart
    maximum-paths 4 ecmp 4
    neighbor EVPN-OVERLAY-PEERS peer group
-   neighbor EVPN-OVERLAY-PEERS remote-as 65300
+   neighbor EVPN-OVERLAY-PEERS remote-as 65002
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS bfd
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==

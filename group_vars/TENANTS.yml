@@ -10,50 +10,49 @@ tenants:
           - vxlan-site2
           - vxlan-site3
     point_to_point_services:
-      # p2p pseudowire, vlan-based, no redundancy, 3 subinterfaces PE-2 to PE-3
-      - name: TEN_A_site2_site5_eline_port_based
+      # p2p pseudowire, vlan-based, 1 subinterface
+      - name: TEN_A_site2_site5_eline_vlan_based
         type: vpws-pseudowire
         subinterfaces:
-          - number: 100
-          - number: 101
-          - number: 102
+          - number: 21
         endpoints:
-          - id: 23
+          - id: 2300
             nodes: ["PE-2"]
             interfaces: ["Ethernet3"]
-          - id: 33
+          - id: 3300
             nodes: ["PE-3"]
             interfaces: ["Ethernet3"]
-# #       # pw with ESI active-active port channel on one side, single interface on other side.
-# #       # multiple subinterfaces will be created, own pw on each, IDs generated from endpoint.id + subif number.
-#       - name: TEN_A_site3_site5_eline_vlan_based
-#         type: vpws-pseudowire
-#         subinterfaces:
-#           - number: 1000
-#           - number: 1001
-#           - number: 1002
-#           - number: 1003
-#             # client_encapsulation:
-#             #   dot1q_vlan: 1234
-#             # network_encapsulation:
-#             #   retain_client: true
-#           - number: 10
-#             # client_encapsulation:
-#             #   match_any: true
-#         endpoints:
-#           - id: 10000
-#             nodes: ["pe1", "pe2"]
-#             interfaces: ["Ethernet5", "Ethernet5"]
-#             # error_correction:
-#             #   fire_code: true
-#             port_channel:
-#               mode: active
-#               short_esi: 0303:0202:0101
-#           - id: 58000
-#             port_channel:
-#               mode: active
-#             nodes: ["pe5", "pe5"]
-#             interfaces: ["Ethernet8", "Ethernet9"]
+    vrfs:
+      TENANT_A_L3VPN:
+        vrf_id: 10
+        address_families:
+          - evpn
+        l3_interfaces:
+          - description: TENANT_A_SITE_2_L3VPN
+            enabled: true
+            interfaces:
+            - Ethernet3.22
+            ip_addresses:
+            - 23.23.102.1/24
+            nodes:
+            - PE-2
+          - description: TENANT_A_SITE_3_L3VPN
+            enabled: true
+            interfaces:
+            - Ethernet3.22
+            ip_addresses:
+            - 23.23.202.1/24
+            nodes:
+            - PE-3
+        svis:
+          144:
+            enabled: true
+            name: TENANT_A_MH_L2SERVICE
+            ip_address_virtual: 14.14.200.1/24
+            tags:
+              - site1
+              - site4
+
 #   TENANT_B:
 #     pseudowire_rt_base: 2000
 #     mac_vrf_id_base: 20000

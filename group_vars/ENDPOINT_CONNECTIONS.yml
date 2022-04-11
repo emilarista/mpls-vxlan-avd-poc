@@ -4,12 +4,8 @@
 port_profiles:
   TENANT_A_CORE_L2VLANS:
     mode: trunk
-    vlans: "10,11"
+    vlans: "144"
     spanning_tree_portfast: edge
-  # TENANT_B_2020:
-  #   mode: trunk
-  #   vlans: 2020
-  #   spanning_tree_portfast: edge
 cpes:
   CPE1_SITE1_DUALHOMED:
     adapters:

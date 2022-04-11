@@ -524,11 +524,11 @@ router isis EVPN_UNDERLAY
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65300|  100.64.30.11 |
+| 65002|  100.64.30.11 |
 
 | BGP AS | Cluster ID |
 | ------ | --------- |
-| 65300|  100.64.30.11 |
+| 65002|  100.64.30.11 |
 
 | BGP Tuning |
 | ---------- |
@@ -545,7 +545,7 @@ router isis EVPN_UNDERLAY
 | Settings | Value |
 | -------- | ----- |
 | Address Family | evpn |
-| Remote AS | 65300 |
+| Remote AS | 65002 |
 | Route Reflector Client | Yes |
 | Source | Loopback0 |
 | BFD | True |
@@ -592,7 +592,7 @@ router isis EVPN_UNDERLAY
 
 ```eos
 !
-router bgp 65300
+router bgp 65002
    router-id 100.64.30.11
    bgp cluster-id 100.64.30.11
    no bgp default ipv4-unicast
@@ -601,7 +601,7 @@ router bgp 65300
    graceful-restart
    maximum-paths 4 ecmp 4
    neighbor EVPN-OVERLAY-PEERS peer group
-   neighbor EVPN-OVERLAY-PEERS remote-as 65300
+   neighbor EVPN-OVERLAY-PEERS remote-as 65002
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
    neighbor EVPN-OVERLAY-PEERS route-reflector-client
    neighbor EVPN-OVERLAY-PEERS bfd

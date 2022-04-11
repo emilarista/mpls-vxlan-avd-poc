@@ -1,5 +1,5 @@
 router_bgp:
-  as: '65200'
+  as: '65001'
   router_id: 100.64.20.12
   bgp_defaults:
   - no bgp default ipv4-unicast
@@ -11,7 +11,7 @@ router_bgp:
     EVPN-OVERLAY-PEERS:
       type: evpn
       update_source: Loopback0
-      remote_as: '65200'
+      remote_as: '65001'
       bfd: true
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       send_community: all
