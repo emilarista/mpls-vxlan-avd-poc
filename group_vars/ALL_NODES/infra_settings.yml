@@ -10,3 +10,9 @@ bfd_multihop:
   interval: 5000
   min_rx: 5000
   multiplier: 3
+
+# RD/RT Format
+overlay_rd_type:
+  admin_subfield: overlay_loopback
+overlay_rt_type:
+  admin_subfield: 65000

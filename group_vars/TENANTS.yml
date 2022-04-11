@@ -3,12 +3,12 @@ tenants:
   TENANT_A:
     mac_vrf_id_base: 10000
     pseudowire_rt_base: 1000
-    l2vlans:
-      10:
-        name: TENANT_A_L2_SERVICE_10
-        tags:
-          - vxlan-site2
-          - vxlan-site3
+    # l2vlans:
+    #   10:
+    #     name: TENANT_A_L2_SERVICE_10
+    #     tags:
+    #       - vxlan-site5
+    #       - vxlan-site6
     point_to_point_services:
       # p2p pseudowire, vlan-based, 1 subinterface
       - name: TEN_A_site2_site5_eline_vlan_based
@@ -52,6 +52,20 @@ tenants:
             tags:
               - site1
               - site4
+          231:
+            enabled: true
+            name: TENANT_A_VXLAN_231
+            ip_address_virtual: 23.23.10.1/24
+            tags:
+              - vxlan-site5
+              - vxlan-site6
+          232:
+            enabled: true
+            name: TENANT_A_VXLAN_232
+            ip_address_virtual: 23.23.20.1/24
+            tags:
+              - vxlan-site5
+              - vxlan-site6
 
 #   TENANT_B:
 #     pseudowire_rt_base: 2000

@@ -38,7 +38,7 @@ l3leaf:
     GW2:
       filter:
         tenants: [ all ]
-        tags: [ vxlan-site2 ]
+        tags: [ vxlan-site6 ]
       node_sid_base: 2000
       # mpls_route_reflectors: [ P-1A, P-2A ]
       # mpls_overlay_role: client
@@ -66,7 +66,7 @@ l3leaf:
     SPE6:
       filter:
         tenants: [ all ]
-        tags: [ vxlan-site2 ]
+        tags: [ vxlan-site6 ]
       uplink_switches: [ GW2 ]
       evpn_route_servers: [ GW2 ]
       nodes:

@@ -52,13 +52,34 @@ router_bgp:
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
       description: P-2A
+  vrfs:
+    TENANT_A_L3VPN:
+      router_id: 100.64.20.11
+      rd: 100.64.20.11:10
+      route_targets:
+        import:
+          evpn:
+          - '65000:10'
+        export:
+          evpn:
+          - '65000:10'
+      redistribute_routes:
+      - connected
   vlans:
-    10:
+    231:
       tenant: TENANT_A
-      rd: 100.64.20.11:10010
+      rd: 100.64.20.11:10231
       route_targets:
         both:
-        - 10010:10010
+        - 65000:10231
+      redistribute_routes:
+      - learned
+    232:
+      tenant: TENANT_A
+      rd: 100.64.20.11:10232
+      route_targets:
+        both:
+        - 65000:10232
       redistribute_routes:
       - learned
 static_routes:
@@ -99,6 +120,9 @@ local_users:
 vrfs:
   MGMT:
     ip_routing: false
+  TENANT_A_L3VPN:
+    tenant: TENANT_A
+    ip_routing: true
 management_interfaces:
   Management1:
     description: oob_management
@@ -215,12 +239,34 @@ ip_extcommunity_lists:
   - type: permit
     extcommunities: soo 100.64.21.11:1
 vlans:
-  10:
+  231:
     tenant: TENANT_A
-    name: TENANT_A_L2_SERVICE_10
+    name: TENANT_A_VXLAN_231
+  232:
+    tenant: TENANT_A
+    name: TENANT_A_VXLAN_232
 ip_igmp_snooping:
   globally_enabled: true
 ip_virtual_router_mac_address: 00:1c:73:00:dc:00
+vlan_interfaces:
+  Vlan231:
+    tenant: TENANT_A
+    tags:
+    - vxlan-site5
+    - vxlan-site6
+    description: TENANT_A_VXLAN_231
+    shutdown: false
+    vrf: TENANT_A_L3VPN
+    ip_address_virtual: 23.23.10.1/24
+  Vlan232:
+    tenant: TENANT_A
+    tags:
+    - vxlan-site5
+    - vxlan-site6
+    description: TENANT_A_VXLAN_232
+    shutdown: false
+    vrf: TENANT_A_L3VPN
+    ip_address_virtual: 23.23.20.1/24
 vxlan_interface:
   Vxlan1:
     description: GW2_VTEP
@@ -228,5 +274,10 @@ vxlan_interface:
       source_interface: Loopback1
       udp_port: 4789
       vlans:
-        10:
-          vni: 10010
+        231:
+          vni: 10231
+        232:
+          vni: 10232
+      vrfs:
+        TENANT_A_L3VPN:
+          vni: 10

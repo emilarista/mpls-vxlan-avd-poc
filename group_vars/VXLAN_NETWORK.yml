@@ -23,3 +23,7 @@ p2p_uplinks_mtu: 1500
 custom_structured_configuration_router_isis:
   advertise:
     passive_only: true
+
+connected_endpoints_keys:
+  cpes:
+    type: cpe

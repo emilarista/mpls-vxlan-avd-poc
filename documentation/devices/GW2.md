@@ -27,6 +27,7 @@
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
+  - [VLAN Interfaces](#vlan-interfaces)
   - [VXLAN Interface](#vxlan-interface)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
@@ -268,14 +269,18 @@ vlan internal order ascending range 3700 3900
 
 | VLAN ID | Name | Trunk Groups |
 | ------- | ---- | ------------ |
-| 10 | TENANT_A_L2_SERVICE_10 | - |
+| 231 | TENANT_A_VXLAN_231 | - |
+| 232 | TENANT_A_VXLAN_232 | - |
 
 ## VLANs Device Configuration
 
 ```eos
 !
-vlan 10
-   name TENANT_A_L2_SERVICE_10
+vlan 231
+   name TENANT_A_VXLAN_231
+!
+vlan 232
+   name TENANT_A_VXLAN_232
 ```
 
 # Interfaces
@@ -381,6 +386,40 @@ interface Loopback1
    isis passive
 ```
 
+## VLAN Interfaces
+
+### VLAN Interfaces Summary
+
+| Interface | Description | VRF |  MTU | Shutdown |
+| --------- | ----------- | --- | ---- | -------- |
+| Vlan231 | TENANT_A_VXLAN_231 | TENANT_A_L3VPN | - | false |
+| Vlan232 | TENANT_A_VXLAN_232 | TENANT_A_L3VPN | - | false |
+
+#### IPv4
+
+| Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
+| --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
+| Vlan231 |  TENANT_A_L3VPN  |  -  |  23.23.10.1/24  |  -  |  -  |  -  |  -  |
+| Vlan232 |  TENANT_A_L3VPN  |  -  |  23.23.20.1/24  |  -  |  -  |  -  |  -  |
+
+
+### VLAN Interfaces Device Configuration
+
+```eos
+!
+interface Vlan231
+   description TENANT_A_VXLAN_231
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 23.23.10.1/24
+!
+interface Vlan232
+   description TENANT_A_VXLAN_232
+   no shutdown
+   vrf TENANT_A_L3VPN
+   ip address virtual 23.23.20.1/24
+```
+
 ## VXLAN Interface
 
 ### VXLAN Interface Summary
@@ -394,7 +433,14 @@ interface Loopback1
 
 | VLAN | VNI | Flood List | Multicast Group |
 | ---- | --- | ---------- | --------------- |
-| 10 | 10010 | - | - |
+| 231 | 10231 | - | - |
+| 232 | 10232 | - | - |
+
+#### VRF to VNI and Multicast Group Mappings
+
+| VRF | VNI | Multicast Group |
+| ---- | --- | --------------- |
+| TENANT_A_L3VPN | 10 | - |
 
 ### VXLAN Interface Device Configuration
 
@@ -404,7 +450,9 @@ interface Vxlan1
    description GW2_VTEP
    vxlan source-interface Loopback1
    vxlan udp-port 4789
-   vxlan vlan 10 vni 10010
+   vxlan vlan 231 vni 10231
+   vxlan vlan 232 vni 10232
+   vxlan vrf TENANT_A_L3VPN vni 10
 ```
 
 # Routing
@@ -438,6 +486,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 | --- | --------------- |
 | default | true |
 | MGMT | false |
+| TENANT_A_L3VPN | true |
 
 ### IP Routing Device Configuration
 
@@ -445,6 +494,7 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 !
 ip routing
 no ip routing vrf MGMT
+ip routing vrf TENANT_A_L3VPN
 ```
 ## IPv6 Routing
 
@@ -454,6 +504,7 @@ no ip routing vrf MGMT
 | --- | --------------- |
 | default | false |
 | MGMT | false |
+| TENANT_A_L3VPN | false |
 
 ## Static Routes
 
@@ -586,7 +637,14 @@ router isis EVPN_UNDERLAY
 
 | VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
 | ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
-| 10 | 100.64.20.11:10010 | 10010:10010 | - | - | learned |
+| 231 | 100.64.20.11:10231 | 65000:10231 | - | - | learned |
+| 232 | 100.64.20.11:10232 | 65000:10232 | - | - | learned |
+
+### Router BGP VRFs
+
+| VRF | Route-Distinguisher | Redistribute |
+| --- | ------------------- | ------------ |
+| TENANT_A_L3VPN | 100.64.20.11:10 | connected |
 
 ### Router BGP Device Configuration
 
@@ -624,9 +682,14 @@ router bgp 65001
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.2 description P-2A
    !
-   vlan 10
-      rd 100.64.20.11:10010
-      route-target both 10010:10010
+   vlan 231
+      rd 100.64.20.11:10231
+      route-target both 65000:10231
+      redistribute learned
+   !
+   vlan 232
+      rd 100.64.20.11:10232
+      route-target both 65000:10232
       redistribute learned
    !
    address-family evpn
@@ -638,6 +701,13 @@ router bgp 65001
    !
    address-family ipv4
       no neighbor EVPN-OVERLAY-PEERS activate
+   !
+   vrf TENANT_A_L3VPN
+      rd 100.64.20.11:10
+      route-target import evpn 65000:10
+      route-target export evpn 65000:10
+      router-id 100.64.20.11
+      redistribute connected
 ```
 
 # BFD
@@ -757,12 +827,15 @@ ip extcommunity-list ECL-EVPN-SOO permit soo 100.64.21.11:1
 | VRF Name | IP Routing |
 | -------- | ---------- |
 | MGMT | disabled |
+| TENANT_A_L3VPN | enabled |
 
 ## VRF Instances Device Configuration
 
 ```eos
 !
 vrf instance MGMT
+!
+vrf instance TENANT_A_L3VPN
 ```
 
 # Quality Of Service
