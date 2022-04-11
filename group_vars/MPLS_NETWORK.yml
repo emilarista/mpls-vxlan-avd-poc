@@ -86,8 +86,8 @@ pe:
     SITE1:
       spanning_tree_root_super: true
       filter:
-        tenants: [all]
-        tags: [site1]
+        tenants: [ all ]
+        tags: [ site1 ]
       nodes:
         PE-1A:
           id: 1
@@ -98,8 +98,8 @@ pe:
 
     SITE2:
       filter:
-        tenants: [all]
-        tags: [site2]
+        tenants: [ all ]
+        tags: [ site2 ]
       nodes:
         PE-2:
           id: 3
@@ -107,8 +107,8 @@ pe:
 
     SITE3:
       filter:
-        tenants: [all]
-        tags: [site3]
+        tenants: [ all ]
+        tags: [ site3 ]
       nodes:
         PE-3:
           id: 4
@@ -116,8 +116,8 @@ pe:
 
     SITE4:
       filter:
-        tenants: [all]
-        tags: [site4]
+        tenants: [ all ]
+        tags: [ site4 ]
       spanning_tree_root_super: true
       nodes:
         PE-4A:
@@ -144,14 +144,16 @@ rr:
   node_groups:
     P1-2:
       bgp_cluster_id: 12.12.12.12
-      # evpn_gw:
       structured_config:
         router_bgp:
+          peer_groups:
+            MPLS-OVERLAY-PEERS:
+              ebgp_multihop: 10
           neighbors:
-            100.64.20.12:
+            100.64.20.11:
               peer_group: MPLS-OVERLAY-PEERS
               description: GW2
-            100.64.30.12:
+            100.64.30.11:
               peer_group: MPLS-OVERLAY-PEERS
               description: GW3
       nodes:

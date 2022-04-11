@@ -21,6 +21,9 @@
 - [Internal VLAN Allocation Policy](#internal-vlan-allocation-policy)
   - [Internal VLAN Allocation Policy Summary](#internal-vlan-allocation-policy-summary)
   - [Internal VLAN Allocation Policy Configuration](#internal-vlan-allocation-policy-configuration)
+- [VLANs](#vlans)
+  - [VLANs Summary](#vlans-summary)
+  - [VLANs Device Configuration](#vlans-device-configuration)
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
@@ -256,6 +259,22 @@ spanning-tree mst 0 priority 4096
 vlan internal order ascending range 3700 3900
 ```
 
+# VLANs
+
+## VLANs Summary
+
+| VLAN ID | Name | Trunk Groups |
+| ------- | ---- | ------------ |
+| 10 | TENANT_A_L2_SERVICE_10 | - |
+
+## VLANs Device Configuration
+
+```eos
+!
+vlan 10
+   name TENANT_A_L2_SERVICE_10
+```
+
 # Interfaces
 
 ## Ethernet Interfaces
@@ -349,6 +368,12 @@ interface Loopback1
 | Source Interface | Loopback1 |
 | UDP port | 4789 |
 
+#### VLAN to VNI, Flood List and Multicast Group Mappings
+
+| VLAN | VNI | Flood List | Multicast Group |
+| ---- | --- | ---------- | --------------- |
+| 10 | 10010 | - | - |
+
 ### VXLAN Interface Device Configuration
 
 ```eos
@@ -357,6 +382,7 @@ interface Vxlan1
    description SPE6_VTEP
    vxlan source-interface Loopback1
    vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
 ```
 
 # Routing
@@ -434,6 +460,7 @@ ip route vrf MGMT 0.0.0.0/0 10.83.28.1
 | Address Family | ipv4 unicast |
 | Router-ID | 100.64.20.12 |
 | Log Adjacency Changes | True |
+| Advertise Passive-only | True |
 
 ### ISIS Interfaces Summary
 
@@ -452,6 +479,7 @@ router isis EVPN_UNDERLAY
    is-type level-2
    router-id ipv4 100.64.20.12
    log-adjacency-changes
+   advertise passive-only
    !
    address-family ipv4 unicast
       maximum-paths 4
@@ -501,6 +529,12 @@ router isis EVPN_UNDERLAY
 | ---------- | -------- |
 | EVPN-OVERLAY-PEERS | True |
 
+### Router BGP VLANs
+
+| VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
+| ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
+| 10 | 100.64.20.12:10010 | 10010:10010 | - | - | learned |
+
 ### Router BGP Device Configuration
 
 ```eos
@@ -521,6 +555,11 @@ router bgp 65200
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
    neighbor 100.64.20.11 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.20.11 description GW2
+   !
+   vlan 10
+      rd 100.64.20.12:10010
+      route-target both 10010:10010
+      redistribute learned
    !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in

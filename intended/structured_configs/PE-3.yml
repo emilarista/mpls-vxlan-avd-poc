@@ -46,6 +46,21 @@ router_bgp:
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
       description: P2-A
+  vpws:
+  - name: TENANT_A
+    rd: 100.70.1.14:1000
+    route_targets:
+      import_export: 65000:1000
+    pseudowires:
+    - name: TEN_A_site2_site5_eline_port_based_100
+      id_local: 133
+      id_remote: 123
+    - name: TEN_A_site2_site5_eline_port_based_101
+      id_local: 134
+      id_remote: 124
+    - name: TEN_A_site2_site5_eline_port_based_102
+      id_local: 135
+      id_remote: 125
 static_routes:
 - vrf: MGMT
   destination_address_prefix: 0.0.0.0/0
@@ -166,12 +181,74 @@ ethernet_interfaces:
     isis_authentication_key: $1c$sTNAlR6rKSw=
     mpls:
       ip: true
+  Ethernet3.100:
+    type: l2dot1q
+    encapsulation_vlan:
+      client:
+        dot1q:
+          vlan: 100
+      network:
+        client: true
+    peer_type: l3_interface
+    shutdown: false
+  Ethernet3.101:
+    type: l2dot1q
+    encapsulation_vlan:
+      client:
+        dot1q:
+          vlan: 101
+      network:
+        client: true
+    peer_type: l3_interface
+    shutdown: false
+  Ethernet3.102:
+    type: l2dot1q
+    encapsulation_vlan:
+      client:
+        dot1q:
+          vlan: 102
+      network:
+        client: true
+    peer_type: l3_interface
+    shutdown: false
+  Ethernet3:
+    type: routed
+    peer_type: l3_interface
+    shutdown: false
 router_bfd:
   multihop:
     interval: 5000
     min_rx: 5000
     multiplier: 3
-patch_panel: {}
+patch_panel:
+  patches:
+  - name: TEN_A_site2_site5_eline_port_based_100
+    enabled: true
+    connectors:
+    - id: 1
+      type: interface
+      endpoint: Ethernet3.100
+    - id: 2
+      type: pseudowire
+      endpoint: bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_100
+  - name: TEN_A_site2_site5_eline_port_based_101
+    enabled: true
+    connectors:
+    - id: 1
+      type: interface
+      endpoint: Ethernet3.101
+    - id: 2
+      type: pseudowire
+      endpoint: bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_101
+  - name: TEN_A_site2_site5_eline_port_based_102
+    enabled: true
+    connectors:
+    - id: 1
+      type: interface
+      endpoint: Ethernet3.102
+    - id: 2
+      type: pseudowire
+      endpoint: bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_102
 ip_igmp_snooping:
   globally_enabled: true
 ip_virtual_router_mac_address: 00:1c:73:00:dc:00

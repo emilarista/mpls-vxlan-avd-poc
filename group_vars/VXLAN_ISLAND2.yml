@@ -36,6 +36,9 @@ l3leaf:
       - 'graceful-restart'
   node_groups:
     GW2:
+      filter:
+        tenants: [ all ]
+        tags: [ vxlan-site2 ]
       node_sid_base: 2000
       # mpls_route_reflectors: [ P-1A, P-2A ]
       # mpls_overlay_role: client
@@ -45,6 +48,7 @@ l3leaf:
           enabled: true
           mpls_overlay_address_family: evpn
           mpls_underlay: isis-sr
+          mpls_remote_as: 65000
       structured_config:
         router_bgp:
           neighbors:
@@ -60,6 +64,9 @@ l3leaf:
           mgmt_ip: 10.83.30.248/22
 
     SPE6:
+      filter:
+        tenants: [ all ]
+        tags: [ vxlan-site2 ]
       uplink_switches: [ GW2 ]
       evpn_route_servers: [ GW2 ]
       nodes:

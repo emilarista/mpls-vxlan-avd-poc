@@ -31,8 +31,16 @@ p,P4-B,Ethernet3,p,P3-B,Ethernet3
 p,P4-B,Ethernet6,p,P4-A,Ethernet6
 pe,PE-1A,Ethernet2,rr,P1-A,Ethernet2
 pe,PE-1B,Ethernet2,p,P1-B,Ethernet2
+pe,PE-2,Ethernet3,l3_interface,,
+pe,PE-2,Ethernet3.100,l3_interface,,
+pe,PE-2,Ethernet3.101,l3_interface,,
+pe,PE-2,Ethernet3.102,l3_interface,,
 pe,PE-2,Ethernet4,rr,P2-A,Ethernet2
 pe,PE-2,Ethernet5,p,P2-B,Ethernet2
+pe,PE-3,Ethernet3,l3_interface,,
+pe,PE-3,Ethernet3.100,l3_interface,,
+pe,PE-3,Ethernet3.101,l3_interface,,
+pe,PE-3,Ethernet3.102,l3_interface,,
 pe,PE-3,Ethernet4,p,P3-A,Ethernet2
 pe,PE-3,Ethernet5,p,P3-B,Ethernet2
 pe,PE-4A,Ethernet2,p,P4-A,Ethernet2

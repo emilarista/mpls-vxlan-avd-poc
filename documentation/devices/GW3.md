@@ -21,6 +21,9 @@
 - [Internal VLAN Allocation Policy](#internal-vlan-allocation-policy)
   - [Internal VLAN Allocation Policy Summary](#internal-vlan-allocation-policy-summary)
   - [Internal VLAN Allocation Policy Configuration](#internal-vlan-allocation-policy-configuration)
+- [VLANs](#vlans)
+  - [VLANs Summary](#vlans-summary)
+  - [VLANs Device Configuration](#vlans-device-configuration)
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
@@ -259,6 +262,22 @@ spanning-tree mst 0 priority 4096
 vlan internal order ascending range 3700 3900
 ```
 
+# VLANs
+
+## VLANs Summary
+
+| VLAN ID | Name | Trunk Groups |
+| ------- | ---- | ------------ |
+| 10 | TENANT_A_L2_SERVICE_10 | - |
+
+## VLANs Device Configuration
+
+```eos
+!
+vlan 10
+   name TENANT_A_L2_SERVICE_10
+```
+
 # Interfaces
 
 ## Ethernet Interfaces
@@ -371,6 +390,12 @@ interface Loopback1
 | Source Interface | Loopback1 |
 | UDP port | 4789 |
 
+#### VLAN to VNI, Flood List and Multicast Group Mappings
+
+| VLAN | VNI | Flood List | Multicast Group |
+| ---- | --- | ---------- | --------------- |
+| 10 | 10010 | - | - |
+
 ### VXLAN Interface Device Configuration
 
 ```eos
@@ -379,6 +404,7 @@ interface Vxlan1
    description GW3_VTEP
    vxlan source-interface Loopback1
    vxlan udp-port 4789
+   vxlan vlan 10 vni 10010
 ```
 
 # Routing
@@ -456,6 +482,7 @@ ip route vrf MGMT 0.0.0.0/0 10.83.28.1
 | Address Family | ipv4 unicast |
 | Router-ID | 100.64.30.11 |
 | Log Adjacency Changes | True |
+| Advertise Passive-only | True |
 | SR MPLS Enabled | True |
 
 ### ISIS Interfaces Summary
@@ -482,6 +509,7 @@ router isis EVPN_UNDERLAY
    is-type level-2
    router-id ipv4 100.64.30.11
    log-adjacency-changes
+   advertise passive-only
    !
    address-family ipv4 unicast
       maximum-paths 4
@@ -524,13 +552,26 @@ router isis EVPN_UNDERLAY
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
+#### MPLS-OVERLAY-PEERS
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | mpls |
+| Remote AS | 65000 |
+| Local AS | 65000 |
+| Source | Loopback0 |
+| BFD | True |
+| Ebgp multihop | 10 |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
+
 ### BGP Neighbors
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
 | 100.64.30.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
-| 100.70.2.1 | - | default | - | - | - | - | - | - |
-| 100.70.2.2 | - | default | - | - | - | - | - | - |
+| 100.70.2.1 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
+| 100.70.2.2 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 
 ### Router BGP EVPN Address Family
 
@@ -539,6 +580,13 @@ router isis EVPN_UNDERLAY
 | Peer Group | Activate |
 | ---------- | -------- |
 | EVPN-OVERLAY-PEERS | True |
+| MPLS-OVERLAY-PEERS | True |
+
+### Router BGP VLANs
+
+| VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
+| ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
+| 10 | 100.64.30.11:10010 | 10010:10010 | - | - | learned |
 
 ### Router BGP Device Configuration
 
@@ -560,6 +608,15 @@ router bgp 65300
    neighbor EVPN-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor EVPN-OVERLAY-PEERS send-community
    neighbor EVPN-OVERLAY-PEERS maximum-routes 0
+   neighbor MPLS-OVERLAY-PEERS peer group
+   neighbor MPLS-OVERLAY-PEERS remote-as 65000
+   neighbor MPLS-OVERLAY-PEERS local-as 65000 no-prepend replace-as
+   neighbor MPLS-OVERLAY-PEERS update-source Loopback0
+   neighbor MPLS-OVERLAY-PEERS bfd
+   neighbor MPLS-OVERLAY-PEERS ebgp-multihop 10
+   neighbor MPLS-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
+   neighbor MPLS-OVERLAY-PEERS send-community
+   neighbor MPLS-OVERLAY-PEERS maximum-routes 0
    neighbor 100.64.30.12 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.30.12 description SPE5
    neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
@@ -567,10 +624,17 @@ router bgp 65300
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.2 description P-2A
    !
+   vlan 10
+      rd 100.64.30.11:10010
+      route-target both 10010:10010
+      redistribute learned
+   !
    address-family evpn
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
+      neighbor MPLS-OVERLAY-PEERS activate
+      neighbor MPLS-OVERLAY-PEERS encapsulation mpls next-hop-self source-interface Loopback0
    !
    address-family ipv4
       no neighbor EVPN-OVERLAY-PEERS activate

@@ -272,6 +272,14 @@ vlan internal order ascending range 3700 3900
 
 *Inherited from Port-Channel Interface
 
+#### Flexible Encapsulation Interfaces
+
+| Interface | Description | Type | Vlan ID | Client Unmatched | Client Dot1q VLAN | Client Dot1q Outer Tag | Client Dot1q Inner Tag | Network Retain Client Encapsulation | Network Dot1q VLAN | Network Dot1q Outer Tag | Network Dot1q Inner Tag |
+| --------- | ----------- | ---- | ------- | -----------------| ----------------- | ---------------------- | ---------------------- | ----------------------------------- | ------------------ | ----------------------- | ----------------------- |
+| Ethernet3.100 | - | l2dot1q | - | False | 100 | - | - | True | - | - | - |
+| Ethernet3.101 | - | l2dot1q | - | False | 101 | - | - | True | - | - | - |
+| Ethernet3.102 | - | l2dot1q | - | False | 102 | - | - | True | - | - | - |
+
 #### IPv4
 
 | Interface | Description | Type | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
@@ -289,6 +297,25 @@ vlan internal order ascending range 3700 3900
 ### Ethernet Interfaces Device Configuration
 
 ```eos
+!
+interface Ethernet3
+   no shutdown
+   no switchport
+!
+interface Ethernet3.100
+   no shutdown
+   encapsulation vlan
+      client dot1q 100 network client
+!
+interface Ethernet3.101
+   no shutdown
+   encapsulation vlan
+      client dot1q 101 network client
+!
+interface Ethernet3.102
+   no shutdown
+   encapsulation vlan
+      client dot1q 102 network client
 !
 interface Ethernet4
    description P2P_LINK_TO_P2-A_Ethernet2
@@ -519,6 +546,14 @@ router isis CORE
 | ------------------------------ | ------------------------------ |
 | mpls | Loopback0 |
 
+### Router BGP VPWS Instances
+
+| Instance | Route-Distinguisher | Both Route-Target | MPLS Control Word | Label Flow | MTU | Pseudowire | Local ID | Remote ID |
+| -------- | ------------------- | ----------------- | ----------------- | -----------| --- | ---------- | -------- | --------- |
+| TENANT_A | 100.70.1.13:1000 | 65000:1000 | False | False | - | TEN_A_site2_site5_eline_port_based_100 | 123 | 133 |
+| TENANT_A | 100.70.1.13:1000 | 65000:1000 | False | False | - | TEN_A_site2_site5_eline_port_based_101 | 124 | 134 |
+| TENANT_A | 100.70.1.13:1000 | 65000:1000 | False | False | - | TEN_A_site2_site5_eline_port_based_102 | 125 | 135 |
+
 ### Router BGP Device Configuration
 
 ```eos
@@ -541,6 +576,19 @@ router bgp 65000
    neighbor 100.70.2.1 description P1-A
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.2 description P2-A
+   !
+   vpws TENANT_A
+      rd 100.70.1.13:1000
+      route-target import export evpn 65000:1000
+      !
+      pseudowire TEN_A_site2_site5_eline_port_based_100
+         evpn vpws id local 123 remote 133
+      !
+      pseudowire TEN_A_site2_site5_eline_port_based_101
+         evpn vpws id local 124 remote 134
+      !
+      pseudowire TEN_A_site2_site5_eline_port_based_102
+         evpn vpws id local 125 remote 135
    !
    address-family evpn
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
@@ -611,12 +659,27 @@ mpls ip
 
 | Patch Name | Enabled | Connector A Type | Connector A Endpoint | Connector B Type | Connector B Endpoint |
 | ---------- | ------- | ---------------- | -------------------- | ---------------- | -------------------- |
+| TEN_A_site2_site5_eline_port_based_100 | True | Interface | Ethernet3.100 | Pseudowire | bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_100 |
+| TEN_A_site2_site5_eline_port_based_101 | True | Interface | Ethernet3.101 | Pseudowire | bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_101 |
+| TEN_A_site2_site5_eline_port_based_102 | True | Interface | Ethernet3.102 | Pseudowire | bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_102 |
 
 ## Patch Panel Configuration
 
 ```eos
 !
 patch panel
+   patch TEN_A_site2_site5_eline_port_based_100
+      connector 1 interface Ethernet3.100
+      connector 2 pseudowire bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_100
+   !
+   patch TEN_A_site2_site5_eline_port_based_101
+      connector 1 interface Ethernet3.101
+      connector 2 pseudowire bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_101
+   !
+   patch TEN_A_site2_site5_eline_port_based_102
+      connector 1 interface Ethernet3.102
+      connector 2 pseudowire bgp vpws TENANT_A pseudowire TEN_A_site2_site5_eline_port_based_102
+   !
 ```
 
 # Multicast
