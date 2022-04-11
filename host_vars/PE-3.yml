@@ -1,0 +1,30 @@
+---
+custom_structured_configuration_ip_extcommunity_lists:
+  L3VPN:
+    - type: permit
+      extcommunities: "65000:10"
+
+custom_structured_configuration_route_maps:
+  SRTE1:
+    sequence_numbers:
+      10:
+        type: permit
+        description: COLOR_L3VPN_ROUTES
+        match:
+          - "extcommunity L3VPN"
+        set:
+          - "extcommunity color 103 additive"
+
+custom_structured_configuration_router_traffic_engineering:
+  segment_routing:
+    colored_tunnel_rib: true
+    policy_endpoints:
+      - address: 100.70.1.13
+        colors:
+          - value: 103
+            binding_sid: 1035103
+            description: "L3EVPN to PE2"
+            path_group:
+              - preference: 1
+                segment_list:
+                  - label_stack: "900306 900308 900305"

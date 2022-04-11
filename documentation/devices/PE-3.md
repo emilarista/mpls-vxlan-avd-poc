@@ -30,6 +30,7 @@
   - [IP Routing](#ip-routing)
   - [IPv6 Routing](#ipv6-routing)
   - [Static Routes](#static-routes)
+  - [Router Traffic-Engineering](#router-traffic-engineering)
   - [Router ISIS](#router-isis)
   - [Router BGP](#router-bgp)
 - [BFD](#bfd)
@@ -43,6 +44,8 @@
 - [Multicast](#multicast)
   - [IP IGMP Snooping](#ip-igmp-snooping)
 - [Filters](#filters)
+  - [Route-maps](#route-maps)
+  - [IP Extended Community Lists](#ip-extended-community-lists)
 - [ACL](#acl)
 - [VRF Instances](#vrf-instances)
   - [VRF Instances Summary](#vrf-instances-summary)
@@ -449,6 +452,36 @@ ip routing vrf TENANT_A_L3VPN
 ip route vrf MGMT 0.0.0.0/0 172.16.32.1
 ```
 
+## Router Traffic-Engineering
+
+### Segment Routing Summary
+
+- SRTE is enabled.
+
+- system-colored-tunnel-rib is enabled
+
+#### SRTE Policies
+
+| Endpoint | Color | Preference | Name | Description | Label Stack | Index  | Weight | Explicit Null |
+| -------- | ----- | ---------- | ---- | ----------- | ----------- | ------ | ------ | ------------- |
+| 100.70.1.13 | 103 | 1 | - | L3EVPN to PE2 | 900306 900308 900305 | - | - | - |
+
+### Router Traffic Engineering Device Configuration
+
+```eos
+!
+router traffic-engineering
+   segment-routing
+      rib system-colored-tunnel-rib
+      !
+      policy endpoint 100.70.1.13 color 103
+         binding-sid 1035103
+         description L3EVPN to PE2
+         !
+         path-group preference 1
+            segment-list label-stack 900306 900308 900305
+```
+
 ## Router ISIS
 
 ### Router ISIS Summary
@@ -696,6 +729,42 @@ patch panel
 ```
 
 # Filters
+
+## Route-maps
+
+### Route-maps Summary
+
+#### SRTE1
+
+| Sequence | Type | Match and/or Set |
+| -------- | ---- | ---------------- |
+| 10 | permit | match extcommunity L3VPN |
+| 10 | permit | set extcommunity color 103 additive |
+
+### Route-maps Device Configuration
+
+```eos
+!
+route-map SRTE1 permit 10
+   description COLOR_L3VPN_ROUTES
+   match extcommunity L3VPN
+   set extcommunity color 103 additive
+```
+
+## IP Extended Community Lists
+
+### IP Extended Community Lists Summary
+
+| List Name | Type | Extended Communities |
+| --------- | ---- | -------------------- |
+| L3VPN | permit | 65000:10 |
+
+### IP Extended Community Lists configuration
+
+```eos
+!
+ip extcommunity-list L3VPN permit 65000:10
+```
 
 # ACL
 
