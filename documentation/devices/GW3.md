@@ -589,6 +589,17 @@ router isis EVPN_UNDERLAY
 
 ### Router BGP Peer Groups
 
+#### EVPN-OVERLAY-CORE
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | evpn |
+| Source | Loopback0 |
+| BFD | True |
+| Ebgp multihop | 15 |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
+
 #### EVPN-OVERLAY-PEERS
 
 | Settings | Value |
@@ -614,23 +625,11 @@ router isis EVPN_UNDERLAY
 | Send community | all |
 | Maximum routes | 0 (no limit) |
 
-#### REMOTE-DOMAIN
-
-| Settings | Value |
-| -------- | ----- |
-| Address Family | evpn |
-| Remote AS | 65001 |
-| Source | Loopback0 |
-| BFD | True |
-| Ebgp multihop | 15 |
-| Send community | all |
-| Maximum routes | 0 (no limit) |
-
 ### BGP Neighbors
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
-| 100.64.20.11 | Inherited from peer group REMOTE-DOMAIN | default | - | Inherited from peer group REMOTE-DOMAIN | Inherited from peer group REMOTE-DOMAIN | - | Inherited from peer group REMOTE-DOMAIN | - |
+| 100.64.20.11 | 65001 | default | - | Inherited from peer group EVPN-OVERLAY-CORE | Inherited from peer group EVPN-OVERLAY-CORE | - | Inherited from peer group EVPN-OVERLAY-CORE | - |
 | 100.64.30.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
 | 100.70.2.1 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 | 100.70.2.2 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
@@ -641,15 +640,15 @@ router isis EVPN_UNDERLAY
 
 | Peer Group | Activate |
 | ---------- | -------- |
+| EVPN-OVERLAY-CORE | True |
 | EVPN-OVERLAY-PEERS | True |
 | MPLS-OVERLAY-PEERS | True |
-| REMOTE-DOMAIN | True |
 
 #### EVPN DCI Gateway Summary
 
 | Settings | Value |
 | -------- | ----- |
-| Remote Domain Peer Groups | REMOTE-DOMAIN |
+| Remote Domain Peer Groups | EVPN-OVERLAY-CORE |
 | L3 Gateway Configured | True |
 | L3 Gateway Inter-domain | True |
 
@@ -678,6 +677,13 @@ router bgp 65002
    graceful-restart restart-time 300
    graceful-restart
    maximum-paths 4 ecmp 4
+   neighbor EVPN-OVERLAY-CORE peer group
+   neighbor EVPN-OVERLAY-CORE update-source Loopback0
+   neighbor EVPN-OVERLAY-CORE bfd
+   neighbor EVPN-OVERLAY-CORE ebgp-multihop 15
+   neighbor EVPN-OVERLAY-CORE password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
+   neighbor EVPN-OVERLAY-CORE send-community
+   neighbor EVPN-OVERLAY-CORE maximum-routes 0
    neighbor EVPN-OVERLAY-PEERS peer group
    neighbor EVPN-OVERLAY-PEERS remote-as 65002
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
@@ -695,15 +701,8 @@ router bgp 65002
    neighbor MPLS-OVERLAY-PEERS password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
    neighbor MPLS-OVERLAY-PEERS send-community
    neighbor MPLS-OVERLAY-PEERS maximum-routes 0
-   neighbor REMOTE-DOMAIN peer group
-   neighbor REMOTE-DOMAIN remote-as 65001
-   neighbor REMOTE-DOMAIN update-source Loopback0
-   neighbor REMOTE-DOMAIN bfd
-   neighbor REMOTE-DOMAIN ebgp-multihop 15
-   neighbor REMOTE-DOMAIN password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
-   neighbor REMOTE-DOMAIN send-community
-   neighbor REMOTE-DOMAIN maximum-routes 0
-   neighbor 100.64.20.11 peer group REMOTE-DOMAIN
+   neighbor 100.64.20.11 peer group EVPN-OVERLAY-CORE
+   neighbor 100.64.20.11 remote-as 65001
    neighbor 100.64.20.11 description GW2
    neighbor 100.64.30.12 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.30.12 description SPE5
@@ -727,13 +726,13 @@ router bgp 65002
       redistribute learned
    !
    address-family evpn
+      neighbor EVPN-OVERLAY-CORE activate
+      neighbor EVPN-OVERLAY-CORE domain remote
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
       neighbor MPLS-OVERLAY-PEERS activate
       neighbor MPLS-OVERLAY-PEERS encapsulation mpls next-hop-self source-interface Loopback0
-      neighbor REMOTE-DOMAIN activate
-      neighbor REMOTE-DOMAIN domain remote
       neighbor default next-hop-self received-evpn-routes route-type ip-prefix inter-domain
    !
    address-family ipv4

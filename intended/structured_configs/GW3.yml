@@ -28,12 +28,11 @@ router_bgp:
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       remote_as: '65000'
       local_as: '65000'
-    REMOTE-DOMAIN:
+    EVPN-OVERLAY-CORE:
       type: evpn
       update_source: Loopback0
-      remote_as: '65001'
-      ebgp_multihop: 15
       bfd: true
+      ebgp_multihop: '15'
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       send_community: all
       maximum_routes: 0
@@ -51,9 +50,9 @@ router_bgp:
         activate: true
         encapsulation: mpls
         next_hop_self_source_interface: Loopback0
-      REMOTE-DOMAIN:
-        activate: true
+      EVPN-OVERLAY-CORE:
         domain_remote: true
+        activate: true
     neighbor_default:
       next_hop_self_received_evpn_routes:
         enable: true
@@ -69,8 +68,9 @@ router_bgp:
       peer_group: MPLS-OVERLAY-PEERS
       description: P-2A
     100.64.20.11:
-      peer_group: REMOTE-DOMAIN
+      peer_group: EVPN-OVERLAY-CORE
       description: GW2
+      remote_as: '65001'
   vrfs:
     TENANT_A_L3VPN:
       router_id: 100.64.30.11

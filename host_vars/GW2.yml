@@ -1,25 +1,7 @@
 ---
 custom_structured_configuration_router_bgp:
-  peer_groups:
-    REMOTE-DOMAIN:
-      type: evpn
-      update_source: Loopback0
-      remote_as: '65002'
-      ebgp_multihop: 15
-      bfd: true
-      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
-      send_community: all
-      maximum_routes: 0
   neighbors:
     100.64.30.11:
-      peer_group: REMOTE-DOMAIN
+      peer_group: EVPN-OVERLAY-CORE
       description: GW3
-  address_family_evpn:
-    peer_groups:
-      REMOTE-DOMAIN:
-        activate: true
-        domain_remote: true
-    neighbor_default:
-      next_hop_self_received_evpn_routes:
-        enable: true
-        inter_domain: true
+      remote_as: '65002'
