@@ -26,7 +26,7 @@ tenants:
       TENANT_A_L3VPN:
         vrf_id: 10
         address_families:
-          - evpn
+          - vpn-ipv4
         l3_interfaces:
           - description: TENANT_A_SITE_2_L3VPN
             enabled: true
