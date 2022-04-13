@@ -57,7 +57,6 @@ cpes:
       - SPE5
       profile: TENANT_A_VXLAN
 
-
   CPE6_VXLAN:
     adapters:
     - endpoint_ports:

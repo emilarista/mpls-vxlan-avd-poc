@@ -7,6 +7,9 @@ router_bgp:
   - graceful-restart restart-time 300
   - graceful-restart
   - maximum-paths 4 ecmp 4
+  bgp:
+    bestpath:
+      d_path: true
   bgp_cluster_id: 100.64.30.11
   peer_groups:
     EVPN-OVERLAY-PEERS:
@@ -28,6 +31,14 @@ router_bgp:
       password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
       remote_as: '65000'
       local_as: '65000'
+    EVPN-OVERLAY-CORE:
+      type: evpn
+      update_source: Loopback0
+      bfd: true
+      ebgp_multihop: '15'
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      send_community: all
+      maximum_routes: 0
   address_family_ipv4:
     peer_groups:
       EVPN-OVERLAY-PEERS:
@@ -38,10 +49,21 @@ router_bgp:
         activate: true
         route_map_in: RM-EVPN-SOO-IN
         route_map_out: RM-EVPN-SOO-OUT
+      EVPN-OVERLAY-CORE:
+        domain_remote: true
+        activate: true
+    neighbor_default:
+      next_hop_self_received_evpn_routes:
+        enable: true
+        inter_domain: true
+    domain_identifier: '65000:2'
+  address_family_vpn_ipv4:
+    peer_groups:
       MPLS-OVERLAY-PEERS:
         activate: true
-        encapsulation: mpls
-        next_hop_self_source_interface: Loopback0
+    domain_identifier: '65000:1'
+    neighbor_default_encapsulation_mpls_next_hop_self:
+      source_interface: Loopback0
   neighbors:
     100.64.30.12:
       peer_group: EVPN-OVERLAY-PEERS
@@ -52,15 +74,23 @@ router_bgp:
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
       description: P-2A
+    100.64.20.11:
+      peer_group: EVPN-OVERLAY-CORE
+      description: GW2
+      remote_as: 65001
   vrfs:
     TENANT_A_L3VPN:
       router_id: 100.64.30.11
       rd: 100.64.30.11:10
       route_targets:
         import:
+          vpn-ipv4:
+          - '65000:10'
           evpn:
           - '65000:10'
         export:
+          vpn-ipv4:
+          - '65000:10'
           evpn:
           - '65000:10'
       redistribute_routes:
@@ -69,17 +99,29 @@ router_bgp:
     231:
       tenant: TENANT_A
       rd: 100.64.30.11:10231
+      rd_evpn_domain:
+        domain: remote
+        rd: 100.64.30.11:10231
       route_targets:
         both:
         - 65000:10231
+        import_export_evpn_domains:
+        - domain: remote
+          route_target: 65000:10231
       redistribute_routes:
       - learned
     232:
       tenant: TENANT_A
       rd: 100.64.30.11:10232
+      rd_evpn_domain:
+        domain: remote
+        rd: 100.64.30.11:10232
       route_targets:
         both:
         - 65000:10232
+        import_export_evpn_domains:
+        - domain: remote
+          route_target: 65000:10232
       redistribute_routes:
       - learned
 static_routes:
@@ -144,6 +186,10 @@ struct_cfg:
       100.70.2.2:
         peer_group: MPLS-OVERLAY-PEERS
         description: P-2A
+      100.64.20.11:
+        peer_group: EVPN-OVERLAY-CORE
+        description: GW2
+        remote_as: 65001
 ethernet_interfaces:
   Ethernet2:
     peer: SPE5

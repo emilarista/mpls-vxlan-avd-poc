@@ -46,19 +46,6 @@ router_bgp:
     100.70.2.2:
       peer_group: MPLS-OVERLAY-PEERS
       description: P2-A
-  vrfs:
-    TENANT_A_L3VPN:
-      router_id: 100.70.1.11
-      rd: 100.70.1.11:10
-      route_targets:
-        import:
-          evpn:
-          - '65000:10'
-        export:
-          evpn:
-          - '65000:10'
-      redistribute_routes:
-      - connected
   vlans:
     144:
       tenant: TENANT_A
@@ -107,9 +94,6 @@ local_users:
 vrfs:
   MGMT:
     ip_routing: false
-  TENANT_A_L3VPN:
-    tenant: TENANT_A
-    ip_routing: true
 management_interfaces:
   Management1:
     description: oob_management
@@ -207,17 +191,7 @@ patch_panel: {}
 vlans:
   144:
     tenant: TENANT_A
-    name: TENANT_A_MH_L2SERVICE
+    name: TENANT_A_L2_SERVICE_144
 ip_igmp_snooping:
   globally_enabled: true
 ip_virtual_router_mac_address: 00:1c:73:00:dc:00
-vlan_interfaces:
-  Vlan144:
-    tenant: TENANT_A
-    tags:
-    - site1
-    - site4
-    description: TENANT_A_MH_L2SERVICE
-    shutdown: false
-    vrf: TENANT_A_L3VPN
-    ip_address_virtual: 14.14.200.1/24

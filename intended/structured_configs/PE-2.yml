@@ -52,10 +52,10 @@ router_bgp:
       rd: 100.70.1.13:10
       route_targets:
         import:
-          evpn:
+          vpn-ipv4:
           - '65000:10'
         export:
-          evpn:
+          vpn-ipv4:
           - '65000:10'
       redistribute_routes:
       - connected

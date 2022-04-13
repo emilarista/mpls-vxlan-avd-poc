@@ -588,8 +588,20 @@ router isis EVPN_UNDERLAY
 | graceful-restart restart-time 300 |
 | graceful-restart |
 | maximum-paths 4 ecmp 4 |
+| bgp bestpath d-path |
 
 ### Router BGP Peer Groups
+
+#### EVPN-OVERLAY-CORE
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | evpn |
+| Source | Loopback0 |
+| BFD | True |
+| Ebgp multihop | 15 |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
 
 #### EVPN-OVERLAY-PEERS
 
@@ -621,6 +633,7 @@ router isis EVPN_UNDERLAY
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | -------------- |
 | 100.64.20.12 | Inherited from peer group EVPN-OVERLAY-PEERS | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - |
+| 100.64.30.11 | 65002 | default | - | Inherited from peer group EVPN-OVERLAY-CORE | Inherited from peer group EVPN-OVERLAY-CORE | - | Inherited from peer group EVPN-OVERLAY-CORE | - |
 | 100.70.2.1 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 | 100.70.2.2 | Inherited from peer group MPLS-OVERLAY-PEERS | default | - | Inherited from peer group MPLS-OVERLAY-PEERS | Inherited from peer group MPLS-OVERLAY-PEERS | - | Inherited from peer group MPLS-OVERLAY-PEERS | - |
 
@@ -630,15 +643,23 @@ router isis EVPN_UNDERLAY
 
 | Peer Group | Activate |
 | ---------- | -------- |
+| EVPN-OVERLAY-CORE | True |
 | EVPN-OVERLAY-PEERS | True |
-| MPLS-OVERLAY-PEERS | True |
+
+#### EVPN DCI Gateway Summary
+
+| Settings | Value |
+| -------- | ----- |
+| Remote Domain Peer Groups | EVPN-OVERLAY-CORE |
+| L3 Gateway Configured | True |
+| L3 Gateway Inter-domain | True |
 
 ### Router BGP VLANs
 
 | VLAN | Route-Distinguisher | Both Route-Target | Import Route Target | Export Route-Target | Redistribute |
 | ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
-| 231 | 100.64.20.11:10231 | 65000:10231 | - | - | learned |
-| 232 | 100.64.20.11:10232 | 65000:10232 | - | - | learned |
+| 231 | 100.64.20.11:10231 | 65000:10231<br>remote 65000:10231 | - | - | learned |
+| 232 | 100.64.20.11:10232 | 65000:10232<br>remote 65000:10232 | - | - | learned |
 
 ### Router BGP VRFs
 
@@ -658,6 +679,14 @@ router bgp 65001
    graceful-restart restart-time 300
    graceful-restart
    maximum-paths 4 ecmp 4
+   bgp bestpath d-path
+   neighbor EVPN-OVERLAY-CORE peer group
+   neighbor EVPN-OVERLAY-CORE update-source Loopback0
+   neighbor EVPN-OVERLAY-CORE bfd
+   neighbor EVPN-OVERLAY-CORE ebgp-multihop 15
+   neighbor EVPN-OVERLAY-CORE password 7 $1c$U4tL2vQP9QwZlxIV1K3/pw==
+   neighbor EVPN-OVERLAY-CORE send-community
+   neighbor EVPN-OVERLAY-CORE maximum-routes 0
    neighbor EVPN-OVERLAY-PEERS peer group
    neighbor EVPN-OVERLAY-PEERS remote-as 65001
    neighbor EVPN-OVERLAY-PEERS update-source Loopback0
@@ -677,6 +706,9 @@ router bgp 65001
    neighbor MPLS-OVERLAY-PEERS maximum-routes 0
    neighbor 100.64.20.12 peer group EVPN-OVERLAY-PEERS
    neighbor 100.64.20.12 description SPE6
+   neighbor 100.64.30.11 peer group EVPN-OVERLAY-CORE
+   neighbor 100.64.30.11 remote-as 65002
+   neighbor 100.64.30.11 description GW3
    neighbor 100.70.2.1 peer group MPLS-OVERLAY-PEERS
    neighbor 100.70.2.1 description P-1A
    neighbor 100.70.2.2 peer group MPLS-OVERLAY-PEERS
@@ -684,27 +716,40 @@ router bgp 65001
    !
    vlan 231
       rd 100.64.20.11:10231
+      rd evpn domain remote 100.64.20.11:10231
       route-target both 65000:10231
+      route-target import export evpn domain remote 65000:10231
       redistribute learned
    !
    vlan 232
       rd 100.64.20.11:10232
+      rd evpn domain remote 100.64.20.11:10232
       route-target both 65000:10232
+      route-target import export evpn domain remote 65000:10232
       redistribute learned
    !
    address-family evpn
+      domain identifier 65000:2
+      neighbor EVPN-OVERLAY-CORE activate
+      neighbor EVPN-OVERLAY-CORE domain remote
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor EVPN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor EVPN-OVERLAY-PEERS activate
-      neighbor MPLS-OVERLAY-PEERS activate
-      neighbor MPLS-OVERLAY-PEERS encapsulation mpls next-hop-self source-interface Loopback0
+      neighbor default next-hop-self received-evpn-routes route-type ip-prefix inter-domain
    !
    address-family ipv4
       no neighbor EVPN-OVERLAY-PEERS activate
    !
+   address-family vpn-ipv4
+      domain identifier 65000:1
+      neighbor MPLS-OVERLAY-PEERS activate
+      neighbor default encapsulation mpls next-hop-self source-interface Loopback0
+   !
    vrf TENANT_A_L3VPN
       rd 100.64.20.11:10
+      route-target import vpn-ipv4 65000:10
       route-target import evpn 65000:10
+      route-target export vpn-ipv4 65000:10
       route-target export evpn 65000:10
       router-id 100.64.20.11
       redistribute connected

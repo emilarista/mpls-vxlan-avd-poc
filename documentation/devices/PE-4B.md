@@ -28,7 +28,6 @@
   - [Ethernet Interfaces](#ethernet-interfaces)
   - [Port-Channel Interfaces](#port-channel-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
-  - [VLAN Interfaces](#vlan-interfaces)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
   - [Virtual Router MAC Address](#virtual-router-mac-address)
@@ -273,14 +272,14 @@ vlan internal order ascending range 3700 3900
 
 | VLAN ID | Name | Trunk Groups |
 | ------- | ---- | ------------ |
-| 144 | TENANT_A_MH_L2SERVICE | - |
+| 144 | TENANT_A_L2_SERVICE_144 | - |
 
 ## VLANs Device Configuration
 
 ```eos
 !
 vlan 144
-   name TENANT_A_MH_L2SERVICE
+   name TENANT_A_L2_SERVICE_144
 ```
 
 # Interfaces
@@ -396,32 +395,6 @@ interface Loopback0
    node-segment ipv4 index 106
 ```
 
-## VLAN Interfaces
-
-### VLAN Interfaces Summary
-
-| Interface | Description | VRF |  MTU | Shutdown |
-| --------- | ----------- | --- | ---- | -------- |
-| Vlan144 | TENANT_A_MH_L2SERVICE | TENANT_A_L3VPN | - | false |
-
-#### IPv4
-
-| Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
-| --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
-| Vlan144 |  TENANT_A_L3VPN  |  -  |  14.14.200.1/24  |  -  |  -  |  -  |  -  |
-
-
-### VLAN Interfaces Device Configuration
-
-```eos
-!
-interface Vlan144
-   description TENANT_A_MH_L2SERVICE
-   no shutdown
-   vrf TENANT_A_L3VPN
-   ip address virtual 14.14.200.1/24
-```
-
 # Routing
 ## Service Routing Protocols Model
 
@@ -453,7 +426,6 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 | --- | --------------- |
 | default | true |
 | MGMT | false |
-| TENANT_A_L3VPN | true |
 
 ### IP Routing Device Configuration
 
@@ -461,7 +433,6 @@ ip virtual-router mac-address 00:1c:73:00:dc:00
 !
 ip routing
 no ip routing vrf MGMT
-ip routing vrf TENANT_A_L3VPN
 ```
 ## IPv6 Routing
 
@@ -471,7 +442,6 @@ ip routing vrf TENANT_A_L3VPN
 | --- | --------------- |
 | default | false |
 | MGMT | false |
-| TENANT_A_L3VPN | false |
 
 ## Static Routes
 
@@ -593,12 +563,6 @@ router isis CORE
 | ---- | ------------------- | ----------------- | ------------------- | ------------------- | ------------ |
 | 144 | 100.70.1.16:10144 | 65000:10144 | - | - | learned |
 
-### Router BGP VRFs
-
-| VRF | Route-Distinguisher | Redistribute |
-| --- | ------------------- | ------------ |
-| TENANT_A_L3VPN | 100.70.1.16:10 | connected |
-
 ### Router BGP Device Configuration
 
 ```eos
@@ -641,13 +605,6 @@ router bgp 65000
    address-family vpn-ipv6
       neighbor MPLS-OVERLAY-PEERS activate
       neighbor default encapsulation mpls next-hop-self source-interface Loopback0
-   !
-   vrf TENANT_A_L3VPN
-      rd 100.70.1.16:10
-      route-target import evpn 65000:10
-      route-target export evpn 65000:10
-      router-id 100.70.1.16
-      redistribute connected
 ```
 
 # BFD
@@ -736,15 +693,12 @@ patch panel
 | VRF Name | IP Routing |
 | -------- | ---------- |
 | MGMT | disabled |
-| TENANT_A_L3VPN | enabled |
 
 ## VRF Instances Device Configuration
 
 ```eos
 !
 vrf instance MGMT
-!
-vrf instance TENANT_A_L3VPN
 ```
 
 # Quality Of Service

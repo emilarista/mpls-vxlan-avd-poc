@@ -28,11 +28,6 @@ bgp_peer_groups:
   rr_overlay_peers:
     password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
 
-# overlay_rd_type:
-#   admin_subfield: overlay_loopback
-# overlay_rt_type:
-#   admin_subfield: 65000
-
 # Nodes:
 
 # P Routers

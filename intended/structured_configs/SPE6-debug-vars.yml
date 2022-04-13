@@ -1,0 +1,938 @@
+ansible_connection: httpapi
+ansible_network_os: eos
+ansible_user: emil
+ansible_ssh_pass: doges
+ansible_become: true
+ansible_become_method: enable
+ansible_httpapi_use_ssl: true
+ansible_httpapi_validate_certs: false
+validation_mode_loose: true
+core_interfaces:
+  p2p_links_ip_pools:
+  - name: underlay_pool
+    ipv4_pool: 100.64.48.0/24
+  p2p_links_profiles:
+  - name: default_bb_profile
+    mtu: 1500
+    isis_hello_padding: false
+    isis_metric: 50
+    ip_pool: underlay_pool
+    isis_circuit_type: level-2
+    isis_authentication_mode: md5
+    isis_authentication_key: $1c$sTNAlR6rKSw=
+  p2p_links:
+  - nodes:
+    - P1-A
+    - PE-1A
+    id: 1
+    interfaces:
+    - Ethernet2
+    - Ethernet2
+    profile: default_bb_profile
+  - nodes:
+    - P1-A
+    - P1-B
+    id: 2
+    interfaces:
+    - Ethernet6
+    - Ethernet6
+    profile: default_bb_profile
+  - nodes:
+    - P1-A
+    - P2-A
+    id: 3
+    interfaces:
+    - Ethernet3
+    - Ethernet3
+    profile: default_bb_profile
+  - nodes:
+    - P1-B
+    - PE-1B
+    id: 4
+    interfaces:
+    - Ethernet2
+    - Ethernet2
+    profile: default_bb_profile
+  - nodes:
+    - P1-B
+    - P3-A
+    id: 5
+    interfaces:
+    - Ethernet4
+    - Ethernet4
+    profile: default_bb_profile
+  - nodes:
+    - P1-B
+    - P4-A
+    id: 6
+    interfaces:
+    - Ethernet3
+    - Ethernet3
+    profile: default_bb_profile
+  - nodes:
+    - P3-A
+    - PE-3
+    id: 7
+    interfaces:
+    - Ethernet2
+    - Ethernet4
+    profile: default_bb_profile
+  - nodes:
+    - P3-A
+    - P3-B
+    id: 8
+    interfaces:
+    - Ethernet6
+    - Ethernet6
+    profile: default_bb_profile
+  - nodes:
+    - P3-A
+    - P2-B
+    id: 9
+    interfaces:
+    - Ethernet3
+    - Ethernet3
+    profile: default_bb_profile
+  - nodes:
+    - P3-B
+    - PE-3
+    id: 10
+    interfaces:
+    - Ethernet2
+    - Ethernet5
+    profile: default_bb_profile
+  - nodes:
+    - P3-B
+    - P4-B
+    id: 11
+    interfaces:
+    - Ethernet3
+    - Ethernet3
+    profile: default_bb_profile
+  - nodes:
+    - P3-B
+    - GW3
+    id: 12
+    interfaces:
+    - Ethernet5
+    - Ethernet1
+    profile: default_bb_profile
+  - nodes:
+    - P2-A
+    - GW2
+    id: 14
+    interfaces:
+    - Ethernet5
+    - Ethernet1
+    profile: default_bb_profile
+  - nodes:
+    - P2-A
+    - PE-2
+    id: 15
+    interfaces:
+    - Ethernet2
+    - Ethernet4
+    profile: default_bb_profile
+  - nodes:
+    - P2-A
+    - P2-B
+    id: 16
+    interfaces:
+    - Ethernet6
+    - Ethernet6
+    profile: default_bb_profile
+  - nodes:
+    - P2-B
+    - PE-2
+    id: 17
+    interfaces:
+    - Ethernet2
+    - Ethernet5
+    profile: default_bb_profile
+  - nodes:
+    - P2-B
+    - P4-A
+    id: 18
+    interfaces:
+    - Ethernet4
+    - Ethernet4
+    profile: default_bb_profile
+  - nodes:
+    - P4-A
+    - PE-4A
+    id: 19
+    interfaces:
+    - Ethernet2
+    - Ethernet2
+    profile: default_bb_profile
+  - nodes:
+    - P4-A
+    - P4-B
+    id: 20
+    interfaces:
+    - Ethernet6
+    - Ethernet6
+    profile: default_bb_profile
+  - nodes:
+    - P4-B
+    - PE-4B
+    id: 21
+    interfaces:
+    - Ethernet2
+    - Ethernet2
+    profile: default_bb_profile
+daemon_terminattr:
+  cvaddrs:
+  - 172.16.30.33:9910
+  cvauth:
+    method: token
+    token_file: /tmp/token
+  cvvrf: MGMT
+  ingestexclude: /Sysdb/cell/1/agent,/Sysdb/cell/2/agent
+  smashexcludes: ale,flexCounter,hardware,kni,pulse,strata
+  taillogs: /var/log/messages
+bgp_maximum_paths: 4
+bgp_ecmp: 4
+overlay_prevent_readvertise_to_server: true
+bfd_multihop:
+  interval: 5000
+  min_rx: 5000
+  multiplier: 3
+overlay_rd_type:
+  admin_subfield: overlay_loopback
+overlay_rt_type:
+  admin_subfield: 65000
+local_users:
+  admin:
+    privilege: 15
+    role: network-admin
+    no_password: true
+  emil:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$MpV4C4845hWsbUmn$exArYvtdPq4rnaSCMNdLy.hIZh0c0Q1Nnmy514hds/2A45g4nggx7kbhWDQmZ4SOt4FZcCFNw6TE//d73PzhJ.
+  cvpadmin:
+    privilege: 15
+    role: network-admin
+    sha512_password: $6$Wy3T6kVW72lScPdR$vXW5AVe/Uz41Ro/Rj7YvdvI25OEznjT/Lv8724PweuuAiOIuCk.dqnRkAvY1ahG0ClFbwtKtZhExFwMYI5hLX1
+internal_vlan_order:
+  allocation: ascending
+  range:
+    beginning: 3700
+    ending: 3900
+management_security:
+  password:
+    encryption_key_common: true
+mgmt_gateway: 10.83.28.1
+name_servers:
+- 8.8.8.8
+- 8.8.4.4
+dns_domain: clearshark.net
+clock:
+  timezone: America/New_York
+ntp:
+  local_interface:
+    name: Management1
+    vrf: MGMT
+  servers:
+  - name: time-a.nist.gov
+    iburst: true
+    preferred: true
+    version: 4
+    vrf: MGMT
+port_profiles:
+  TENANT_A_CORE_MULTIHOMED:
+    mode: trunk
+    vlans: '144'
+    spanning_tree_portfast: edge
+  TENANT_A_VXLAN:
+    mode: trunk
+    vlans: 231,232
+    spanning_tree_portfast: edge
+cpes:
+  CPE1_SITE1_DUALHOMED:
+    adapters:
+    - endpoint_ports:
+      - Ethernet4
+      - Ethernet5
+      switch_ports:
+      - Ethernet3
+      - Ethernet3
+      switches:
+      - PE-1A
+      - PE-1B
+      profile: TENANT_A_CORE_MULTIHOMED
+      port_channel:
+        description: EVPN-A-A-PortChannel
+        mode: active
+        short_esi: 0101:0303:0405
+    rack: Undefined
+  CPE4_SITE4_DUALHOMED:
+    adapters:
+    - endpoint_ports:
+      - Ethernet4
+      - Ethernet5
+      switch_ports:
+      - Ethernet3
+      - Ethernet3
+      switches:
+      - PE-4A
+      - PE-4B
+      profile: TENANT_A_CORE_MULTIHOMED
+      port_channel:
+        description: EVPN-A-A-PortChannel
+        mode: active
+        short_esi: 0404:0303:0405
+    rack: Undefined
+  CPE5_VXLAN:
+    adapters:
+    - endpoint_ports:
+      - Ethernet1
+      switch_ports:
+      - Ethernet3
+      switches:
+      - SPE5
+      profile: TENANT_A_VXLAN
+  CPE6_VXLAN:
+    adapters:
+    - endpoint_ports:
+      - Ethernet1
+      switch_ports:
+      - Ethernet3
+      switches:
+      - SPE6
+      profile: TENANT_A_VXLAN
+tenants:
+  TENANT_A:
+    mac_vrf_id_base: 10000
+    pseudowire_rt_base: 1000
+    l2vlans:
+      144:
+        name: TENANT_A_L2_SERVICE_144
+        tags:
+        - site1
+        - site4
+    point_to_point_services:
+    - name: TEN_A_site2_site5_eline_vlan_based
+      type: vpws-pseudowire
+      subinterfaces:
+      - number: 21
+      endpoints:
+      - id: 2300
+        nodes:
+        - PE-2
+        interfaces:
+        - Ethernet3
+      - id: 3300
+        nodes:
+        - PE-3
+        interfaces:
+        - Ethernet3
+    vrfs:
+      TENANT_A_L3VPN:
+        vrf_id: 10
+        address_families:
+        - vpn-ipv4
+        l3_interfaces:
+        - description: TENANT_A_SITE_2_L3VPN
+          enabled: true
+          interfaces:
+          - Ethernet3.22
+          ip_addresses:
+          - 23.23.102.1/24
+          nodes:
+          - PE-2
+        - description: TENANT_A_SITE_3_L3VPN
+          enabled: true
+          interfaces:
+          - Ethernet3.22
+          ip_addresses:
+          - 23.23.202.1/24
+          nodes:
+          - PE-3
+        svis:
+          231:
+            enabled: true
+            name: TENANT_A_VXLAN_231
+            ip_address_virtual: 23.23.10.1/24
+            tags:
+            - vxlan-site5
+            - vxlan-site6
+          232:
+            enabled: true
+            name: TENANT_A_VXLAN_232
+            ip_address_virtual: 23.23.20.1/24
+            tags:
+            - vxlan-site5
+            - vxlan-site6
+fabric_name: VXLAN_NETWORK
+evpn_ebgp_multihop: 10
+evpn_ebgp_gateway_multihop: 15
+design:
+  type: l3ls-evpn
+underlay_routing_protocol: isis
+overlay_routing_protocol: ibgp
+bgp_peer_groups:
+  evpn_overlay_peers:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+  ipv4_underlay_peers:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+  mpls_overlay_peers:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+  evpn_overlay_core:
+    password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+p2p_uplinks_mtu: 1500
+custom_structured_configuration_router_isis:
+  advertise:
+    passive_only: true
+connected_endpoints_keys:
+  cpes:
+    type: cpe
+bgp_as: 65001
+dc_name: VXLAN_ISLAND2
+l3leaf:
+  defaults:
+    isis_system_id_prefix: '0000.0021'
+    virtual_router_mac_address: 00:1c:73:00:dc:00
+    platform: vEOS-LAB
+    uplink_ipv4_pool: 100.64.22.0/24
+    vtep_loopback_ipv4_pool: 100.64.21.0/24
+    loopback_ipv4_pool: 100.64.20.0/24
+    loopback_ipv4_offset: 10
+    max_uplink_switches: 3
+    uplink_interfaces:
+    - Ethernet1
+    spanning_tree_priority: 4096
+    spanning_tree_mode: mstp
+    bgp_defaults:
+    - no bgp default ipv4-unicast
+    - distance bgp 20 200 200
+    - graceful-restart restart-time 300
+    - graceful-restart
+  node_groups:
+    GW2:
+      filter:
+        tenants:
+        - all
+        tags:
+        - vxlan-site6
+      node_sid_base: 2000
+      evpn_role: server
+      evpn_gateway:
+        vxlan_to_mpls:
+          enabled: true
+          mpls_overlay_address_family: vpn-ipv4
+          mpls_underlay: isis-sr
+          mpls_remote_as: 65000
+          mpls_domain: '"65000:1"'
+          vxlan_domain: '"65000:2"'
+        evpn_l2_dci:
+          enabled: true
+        evpn_l3_dci:
+          enabled: true
+      structured_config:
+        router_bgp:
+          neighbors:
+            100.70.2.1:
+              peer_group: MPLS-OVERLAY-PEERS
+              description: P-1A
+            100.70.2.2:
+              peer_group: MPLS-OVERLAY-PEERS
+              description: P-2A
+            100.64.30.11:
+              peer_group: EVPN-OVERLAY-CORE
+              description: GW3
+              remote_as: 65002
+      nodes:
+        GW2:
+          id: 1
+          mgmt_ip: 10.83.30.248/22
+    SPE6:
+      filter:
+        tenants:
+        - all
+        tags:
+        - vxlan-site6
+      uplink_switches:
+      - GW2
+      evpn_route_servers:
+      - GW2
+      nodes:
+        SPE6:
+          id: 2
+          mgmt_ip: 10.83.30.249/22
+          uplink_switch_interfaces:
+          - Ethernet2
+          uplink_interfaces:
+          - Ethernet1
+inventory_file: /Users/emil/scripts/ansible/development/AVD_DIA_CLEARSHARK/inventory-evelab.yml
+inventory_dir: /Users/emil/scripts/ansible/development/AVD_DIA_CLEARSHARK
+ansible_host: 10.83.30.249
+type: l3leaf
+inventory_hostname: SPE6
+inventory_hostname_short: SPE6
+group_names:
+- ALL_NODES
+- ENDPOINT_CONNECTIONS
+- SITE_2_LEAFS
+- TENANTS
+- VXLAN_ISLAND2
+- VXLAN_NETWORK
+ansible_facts:
+  switch:
+    type: l3leaf
+    node_type_key: l3leaf
+    connected_endpoints: true
+    default_evpn_role: client
+    default_underlay_routing_protocol: ebgp
+    default_overlay_routing_protocol: ebgp
+    default_overlay_address_families:
+    - evpn
+    default_mpls_overlay_role: none
+    mpls_lsr: false
+    mlag_support: true
+    network_services_l1: false
+    network_services_l2: true
+    network_services_l3: true
+    underlay_router: true
+    uplink_type: p2p
+    vtep: true
+    mpls_ler: false
+    ip_addressing:
+      router_id: ip_addressing/router-id.j2
+      ipv6_router_id: ip_addressing/router-id-ipv6.j2
+      mlag_ip_primary: ip_addressing/mlag-ip-primary.j2
+      mlag_ip_secondary: ip_addressing/mlag-ip-secondary.j2
+      mlag_l3_ip_primary: ip_addressing/mlag-l3-ip-primary.j2
+      mlag_l3_ip_secondary: ip_addressing/mlag-l3-ip-secondary.j2
+      p2p_uplinks_ip: ip_addressing/p2p-uplinks-ip.j2
+      p2p_uplinks_peer_ip: ip_addressing/p2p-uplinks-peer-ip.j2
+      vtep_ip_mlag: ip_addressing/vtep-ip-mlag.j2
+      vtep_ip: ip_addressing/vtep-ip.j2
+    interface_descriptions:
+      underlay_ethernet_interfaces: interface_descriptions/underlay/ethernet-interfaces.j2
+      underlay_port_channel_interfaces: interface_descriptions/underlay/port-channel-interfaces.j2
+      mlag_ethernet_interfaces: interface_descriptions/mlag/ethernet-interfaces.j2
+      mlag_port_channel_interfaces: interface_descriptions/mlag/port-channel-interfaces.j2
+      connected_endpoints_ethernet_interfaces: interface_descriptions/connected_endpoints/ethernet-interfaces.j2
+      connected_endpoints_port_channel_interfaces: interface_descriptions/connected_endpoints/port-channel-interfaces.j2
+      overlay_loopback_interface: interface_descriptions/loopback_interfaces/overlay-loopback.j2
+      vtep_loopback_interface: interface_descriptions/loopback_interfaces/vtep-loopback.j2
+    group: SPE6
+    id: 2
+    mgmt_ip: 10.83.30.249/22
+    platform: vEOS-LAB
+    platform_settings:
+      platforms:
+      - default
+      reload_delay:
+        mlag: 300
+        non_mlag: 330
+      feature_support:
+        queue_monitor_length_notify: false
+    mgmt_interface: Management1
+    underlay_routing_protocol: isis
+    overlay_routing_protocol: ibgp
+    overlay_address_families:
+    - evpn
+    overlay_loopback_description: EVPN_Overlay_Peering
+    filter_tenants:
+    - all
+    filter_tags:
+    - vxlan-site6
+    spanning_tree_mode: mstp
+    spanning_tree_priority: 4096
+    igmp_snooping_enabled: true
+    virtual_router_mac_address: 00:1c:73:00:dc:00
+    max_uplink_switches: 3
+    max_parallel_uplinks: 1
+    uplink_switches:
+    - GW2
+    uplink_switch_interfaces:
+    - Ethernet2
+    uplink_interfaces:
+    - Ethernet1
+    loopback_ipv4_pool: 100.64.20.0/24
+    loopback_ipv4_offset: 10
+    uplink_ipv4_pool: 100.64.22.0/24
+    router_id: 100.64.20.12
+    evpn_role: client
+    mpls_overlay_role: none
+    bgp_as: '65001'
+    bgp_defaults:
+    - no bgp default ipv4-unicast
+    - distance bgp 20 200 200
+    - graceful-restart restart-time 300
+    - graceful-restart
+    bgp_peer_groups:
+      ipv4_underlay_peers:
+        name: IPv4-UNDERLAY-PEERS
+        password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      mlag_ipv4_underlay_peer:
+        name: MLAG-IPv4-UNDERLAY-PEER
+      evpn_overlay_peers:
+        name: EVPN-OVERLAY-PEERS
+        password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      evpn_overlay_core:
+        name: EVPN-OVERLAY-CORE
+        password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      mpls_overlay_peers:
+        name: MPLS-OVERLAY-PEERS
+        password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+      rr_overlay_peers:
+        name: RR-OVERLAY-PEERS
+      gateway_remote_peers:
+        name: GATEWAY-REMOTE-PEERS
+    evpn_route_servers:
+    - GW2
+    isis_net: 49.0001.0000.0021.0002.00
+    is_type: level-2
+    isis_instance_name: EVPN_UNDERLAY
+    mlag: false
+    vtep_loopback_ipv4_pool: 100.64.21.0/24
+    vtep_loopback: Loopback1
+    vtep_ip: 100.64.21.12
+    tenants:
+      TENANT_A:
+        vrfs:
+          TENANT_A_L3VPN:
+            svis:
+            - 231
+            - 232
+        l2vlans: []
+        point_to_point_service: []
+    vlans:
+    - 231
+    - 232
+  topology:
+    links:
+      Ethernet1:
+        peer: GW2
+        peer_interface: Ethernet2
+        peer_type: l3leaf
+        peer_bgp_as: '65001'
+        type: underlay_p2p
+        ip_address: 100.64.22.7
+        peer_ip_address: 100.64.22.6
+    peers:
+    - GW2
+    vlans:
+    - 231
+    - 232
+  avd_topology_peers:
+    GW2:
+    - SPE6
+    GW3:
+    - SPE5
+  avd_overlay_peers:
+    GW2:
+    - SPE6
+    GW3:
+    - SPE5
+switch:
+  type: l3leaf
+  node_type_key: l3leaf
+  connected_endpoints: true
+  default_evpn_role: client
+  default_underlay_routing_protocol: ebgp
+  default_overlay_routing_protocol: ebgp
+  default_overlay_address_families:
+  - evpn
+  default_mpls_overlay_role: none
+  mpls_lsr: false
+  mlag_support: true
+  network_services_l1: false
+  network_services_l2: true
+  network_services_l3: true
+  underlay_router: true
+  uplink_type: p2p
+  vtep: true
+  mpls_ler: false
+  ip_addressing:
+    router_id: ip_addressing/router-id.j2
+    ipv6_router_id: ip_addressing/router-id-ipv6.j2
+    mlag_ip_primary: ip_addressing/mlag-ip-primary.j2
+    mlag_ip_secondary: ip_addressing/mlag-ip-secondary.j2
+    mlag_l3_ip_primary: ip_addressing/mlag-l3-ip-primary.j2
+    mlag_l3_ip_secondary: ip_addressing/mlag-l3-ip-secondary.j2
+    p2p_uplinks_ip: ip_addressing/p2p-uplinks-ip.j2
+    p2p_uplinks_peer_ip: ip_addressing/p2p-uplinks-peer-ip.j2
+    vtep_ip_mlag: ip_addressing/vtep-ip-mlag.j2
+    vtep_ip: ip_addressing/vtep-ip.j2
+  interface_descriptions:
+    underlay_ethernet_interfaces: interface_descriptions/underlay/ethernet-interfaces.j2
+    underlay_port_channel_interfaces: interface_descriptions/underlay/port-channel-interfaces.j2
+    mlag_ethernet_interfaces: interface_descriptions/mlag/ethernet-interfaces.j2
+    mlag_port_channel_interfaces: interface_descriptions/mlag/port-channel-interfaces.j2
+    connected_endpoints_ethernet_interfaces: interface_descriptions/connected_endpoints/ethernet-interfaces.j2
+    connected_endpoints_port_channel_interfaces: interface_descriptions/connected_endpoints/port-channel-interfaces.j2
+    overlay_loopback_interface: interface_descriptions/loopback_interfaces/overlay-loopback.j2
+    vtep_loopback_interface: interface_descriptions/loopback_interfaces/vtep-loopback.j2
+  group: SPE6
+  id: 2
+  mgmt_ip: 10.83.30.249/22
+  platform: vEOS-LAB
+  platform_settings:
+    platforms:
+    - default
+    reload_delay:
+      mlag: 300
+      non_mlag: 330
+    feature_support:
+      queue_monitor_length_notify: false
+  mgmt_interface: Management1
+  underlay_routing_protocol: isis
+  overlay_routing_protocol: ibgp
+  overlay_address_families:
+  - evpn
+  overlay_loopback_description: EVPN_Overlay_Peering
+  filter_tenants:
+  - all
+  filter_tags:
+  - vxlan-site6
+  spanning_tree_mode: mstp
+  spanning_tree_priority: 4096
+  igmp_snooping_enabled: true
+  virtual_router_mac_address: 00:1c:73:00:dc:00
+  max_uplink_switches: 3
+  max_parallel_uplinks: 1
+  uplink_switches:
+  - GW2
+  uplink_switch_interfaces:
+  - Ethernet2
+  uplink_interfaces:
+  - Ethernet1
+  loopback_ipv4_pool: 100.64.20.0/24
+  loopback_ipv4_offset: 10
+  uplink_ipv4_pool: 100.64.22.0/24
+  router_id: 100.64.20.12
+  evpn_role: client
+  mpls_overlay_role: none
+  bgp_as: '65001'
+  bgp_defaults:
+  - no bgp default ipv4-unicast
+  - distance bgp 20 200 200
+  - graceful-restart restart-time 300
+  - graceful-restart
+  bgp_peer_groups:
+    ipv4_underlay_peers:
+      name: IPv4-UNDERLAY-PEERS
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+    mlag_ipv4_underlay_peer:
+      name: MLAG-IPv4-UNDERLAY-PEER
+    evpn_overlay_peers:
+      name: EVPN-OVERLAY-PEERS
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+    evpn_overlay_core:
+      name: EVPN-OVERLAY-CORE
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+    mpls_overlay_peers:
+      name: MPLS-OVERLAY-PEERS
+      password: $1c$U4tL2vQP9QwZlxIV1K3/pw==
+    rr_overlay_peers:
+      name: RR-OVERLAY-PEERS
+    gateway_remote_peers:
+      name: GATEWAY-REMOTE-PEERS
+  evpn_route_servers:
+  - GW2
+  isis_net: 49.0001.0000.0021.0002.00
+  is_type: level-2
+  isis_instance_name: EVPN_UNDERLAY
+  mlag: false
+  vtep_loopback_ipv4_pool: 100.64.21.0/24
+  vtep_loopback: Loopback1
+  vtep_ip: 100.64.21.12
+  tenants:
+    TENANT_A:
+      vrfs:
+        TENANT_A_L3VPN:
+          svis:
+          - 231
+          - 232
+      l2vlans: []
+      point_to_point_service: []
+  vlans:
+  - 231
+  - 232
+topology:
+  links:
+    Ethernet1:
+      peer: GW2
+      peer_interface: Ethernet2
+      peer_type: l3leaf
+      peer_bgp_as: '65001'
+      type: underlay_p2p
+      ip_address: 100.64.22.7
+      peer_ip_address: 100.64.22.6
+  peers:
+  - GW2
+  vlans:
+  - 231
+  - 232
+avd_topology_peers:
+  GW2:
+  - SPE6
+  GW3:
+  - SPE5
+avd_overlay_peers:
+  GW2:
+  - SPE6
+  GW3:
+  - SPE5
+playbook_dir: /Users/emil/scripts/ansible/development/AVD_DIA_CLEARSHARK
+ansible_playbook_python: /Users/emil/scripts/ansible/development/.avdvenv/bin/python
+ansible_config_file: /Users/emil/scripts/ansible/development/AVD_DIA_CLEARSHARK/ansible.cfg
+groups:
+  all:
+  - cv_server
+  - PE-1A
+  - PE-1B
+  - PE-2
+  - PE-3
+  - PE-4A
+  - PE-4B
+  - GW3
+  - SPE5
+  - GW2
+  - SPE6
+  - P1-A
+  - P1-B
+  - P4-A
+  - P4-B
+  - P3-A
+  - P3-B
+  - P2-A
+  - P2-B
+  ungrouped: []
+  CVP:
+  - cv_server
+  ALL_NODES:
+  - PE-1A
+  - PE-1B
+  - P1-A
+  - P1-B
+  - GW2
+  - SPE6
+  - PE-4A
+  - PE-4B
+  - P4-A
+  - P4-B
+  - GW3
+  - SPE5
+  - PE-3
+  - P3-A
+  - P3-B
+  - PE-2
+  - P2-A
+  - P2-B
+  MPLS_NETWORK:
+  - PE-1A
+  - PE-1B
+  - P1-A
+  - P1-B
+  - PE-4A
+  - PE-4B
+  - P4-A
+  - P4-B
+  - PE-3
+  - P3-A
+  - P3-B
+  - PE-2
+  - P2-A
+  - P2-B
+  SITE1:
+  - PE-1A
+  - PE-1B
+  - P1-A
+  - P1-B
+  SITE1_PE:
+  - PE-1A
+  - PE-1B
+  SITE1_P:
+  - P1-A
+  - P1-B
+  SITE2:
+  - PE-2
+  - P2-A
+  - P2-B
+  SITE2_PE:
+  - PE-2
+  SITE2_P:
+  - P2-A
+  - P2-B
+  SITE3:
+  - PE-3
+  - P3-A
+  - P3-B
+  SITE3_PE:
+  - PE-3
+  SITE3_P:
+  - P3-A
+  - P3-B
+  SITE4:
+  - PE-4A
+  - PE-4B
+  - P4-A
+  - P4-B
+  SITE4_PE:
+  - PE-4A
+  - PE-4B
+  SITE4_P:
+  - P4-A
+  - P4-B
+  VXLAN_NETWORK:
+  - GW2
+  - SPE6
+  - GW3
+  - SPE5
+  VXLAN_ISLAND2:
+  - GW2
+  - SPE6
+  SITE_2_LEAFS:
+  - GW2
+  - SPE6
+  VXLAN_ISLAND3:
+  - GW3
+  - SPE5
+  SITE_3_LEAFS:
+  - GW3
+  - SPE5
+  TENANTS:
+  - PE-1A
+  - PE-1B
+  - PE-2
+  - PE-3
+  - PE-4A
+  - PE-4B
+  - GW2
+  - SPE6
+  - GW3
+  - SPE5
+  ENDPOINT_CONNECTIONS:
+  - PE-1A
+  - PE-1B
+  - PE-2
+  - PE-3
+  - PE-4A
+  - PE-4B
+  - GW3
+  - SPE5
+  - GW2
+  - SPE6
+omit: __omit_place_holder__0926006819a9924be79a5f3d7e76eb0faf9099ce
+ansible_version:
+  string: 2.12.2
+  full: 2.12.2
+  major: 2
+  minor: 12
+  revision: 2
+ansible_check_mode: false
+ansible_diff_mode: false
+ansible_forks: 16
+ansible_inventory_sources:
+- /Users/emil/scripts/ansible/development/AVD_DIA_CLEARSHARK/inventory-evelab.yml
+ansible_skip_tags: []
+ansible_run_tags:
+- debug
+- build
+ansible_verbosity: 0
