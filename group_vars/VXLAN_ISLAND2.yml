@@ -27,8 +27,6 @@ l3leaf:
         tenants: [ all ]
         tags: [ vxlan-site6 ]
       node_sid_base: 2000
-      # mpls_route_reflectors: [ P-1A, P-2A ]
-      # mpls_overlay_role: client
       evpn_role: server
       evpn_gateway:
         vxlan_to_mpls:
