@@ -32,9 +32,11 @@ l3leaf:
       evpn_gateway:
         vxlan_to_mpls:
           enabled: true
-          mpls_overlay_address_family: evpn
+          mpls_overlay_address_family: vpn-ipv4
           mpls_underlay: isis-sr
           mpls_remote_as: 65000
+          mpls_domain: "\"65000:1\""
+          vxlan_domain: "\"65000:2\""
         evpn_l2_dci:
           enabled: true
         evpn_l3_dci:
@@ -48,6 +50,10 @@ l3leaf:
             100.70.2.2:
               peer_group: MPLS-OVERLAY-PEERS
               description: P-2A
+            100.64.20.11:
+              peer_group: EVPN-OVERLAY-CORE
+              description: GW2
+              remote_as: 65001
       nodes:
         GW3:
           id: 1
